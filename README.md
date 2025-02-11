@@ -1,7 +1,7 @@
 # InerSens Library
 > Matlab/Simulink tools widely used in the SiMuR Lab
 
-![logo](./img/logoinersense.jpg)
+![logo](./img/logoinersens.png)
 
 [![View simurtools on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/80140-simurtools)
 
