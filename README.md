@@ -27,7 +27,7 @@ Some database examples are provided.
 Project is _in progress_ 
 
 #########  Release History  #########  
-v 1.4 (R2022b) Mar 2023      Cleaning of robotics model
+v 1.4 (R2022b) Mar 2023      Cleaning of pure robotics-related tools
 
 v 1.1 (R2020a)	Sep 2020      Updated for R2020a
                               Made available in Adds-on utility
@@ -36,8 +36,8 @@ v 1.0 (R2019b)	Mar 2019      Updated for R2019b
                               Uses MATLAB Project
 
 ## Contact
-Created by [@simurlab](https://simur.dieecs.com/) - feel free to contact me!
+Created by [@simurlab](https://simur.dieecs.com/) - feel free to contact us!
 
-Copyright 2017-2024 SiMuR Lab
+Copyright 2017-2025 SiMuR Lab
 
 
