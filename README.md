@@ -1,7 +1,7 @@
-# SimurTools Library
+# InerSens Library
 > Matlab/Simulink tools widely used in the SiMuR Lab
 
-![logo](./img/logotoolbox.png)
+![logo](./img/logoinersense.jpg)
 
 [![View simurtools on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/80140-simurtools)
 
@@ -38,6 +38,6 @@ v 1.0 (R2019b)	Mar 2019      Updated for R2019b
 ## Contact
 Created by [@simurlab](https://simur.dieecs.com/) - feel free to contact me!
 
-Copyright 2017-2023 SiMuR Lab
+Copyright 2017-2024 SiMuR Lab
 
 
