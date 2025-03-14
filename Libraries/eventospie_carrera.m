@@ -53,9 +53,8 @@ for i=2:length(maximos)
    
        if length(mins_paso)>=2
            max_paso=[max_paso, maximos(i)];
-           [fc,ifc]=min(gyr(mins_paso));
-           
-           FC=[FC mins_paso(ifc)];
+           [fc,ifc]=min(gyr(mins_paso(2:end)));%el primero es el ic, no vale como fc.
+           FC=[FC mins_paso(ifc+1)];
            IC=[IC mins_paso(1)];
            
        end
