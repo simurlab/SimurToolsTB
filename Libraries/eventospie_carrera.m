@@ -5,18 +5,22 @@
 % filtrado (apoyado en filtro0). Se identifican los eventos de contacto inicial y final del pie en el que 
 % esta el sensor.
 %
-% Sintax: [IC,FC]=eventospie_carrera(gyr,th,freq)
+% Sintax: [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
 %
 % Parametros de entrada:
 %    gyr           - vector con la velocidad de giro en el eje mediolateral
 %    th            - velocidad mínima a alcanzar para detectar eventos. Aconsejado 150
 %    frecuencia    - frecuencia de muestreo.
+%    gyrpron       - vector con la velocidad de giro en el eje frontal(opcional. 
+%                    Sin este parámetro MVP Y MP devolveran un array vacio
 %
 % Parametros de salida:
-%    IC : muestras en las que se ha detectado el contacto con el suelo
-%    FC.  muestras en las que se ha detectado el final del contacto con el suelo
-
-function [IC,FC]=eventospie(gyr,th,freq)
+%    IC  :  muestras en las que se ha detectado el contacto con el suelo
+%    FC  :  muestras en las que se ha detectado el final del contacto con el suelo
+%    MaxS:  muestras en las que se ha detectado el maximo swing(hacia delante)(NaN=no detectado)
+%    MinS:  muestras en las que se ha detectado el minimo swing(hacia atras)  (NaN=no detectado)
+%    MVP :  muestras en las que se detecta la máxima velocidad de pronación (NaN=no detectado)
+function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
  
     % filtrado
     orden=5;
@@ -24,7 +28,6 @@ function [IC,FC]=eventospie(gyr,th,freq)
    
     gyr=filtro0(gyr,orden,corte);
     
-
     tam=size(gyr);% tamaño de la señal de aceleración de entrada
     tam=tam(1);
 
@@ -37,32 +40,72 @@ function [IC,FC]=eventospie(gyr,th,freq)
     maximos=find(Datos2==1)+1;
     minimos=find(Datos2==-1)+1;
     minimos=minimos(gyr(minimos)<0);
-
-    % min_local=minimos(1);
     max_paso=maximos(1);
-    mins_paso=[];
-
+    
     IC=[];
     FC=[];
+    MaxS=[];
+    MinS=[];
 
-for i=2:length(maximos)
- 
-   if gyr(maximos(i))>=th
-             
-       mins_paso=minimos(minimos>max_paso(end) & minimos<maximos(i));
+    pasos_cero_maxs=find(diff(gyr>0)==-1);
+    pasos_cero_mins=find(diff(gyr>0)==+1);
+
+    if nargin==4
+    	%maximos y minimos de la pronacion
+    	gyrpron=filtro0(gyrpron,orden,corte);
+    	% Obtencion de la señal rectangular:
+    	Datos2=gyrpron(2:tam)-gyrpron(1:tam-1);
+    	Datos2=Datos2>=0;
+    	% Obtencion de las señal de pulsos de pronacion:
+    	Datos2=Datos2(1:tam-2)-Datos2(2:tam-1);
+    	maximospron=find(Datos2==1)+1;
+    	minimospron=find(Datos2==-1)+1;
+    end
+    MVP=[];
+    MP=[];
+
+    for i=2:length(maximos)
+        if gyr(maximos(i))>=th
+            mins_paso=minimos(minimos>max_paso(end) & minimos<maximos(i));
    
-       if length(mins_paso)>=2
-           max_paso=[max_paso, maximos(i)];
-           [fc,ifc]=min(gyr(mins_paso(2:end)));%el primero es el ic, no vale como fc.
-           FC=[FC mins_paso(ifc+1)];
-           IC=[IC mins_paso(1)];
-           
-       end
-   end
-    
-end
+            if length(mins_paso)>=2
+                max_paso=[max_paso, maximos(i)]; %#ok<*AGROW>
+                [fc,ifc]=min(gyr(mins_paso(2:end))); %#ok<ASGLU> 
+                %el primero es el ic, no vale como fc.
+                FC=[FC mins_paso(ifc+1)];
+                IC=[IC mins_paso(1)];
 
-end
+                maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end-1)& pasos_cero_maxs<IC(end));
+                if ~isempty(maxs)
+                    MaxS=[MaxS, maxs(1)];
+                else
+                    MaxS=[MaxS, NaN];
+                end
+
+                mins=pasos_cero_mins(pasos_cero_mins>FC(end) & pasos_cero_mins<max_paso(end));
+                if ~isempty(mins)
+                    MinS=[MinS, mins(end)];
+                else
+                    MinS=[MinS, NaN];
+                end
+
+                if nargin==4
+                    mvp=maximospron(maximospron>IC(end)& maximospron<FC(end));
+                    if ~isempty(mvp)
+                        MVP=[MVP, mvp(1)];
+                    else
+                        MVP=[MVP, NaN];
+                    end
+                    mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
+                    if ~isempty(mp)
+                        MP=[MP, mp(1)];
+                    else
+                        MP=[MP, NaN];
+                    end
+                end
+            end
+        end
+    end
 
 
 
