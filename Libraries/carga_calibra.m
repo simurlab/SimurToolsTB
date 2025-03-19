@@ -32,8 +32,13 @@ switch txt2
         R=[ -2 , -3, 1]; 
         end
     case 'T'
+        if txt1 == 'D'
         IMU=IMU1;
-        R=[ 3 , 2, 1];
+        R=[ 3 , 2, 1]; 
+        else 
+        IMU=IMU2;
+        R=[ 3 , 2, 1]; 
+        end
     case 'E'
         if txt1 == 'D'
         IMU=IMU1;
