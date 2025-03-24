@@ -2,24 +2,155 @@
 %
 % cargar y visualizar los datos.
 % suponemos que hay un archivo con datos matlab.mat accesible:
+
 load;
 freq=120;
 
+clear zonas
+clear Intervalos
 
-% Recabar información de cómo estaba el sensor concreto:
+%% PARTE DE CARGA DE DATOS
+%
 
-prompt = "pie Dcho, pie Izdo o Sacro? D/I/S [D]: ";
-txt1 = input(prompt,"s");
+% Carga de los datos experimentales que se van a analizar: experimento y sensor:
+%
+prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A-B + 1-6) [A1]: ";
+txt0 = input(prompt,"s");
+if isempty(txt0)
+    txt0 = 'A1';
+end
+
+% % Recabar información de cómo estaba el sensor concreto:
+% %
+% prompt = "pie Dcho, pie Izdo o Sacro? D/I/S [D]: ";
+% txt1 = input(prompt,"s");
+% if isempty(txt1)
+%     txt1 = 'D';
+% end
+
+% prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+% txt1 = input(prompt,"s");
+% if isempty(txt1)
+%     txt1 = 'D';
+% end
+% 
+% prompt = "colocado en Empeine, en Talón o en Lateral? E/T/L [L]: ";
+% txt2 = input(prompt,"s");
+% if isempty(txt2)
+%     txt2 = 'L';
+% end
+
+% Intervalos y otras variables propias del esperimento seleccionado:
+%
+switch txt0
+    case 'A1'
+        txt1 = 'D';
+        txt2 = 'E';
+        IntervalEstatico=[50 90];
+        Intervalos=[5 20;       % Calentamiento, 2 [min]
+            20 27.2;    % Vel. Mín., 1 [min]
+            27.2 34.4;  % Vel. Intermedia, 1 [min]
+            34.4 41.6]; % Vel. Máx., 1 [min]
+    case 'A2'
+        txt1 = 'D';
+        txt2 = 'E';
+         IntervalEstatico=[50 90];
+        Intervalos=[1.8 3.2;    % Calentamiento, 2 [min]
+            3.2 3.9;    % Vel. Mín., 1 [min]
+            3.9 4.6;    % Vel. Intermedia, 1 [min]
+            4.6 5.3     % Vel. Máx., 1 [min]
+            ]*10;
+    case 'A3'
+        txt1 = 'D';
+        txt2 = 'E';
+         IntervalEstatico=[50 90];
+        Intervalos=[0.7 2.1;     % Calentamiento, 2 [min]
+            2.1 2.8;     % Vel. Mín., 1 [min]
+            2.8 3.5;     % Vel. Intermedia, 1 [min]
+            3.5 4.2;     % Vel. Máx., 1 [min]
+            ]*10;
+    case 'A4'
+        txt1 = 'D';
+        txt2 = 'E';
+         IntervalEstatico=[50 90];
+        Intervalos=[0.6 2.0;     % Calentamiento, 2 [min]
+            2.0 2.7;     % Vel. Mín., 1 [min]
+            2.7 3.4;     % Vel. Intermedia, 1 [min]
+            3.4 4.1;     % Vel. Máx., 1 [min]
+            ]*10;
+    case 'A5'
+        txt1 = 'D';
+        txt2 = 'E';
+         IntervalEstatico=[50 90];
+        Intervalos=[0.48 1.88;     % Calentamiento, 2 [min]
+            1.88 2.58;     % Vel. Mín., 1 [min]
+            2.58 3.28;     % Vel. Intermedia, 1 [min]
+            3.28 3.98;     % Vel. Máx., 1 [min]
+            ]*10;
+    case 'A6'
+        txt1 = 'D';
+        txt2 = 'E';
+         IntervalEstatico=[50 90];
+        Intervalos=[7 10;  % Calentamiento, 2 [min]
+            10 22.2;       % Vel. Mín., 1 [min]
+            22.2 34.4;     % Vel. Intermedia, 1 [min]
+            34.4 46.6];    % Vel. Máx., 1 [min]
+    case 'B1'
+        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+        txt2 = 'L';
+         IntervalEstatico=[50 90];
+        Intervalos=[1 36; 40 55; 55 90; 95 110; 115 140; 145 160; 165 195;
+            200 215; 220 255; 260 275; 280 310; 320 335; 340 365; 375 390; 395 430; 440 465];
+    case 'B2'
+        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+         txt2 = 'L';
+         IntervalEstatico=[50 90];
+         Intervalos=[1 30; 34 37; 37 40; 40 44; 44 47; 47 51; 51 54; 54 57; 57 62;
+            62 66; 66 74; 74 76; 76 79; 79 83; 83 86; 86 90; 90 96; 96 100; 100 104;
+            104 106; 106 114; 114 116; 116 121; 121 125;125 133; 133 135; 135 141; 141 144; 144 147; 147 149; 149 157];
+    case 'B3'
+        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+         txt2 = 'L';
+         IntervalEstatico=[50 90];
+         Intervalos=[1 20; 20 60; 60 72; 72 84; 84 89; 89 102; 102 108; 108 120;
+            120 126; 126 141; 141 147; 147 168];
+    case 'B4'
+        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+         txt2 = 'L';
+         IntervalEstatico=[50 90];
+         Intervalos=[40 45; 45 54; 55 60; 66 67;  67 71; 71 75; 75 79; 79 89;
+            89 93; 93 104; 104 116; 116 132; 132 146; 146 161; 161 175; 175 190; 190 205; 205 220];
+        % Las series correspondientes a acel-decel:
+        % Intervalos=[103.5 116.5; 131.5 146.5; 160 175 ];
+    case 'B5'
+        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+         txt2 = 'T';
+         IntervalEstatico=[50 90];
+         Intervalos=[1 28; 28 48;48 64; 64 78;78 110; 110 125; 125 140];
+        % el primero intervalo son escalones de 15'' de 8km/h a 18km/h;
+        % el segundo fueron 15+15+10+... hasta 20km/h, bajada rápida; el tercero de 10''
+    case 'B6'  % cross en el talón; el IMU1 se desconectó a media prueba.
+         IntervalEstatico=[50 90];
+         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
+        txt1 = input(prompt,"s");
+        txt2 = 'T';
+        Intervalos=[5 75; 75.5 83; 84 87; 87 134];
+end
+
 if isempty(txt1)
     txt1 = 'D';
 end
-
-prompt = "colocado en Empeine, en Talón o en Lateral? E/T/L [L]: ";
-txt2 = input(prompt,"s");
 if isempty(txt2)
     txt2 = 'L';
 end
 
+%% PARTE DE CALIBRACION
+%
 % Para el IMU seleccionado, el vector R necesario para luego reorientar 
 % la posición inicial del sensor a un estandar:
 switch txt2
@@ -82,8 +213,11 @@ posi = [21        1717        3791        410];
 fig_new.OuterPosition=posi;
 
 
-ini=input("Muestra inicio de calibración:");
-fin=input("Muestra fin de calibración:");
+%ini=input("Muestra inicio de calibración:");
+%fin=input("Muestra fin de calibración:");
+
+ini=IntervalEstatico(1,1);
+fin=IntervalEstatico(1,2);
 
 % Matriz de orientación:
 Mrot=calibra_anatomical(acc(ini:fin,:), R);
@@ -92,14 +226,19 @@ acc2=acc*Mrot';
 
 % figura para chequear que la re-orientación fue correcta:
 figure; 
-subplot(211); plot(acc(ini:fin,:)); grid;
-subplot(212); plot(acc2(ini:fin,:)); grid;
+subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
+subplot(212); plot(acc2(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
+sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
 
 % gyro ML con el que se harán detecciones de eventos:
 gyrML=gyr*Mrot';
 
 
+%Intento PCA:
+[coeff, ~, ~] = pca(gyrML); % coeff contains the principal components
+rotation_axis = coeff(:, 3); % First principal component
+desired_axes = coeff; % Columns of coeff are the desired axes
+R = desired_axes';
 
 
-
-
+gyrML2=gyrML*R';
