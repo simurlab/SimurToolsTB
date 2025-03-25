@@ -1,46 +1,41 @@
 %% carga_calibra
 %
-% cargar y visualizar los datos.
-% suponemos que hay un archivo con datos matlab.mat accesible:
+% Utilidad para cargar y calibrar los datos de una prueba, a partir de su ID
+%
 
+% Suponemos que hay un archivo con datos matlab.mat accesible:
 load;
 freq=120;
 
+% limpiamos para evitar problemas:
 clear zonas
 clear Intervalos
 
 %% PARTE DE CARGA DE DATOS
 %
 
-% Carga de los datos experimentales que se van a analizar: experimento y sensor:
+% Algunas gráficas para debuggear:
 %
-prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A-B + 1-6) [A1]: ";
+prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+txt_visualiza = input(prompt,"s");
+if isempty(txt_visualiza)
+    txt_visualiza = 'N';
+end
+
+% Carga de los datos experimentales que se van a analizar: experimento y sensor:
+% La variable global txt0 será la ID del expe.
+%
+prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
 txt0 = input(prompt,"s");
 if isempty(txt0)
     txt0 = 'A1';
 end
 
-% % Recabar información de cómo estaba el sensor concreto:
-% %
-% prompt = "pie Dcho, pie Izdo o Sacro? D/I/S [D]: ";
-% txt1 = input(prompt,"s");
-% if isempty(txt1)
-%     txt1 = 'D';
-% end
 
-% prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-% txt1 = input(prompt,"s");
-% if isempty(txt1)
-%     txt1 = 'D';
-% end
-% 
-% prompt = "colocado en Empeine, en Talón o en Lateral? E/T/L [L]: ";
-% txt2 = input(prompt,"s");
-% if isempty(txt2)
-%     txt2 = 'L';
-% end
-
-% Intervalos y otras variables propias del esperimento seleccionado:
+% Según su ID, cargamos variables propias de cada experimento:
+% - Intervalos: muestras de estudio (en miles) 
+% - txt1: localización del IMU (D/I/S)
+% - txt2: colocación del IMU( E/L/T)
 %
 switch txt0
     case 'A1'
@@ -63,7 +58,7 @@ switch txt0
     case 'A3'
         txt1 = 'D';
         txt2 = 'E';
-         IntervalEstatico=[50 90];
+         IntervalEstatico=[220 250];
         Intervalos=[0.7 2.1;     % Calentamiento, 2 [min]
             2.1 2.8;     % Vel. Mín., 1 [min]
             2.8 3.5;     % Vel. Intermedia, 1 [min]
@@ -114,9 +109,9 @@ switch txt0
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
          txt2 = 'L';
-         IntervalEstatico=[50 90];
-         Intervalos=[1 20; 20 60; 60 72; 72 84; 84 89; 89 102; 102 108; 108 120;
-            120 126; 126 141; 141 147; 147 168];
+         IntervalEstatico=[30 50];
+         Intervalos=[1 20; 20 60; 60 72; 72 84; 84 89; 89 102; 102 108; 108 120; 120 126; 126 141; 141 147; 147 168];
+         %Intervalos=[60 72; 72 84];
     case 'B4'
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
@@ -149,37 +144,40 @@ if isempty(txt2)
     txt2 = 'L';
 end
 
+
 %% PARTE DE CALIBRACION
 %
-% Para el IMU seleccionado, el vector R necesario para luego reorientar 
+% Para el IMU seleccionado, definimos el vector R para luego reorientar 
 % la posición inicial del sensor a un estandar:
+%
 switch txt2
     case 'L'
         if txt1 == 'D'
-        IMU=IMU2;
-        R=[ 2 , 3, 1]; 
-        else 
-        IMU=IMU1;
-        R=[ -2 , -3, 1]; 
+            IMU=IMU2;
+            R=[ 2 , 3, 1];
+        else
+            IMU=IMU1;
+            R=[ -2 , -3, 1];
         end
     case 'T'
         if txt1 == 'D'
-        IMU=IMU1;
-        R=[ 3 , 2, 1]; 
-        else 
-        IMU=IMU2;
-        R=[ 3 , 2, 1]; 
+            IMU=IMU1;
+            R=[ 3 , 2, 1];
+        else
+            IMU=IMU2;
+            R=[ 3 , 2, 1];
         end
     case 'E'
         if txt1 == 'D'
-        IMU=IMU1;
-        R=[ 1 , -2, -3]; 
-        else 
-        IMU=IMU2;
-        R=[ 1 , -2, -3]; 
+            IMU=IMU1;
+            R=[ 1 , -2, -3];
+        else
+            IMU=IMU2;
+            R=[ 1 , -2, -3];
         end
 end
 
+% Una vez definido el IMU, se cargan los datos:
 accx=IMU.Acc_X;
 accy=IMU.Acc_Y;
 accz=IMU.Acc_Z;
@@ -189,56 +187,56 @@ gyrz=IMU.Gyr_Z;
 acc=[accx accy accz];
 gyr=[gyrx gyry gyrz];
 
-
-%% Figura larga para visualizar todo el experimento;
-fig_new=figure;
-plot(accx);
-hAx = gca; % Handle to current axes
-% Adjust font sizes
-hAx.FontSize = 28;
-grid
-posi = [21        1717        3791        410];
-fig_new.OuterPosition=posi;
-
-
-%% Calibracion anatómica
-% Figura larga para ayudar a identificar una zona de reposo
-fig_new=figure;
-plot(accx(1:400));
-hAx = gca; % Handle to current axes
-% Adjust font sizes
-hAx.FontSize = 28;
-grid
-posi = [21        1717        3791        410];
-fig_new.OuterPosition=posi;
-
-
-%ini=input("Muestra inicio de calibración:");
-%fin=input("Muestra fin de calibración:");
-
+% Calibracion anatómica:
+%
 ini=IntervalEstatico(1,1);
 fin=IntervalEstatico(1,2);
 
-% Matriz de orientación:
+% Matriz de re-orientación:
 Mrot=calibra_anatomical(acc(ini:fin,:), R);
-acc2=acc*Mrot';
 
-
-% figura para chequear que la re-orientación fue correcta:
-figure; 
-subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
-subplot(212); plot(acc2(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
-sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
-
-% gyro ML con el que se harán detecciones de eventos:
+% Acss y gyros re-orientados:
+acc2=acc*Mrot'; 
 gyrML=gyr*Mrot';
 
 
-%Intento PCA:
-[coeff, ~, ~] = pca(gyrML); % coeff contains the principal components
-rotation_axis = coeff(:, 3); % First principal component
-desired_axes = coeff; % Columns of coeff are the desired axes
-R = desired_axes';
 
 
-gyrML2=gyrML*R';
+
+%% PARTE DE VISUALIZACION:
+%
+
+if txt_visualiza == 'S'
+
+
+    %% Figura larga para visualizar todo el experimento;
+    fig_new=figure;
+    plot(accx);
+    hAx = gca; % Handle to current axes
+    % Adjust font sizes
+    hAx.FontSize = 28;
+    grid
+    posi = [21        1717        3791        410];
+    fig_new.OuterPosition=posi;
+
+
+    %% Calibracion anatómica
+    % Figura larga para ayudar a identificar una zona de reposo
+    fig_new=figure;
+    plot(accx(1:400));
+    hAx = gca; % Handle to current axes
+    % Adjust font sizes
+    hAx.FontSize = 28;
+    grid
+    posi = [21        1717        3791        410];
+    fig_new.OuterPosition=posi;
+
+    % figura para chequear que la re-orientación fue correcta:
+    figure;
+    subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
+    subplot(212); plot(acc2(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
+    sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
+
+end
+
+%-------------------------- Fin de carga_calibra --------------
