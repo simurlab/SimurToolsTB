@@ -1,4 +1,4 @@
-function [impact_acc, impact_acc_moda] = obtener_impact_gs_amplitude(IC, accz)
+function [impact_acc, impact_acc_moda] = obtener_impact_gs_amplitude(IC, acc_vertical)
     % **************************************************************************************************
     % Función que calcula la aceleración en el eje vertical (impacto) 
     % durante los eventos de foot-strike.
@@ -26,9 +26,9 @@ function [impact_acc, impact_acc_moda] = obtener_impact_gs_amplitude(IC, accz)
     % Definimos la aceleración de la gravedad en [m/s^2] para normalizar los datos
     g_teorica = 9.81;
 
-    % Extraemos los valores de aceleración en el eje vertical (z)
+    % Extraemos los valores de aceleración en el eje vertical
     % en los eventos de foot-strike y los normalizamos en unidades de Gs
-    impact_acc = accz(muestras_footstrike) / g_teorica;
+    impact_acc = acc_vertical(muestras_footstrike) / g_teorica;
 
     % Calculamos la moda de la aceleración de impacto
     impact_acc_moda = mode(impact_acc);

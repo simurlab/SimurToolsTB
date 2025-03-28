@@ -1,4 +1,4 @@
-function [braking_acc, braking_acc_moda] = obtener_braking_gs_amplitude(IC, accx)
+function [braking_acc, braking_acc_moda] = obtener_braking_gs_amplitude(IC, acc_antero_posterior)
     % **************************************************************************************************
     % Función que calcula la aceleración en el eje anteroposterior (braking)
     % durante los eventos de foot-strike.
@@ -7,8 +7,8 @@ function [braking_acc, braking_acc_moda] = obtener_braking_gs_amplitude(IC, accx
     % --------------------------------------------------------------
     % * IC: muestras correspondientes a los eventos de foot-strike.
     %       (Debe ser un array de celdas con los índices de los eventos).
-    % * accx: aceleración en el eje anteroposterior.
-    %       (Vector con los valores de aceleración en el eje x).
+    % * acc_antero_posterior: aceleración en el eje anteroposterior.
+    %       (Vector con los valores de aceleración en el eje de avance del movimiento).
     %
     % Variables de salida devueltas:
     % --------------------------------------------------------------
@@ -26,9 +26,9 @@ function [braking_acc, braking_acc_moda] = obtener_braking_gs_amplitude(IC, accx
     % Definimos la aceleración de la gravedad en [m/s^2] para normalizar los datos
     g_teorica = 9.81;
 
-    % Extraemos los valores de aceleración en el eje anteroposterior (x)
+    % Extraemos los valores de aceleración en el eje anteroposterior
     % en los eventos de foot-strike y los normalizamos en unidades de Gs
-    braking_acc = accx(muestras_footstrike) / g_teorica;
+    braking_acc = acc_antero_posterior(muestras_footstrike) / g_teorica;
 
     % Calculamos la moda de la aceleración de frenado
     braking_acc_moda = mode(braking_acc);

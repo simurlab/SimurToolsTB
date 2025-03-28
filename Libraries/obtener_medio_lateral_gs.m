@@ -1,4 +1,4 @@
-function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = obtener_medio_lateral_gs(IC, accy)
+function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = obtener_medio_lateral_gs(IC, acc_medio_lateral)
     % **************************************************************************************************
     % Función que calcula la aceleración en el eje medio-lateral durante
     % cada heel-strike.
@@ -7,8 +7,8 @@ function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = obt
     % --------------------------------------------------------------
     % * IC: muestras correspondientes a los eventos de foot-strike.
     %       (Debe ser un array de celdas que contiene índices de los eventos).
-    % * accy: aceleración en el eje medio-lateral.
-    %       (Vector con los valores de aceleración en el eje y).
+    % * acc_medio_lateral: aceleración en el eje medio-lateral.
+    %       (Vector con los valores de aceleración en el eje medio-lateral).
     %
     % Variables de salida devueltas:
     % --------------------------------------------------------------
@@ -29,7 +29,7 @@ function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = obt
     
     % Extraemos los valores de aceleración en el eje medio-lateral en los eventos de foot-strike
     % y los normalizamos dividiéndolos por la gravedad para obtener unidades en [Gs]
-    acc_medio_lateral_footstrike = accy(muestras_footstrike) / g_teorica;  
+    acc_medio_lateral_footstrike = acc_medio_lateral(muestras_footstrike) / g_teorica;  
     
     % Calculamos la moda de la aceleración medio-lateral en los eventos de foot-strike
     acc_medio_lateral_footstrike_moda = mode(acc_medio_lateral_footstrike);  
