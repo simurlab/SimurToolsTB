@@ -40,25 +40,26 @@
 % History:  12.11.2000  file created
 %                       full description at the top
 %           19.11.2000  suggestions for in-code comments added
+% Author:   JC.
 %           12.12.2007  Adaptada correctamente a la toolbox.
-%           3.12.2019   Modified for SiMurTools
+%           03.12.2019  Modified for SiMurTools
+%           26.03.2025  Opcion para devolver ejes en el convenio ISB 
 
-function RR=calibra_anatomical(datos,R)
+function RR=calibra_anatomical(datos,v_orden)
 
 if (nargin==1)
-  R=[3,-2,1]; %Orden estandar
+  v_orden=[3,-2,1]; %Orden estandar "anatomico" en el proyecto silop
 end
-[tam1,tam2]=size(R);
+
+[tam1,tam2]=size(v_orden);
 if (tam1*tam2==3)
-  orden=R;
-  R=zeros(3,3);
-  for k=1:3
-    R(k,abs(orden(k)))=sign(orden(k)); 
-  end
-elseif (tam1*tam2==9)
-  %R=R;
+    orden=v_orden;
+    R=zeros(3,3);
+    for k=1:3
+        R(k,abs(orden(k)))=sign(orden(k));
+    end
 else
-	error('Matriz R de formato incorrecto');
+    error('Matriz R de formato incorrecto');
 end
 
 % Ordenar los ejes de los datos
@@ -116,4 +117,6 @@ else
   Rx=[1 0 0; 0  c3 -(c2);0  c2 c3];
 
   RR=Rx*Rz*R;
+
+
 end
