@@ -3,6 +3,8 @@
 % Utilidad para cargar y calibrar los datos de una prueba, a partir de su ID
 %
 
+function [a_cal, g_cal, Intervalos]=carga_calibra(IDexp,Visualiza)
+
 % Suponemos que hay un archivo con datos matlab.mat accesible:
 load;
 freq=120; % por ahora...
@@ -14,24 +16,56 @@ num_intervalos=0;
 clear zonas
 clear Intervalos
 
+ % Cuenta el número de argumentos
+ numArgs = nargin;
+
+ switch numArgs
+     case 0
+         prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+         txt_visualiza = input(prompt,"s");
+         if isempty(txt_visualiza)
+             txt_visualiza = 'N';
+         end
+         % Carga de los datos experimentales que se van a analizar: experimento y sensor:
+         % La variable global txt0 será la ID del expe.
+         %
+
+         prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
+         txt0 = input(prompt,"s");
+         if isempty(txt0)
+             txt0 = 'A1';
+         end
+     case 1
+        txt0 = IDexp;
+        txt_visualiza = 'N';
+     case 2
+          txt0 = IDexp;
+          txt_visualiza = Visualiza; 
+     otherwise
+ end
 
 %% PARTE DE CARGA DE DATOS, EN FUNCION DEL ID
 %
 %
-prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
-txt_visualiza = input(prompt,"s");
-if isempty(txt_visualiza)
-    txt_visualiza = 'N';
-end
-
-% Carga de los datos experimentales que se van a analizar: experimento y sensor:
-% La variable global txt0 será la ID del expe.
-%
-prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
-txt0 = input(prompt,"s");
-if isempty(txt0)
-    txt0 = 'A1';
-end
+% prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+% txt_visualiza = input(prompt,"s");
+% if isempty(txt_visualiza)
+%     txt_visualiza = 'N';
+% end
+% 
+% 
+% % Carga de los datos experimentales que se van a analizar: experimento y sensor:
+% % La variable global txt0 será la ID del expe.
+% %
+% if nargin==0
+%     prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
+%     txt0 = input(prompt,"s");
+%     if isempty(txt0)
+%         txt0 = 'A1';
+%     end
+% else
+%     txt0=IDexp;
+% end
 
 
 % Según su ID, cargamos variables propias de cada experimento:
@@ -46,7 +80,8 @@ switch txt0
     case 'A1'
         txt1 = 'D';
         txt2 = 'E';
-        IMU=IMU1;
+        IMU=datos_totales_A(1).IMU1;
+        %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
         Intervalos=[5 20;       % Calentamiento, 2 [min]
@@ -56,7 +91,7 @@ switch txt0
     case 'A2'
         txt1 = 'D';
         txt2 = 'E';
-        IMU=IMU1;
+        IMU=datos_totales_A(2).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
         Intervalos=[1.8 3.2;    % Calentamiento, 2 [min]
@@ -67,7 +102,7 @@ switch txt0
     case 'A3'
         txt1 = 'D';
         txt2 = 'E';
-        IMU=IMU1;
+      IMU=datos_totales_A(3).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[220 250];
         Intervalos=[0.7 2.1;     % Calentamiento, 2 [min]
@@ -78,8 +113,8 @@ switch txt0
     case 'A4'
         txt1 = 'D';
         txt2 = 'E';
-        IMU=IMU1;
-        Rcalib=[ 3 , -2, 1];
+      IMU=datos_totales_A(4).IMU1; %IMU=IMU1;
+      Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
         Intervalos=[0.6 2.0;     % Calentamiento, 2 [min]
             2.0 2.7;     % Vel. Mín., 1 [min]
@@ -88,7 +123,8 @@ switch txt0
             ]*10;
     case 'A5'
         txt1 = 'D';
-        txt2 = 'E';IMU=IMU1;
+        txt2 = 'E';
+        IMU=datos_totales_A(5).IMU1; 
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
         Intervalos=[0.48 1.88;     % Calentamiento, 2 [min]
@@ -99,7 +135,7 @@ switch txt0
     case 'A6'
         txt1 = 'D';
         txt2 = 'E';
-        IMU=IMU1;
+        IMU=datos_totales_A(6).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
         Intervalos=[7 10;  % Calentamiento, 2 [min]
@@ -114,11 +150,13 @@ switch txt0
         end
         txt2 = 'L';
         if txt1 == 'D'
-            IMU=IMU1;
+            IMU=datos_totales_B(1).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
             Rcalib=[ 2 , 3, 1];
             IntervalEstatico=[10 25];
         else
-            IMU=IMU2;
+            IMU=datos_totales_B(1).IMU2; %IMU=IMU1;
+            %IMU=IMU2;
             Rcalib=[ -2 , -3, 1];
             IntervalEstatico=[70 90];
         end
@@ -132,11 +170,13 @@ switch txt0
         end
         txt2 = 'L';
         if txt1 == 'D'
-            IMU=IMU1;
+                  IMU=datos_totales_B(2).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
             Rcalib=[ 2 , 3, 1];
             IntervalEstatico=[60 80];
         else
-            IMU=IMU2;
+                  IMU=datos_totales_B(2).IMU2; %IMU=IMU1;
+            %IMU=IMU2;
             Rcalib=[ -2 , -3, 1];
             IntervalEstatico=[10 30];
         end
@@ -152,11 +192,13 @@ switch txt0
         txt2 = 'L';
 
         if txt1 == 'D'
-            IMU=IMU1;
+            IMU=datos_totales_B(3).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
             Rcalib=[ 2 , 3, 1];
             IntervalEstatico=[10 40];
         else
-            IMU=IMU2;
+            IMU=datos_totales_B(3).IMU2; %IMU=IMU1;
+            %IMU=IMU2;
             Rcalib=[ -2 , -3, 1];
             IntervalEstatico=[70 100];
         end
@@ -170,10 +212,12 @@ switch txt0
         end
         txt2 = 'L';
         if txt1 == 'D'
-            IMU=IMU1;
+            IMU=datos_totales_B(4).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
             Rcalib=[ -2, -3, 1];
         else
-            IMU=IMU2;
+            IMU=datos_totales_B(4).IMU2; %IMU=IMU1; 
+            %IMU=IMU2;
             Rcalib=[ 2 , 3, 1];
         end
         IntervalEstatico=[50 90];
@@ -189,9 +233,11 @@ switch txt0
         end
         txt2 = 'T';
         if txt1 == 'D'
-            IMU=IMU1;
+            IMU=datos_totales_B(5).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
         else
-            IMU=IMU2;
+            IMU=datos_totales_B(5).IMU2; %IMU=IMU1;
+            %IMU=IMU2;
         end
         Rcalib=[ 1 , -2, -3];
         IntervalEstatico=[50 90];
@@ -206,9 +252,11 @@ switch txt0
         end
         txt2 = 'T';
         if txt1 == 'D'
-            IMU=IMU1;
+                       IMU=datos_totales_B(6).IMU1; %IMU=IMU1;
+            %IMU=IMU1;
         else
-            IMU=IMU2;
+                       IMU=datos_totales_B(6).IMU2; %IMU=IMU1;
+            %IMU=IMU2;
         end
         Rcalib=[ 1 , -2, -3];
         IntervalEstatico=[50 90];
@@ -275,8 +323,8 @@ acc_cal=acc*Mrot';
 gyr_cal=gyr*Mrot';
 
 % En coordenadas ISB
-acc2=Anatomical2ISB(acc_cal);
-gyrML=Anatomical2ISB(gyr_cal);
+a_cal=Anatomical2ISB(acc_cal);
+g_cal=Anatomical2ISB(gyr_cal);
 
 
 
@@ -310,9 +358,10 @@ if txt_visualiza == 'S'
     % figura para chequear que la re-orientación fue correcta:
     figure;
     subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
-    subplot(212); plot(acc2(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
+    subplot(212); plot(a_cal(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
     sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
 
 end
 
+end
 %-------------------------- Fin de carga_calibra --------------
