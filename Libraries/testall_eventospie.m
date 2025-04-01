@@ -33,13 +33,16 @@
 %     txt_visualiza=ID;
 % end
 
-prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
-    txt_visualiza = input(prompt,"s");
-    if isempty(txt_visualiza)
-        txt_visualiza = 'N';
-    end
+% prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+%     txt_visualiza = input(prompt,"s");
+%     if isempty(txt_visualiza)
+%         txt_visualiza = 'N';
+%     end
 
-
+% El numero de intervalos a estudiar:
+num_intervalos=size(Intervalos,1);
+freq=120;
+txt_visualiza = 'N';
 
 for i=1:num_intervalos,
 
@@ -47,7 +50,7 @@ for i=1:num_intervalos,
     final=int32(1000*Intervalos(i,2));
     
     % Selección del signo del gyro medio_lateral:
-    gyroml=-gyrML(inicio:final,3);  % en el talon, D (-)
+    gyroml=-g_cal(inicio:final,3);  % en el talon, D (-)
 
     % ***********************************************************************
     % ********** DETECCIÓN Y ELIMINACIÓN DE VALORES NAN DE gyroml ***********
