@@ -3,7 +3,7 @@
 % Utilidad para cargar y calibrar los datos de una prueba, a partir de su ID
 %
 
-function [a_cal, g_cal, Intervalos]=carga_calibra(IDexp,Visualiza)
+function [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp,Visualiza)
 
 % Suponemos que hay un archivo con datos matlab.mat accesible:
 load;
@@ -307,8 +307,16 @@ accz=IMU.Acc_Z;
 gyrx=IMU.Gyr_X;
 gyry=IMU.Gyr_Y;
 gyrz=IMU.Gyr_Z;
+
+quat_w = IMU.Quat_W;
+quat_x = IMU.Quat_X;
+quat_y = IMU.Quat_Y;
+quat_z = IMU.Quat_Z;
+
 acc=[accx accy accz];
 gyr=[gyrx gyry gyrz];
+quat = [quat_w quat_x quat_y quat_z];
+M_orientacion=quat2rotm(quat);
 
 % Calibracion en coordenadas anatómicas:
 %
@@ -321,6 +329,8 @@ Mrot=calibra_anatomical(acc(ini:fin,:), Rcalib);
 % Acss y gyros re-orientados en coor.anatómicas:
 acc_cal=acc*Mrot'; 
 gyr_cal=gyr*Mrot';
+M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
+quat_cal=rotm2quat(M_orientacion_cal);
 
 % En coordenadas ISB
 a_cal=Anatomical2ISB(acc_cal);
