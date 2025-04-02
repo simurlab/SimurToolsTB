@@ -75,7 +75,11 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                 FC=[FC mins_paso(ifc+1)];
                 IC=[IC mins_paso(1)];
 
-                maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end-1)& pasos_cero_maxs<IC(end));
+                %maxs es el último evento. se tiene que buscar antes del IC
+                %del siguiente paso. pero aún no tenemos el ic del
+                %siguiente paso
+                %maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end-1)& pasos_cero_maxs<IC(end));
+                maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end));
                 if ~isempty(maxs)
                     MaxS=[MaxS, maxs(1)];
                 else
@@ -106,6 +110,5 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
             end
         end
     end
-
-
+    
 
