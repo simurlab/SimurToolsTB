@@ -13,37 +13,44 @@
 % - txt2: colocación del IMU( E/L/T)
 %
 
-prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
-txt_visualiza = input(prompt,"s");
-if isempty(txt_visualiza)
-    txt_visualiza = 'N';
-end
+%function testall_eventospie(Intervalos,ID)
 
-% Selección del signo del gyro medio_lateral en función del experimento:
-%
-if txt2 == 'L'   % En el lateral, para datos B1 a B6
-    if txt1 == 'D'
-        % JC1:(-)  JC2:(-)  JC3: (-)  JC4: (-)
-        sign_gyr=-gyrML;
-    else
-        % JC1:(+)  JC2:(-)  JC3: (+) JC4: (-)
-        sign_gyr=-gyrML;
-    end
-else
-    if txt2 == 'E'
-        sign_gyr=gyrML;  % En el empeine, para exps. A1-A6 (+)
-    else
-        sign_gyr=-gyrML;  % en el talon, D (-)
-    end
-end
+%function testall_eventospie(ID)
+
+% global gyrML;
+% global num_intervalos;
+% global Intervalos;
+% global freq;
 
 
+% if (nargin==0)
+%     prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+%     txt_visualiza = input(prompt,"s");
+%     if isempty(txt_visualiza)
+%         txt_visualiza = 'N';
+%     end
+% else
+%     txt_visualiza=ID;
+% end
 
-for i=1:size(Intervalos,1)
+% prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+%     txt_visualiza = input(prompt,"s");
+%     if isempty(txt_visualiza)
+%         txt_visualiza = 'N';
+%     end
 
-    inicio=1000*Intervalos(i,1);
-    final=1000*Intervalos(i,2);
-    gyroml=sign_gyr(inicio:final,2);  % en el talon, D (-)
+% El numero de intervalos a estudiar:
+num_intervalos=size(Intervalos,1);
+freq=120;
+txt_visualiza = 'N';
+
+for i=1:num_intervalos,
+
+    inicio=int32(1000*Intervalos(i,1));
+    final=int32(1000*Intervalos(i,2));
+    
+    % Selección del signo del gyro medio_lateral:
+    gyroml=-g_cal(inicio:final,3);  % en el talon, D (-)
 
     % ***********************************************************************
     % ********** DETECCIÓN Y ELIMINACIÓN DE VALORES NAN DE gyroml ***********
@@ -58,11 +65,6 @@ for i=1:size(Intervalos,1)
     gyroml = gyroml(~isnan(gyroml)); % Eliminación de todos los valores NaN
     % ***********************************************************************
 
-
-    %[z1,z2,z3,vz1, vz2, vz3]=ftest_ep(gyroml, Intervalos(i,:), freq);
-
-    inicio=1000*Intervalos(i,1);
-    final=1000*Intervalos(i,2);
 
     % filtro y deteccion (requiere la TB de SP de Matlab):
     th=150;
@@ -93,6 +95,7 @@ for i=1:size(Intervalos,1)
     zonas(i,5)=std(vz3);
 
 
+    %----- FIGURAS OPCIONALES PARA DEBUGEAR---- ----------------
 
     if txt_visualiza == 'S'
 
@@ -109,7 +112,6 @@ for i=1:size(Intervalos,1)
         plot(IC, gyr2fil(IC), 'v', 'MarkerSize', 25, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b');
         plot(FC, gyr2fil(FC), '^', 'MarkerSize', 25, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b');
         decora4K(freq);
-
 
         annotation('textbox', [0.15, 0.8, 0.1, 0.1], ... % [x y width height]
             'String', sprintf('Ini: %.0f   Fin: %.0f', inicio, final), ...
@@ -131,4 +133,4 @@ end
 
 % Volcado de resultados para cortar y pegar en una hoja de cálculo:
 %
-fprintf('%.0f \t %.0f \t %.0f \t %.1f \t %.1f \n ', zonas'); 
+fprintf('%.0f \t %.0f \t %.0f \t %.1f \t %.1f \n ', zonas');
