@@ -107,7 +107,7 @@ switch txt0
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[220 250];
         Intervalos=[12 21;     % Calentamiento, 2 [min]
-            21 28;     % Vel. Mín., 1 [min]
+            21.1 28;     % Vel. Mín., 1 [min]
             29 35;     % Vel. Intermedia, 1 [min]
             35.1 42;     % Vel. Máx., 1 [min]
             ];
