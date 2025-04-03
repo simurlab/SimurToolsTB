@@ -84,64 +84,65 @@ switch txt0
         %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
-        Intervalos=[5 20;       % Calentamiento, 2 [min]
-            20 27.2;    % Vel. Mín., 1 [min]
-            27.2 34.4;  % Vel. Intermedia, 1 [min]
-            34.4 41.6]; % Vel. Máx., 1 [min]
+        Intervalos=[8.2 20;       % Calentamiento, 2 [min]
+            20.7 27.2;    % Vel. Mín., 1 [min]
+            27.9 34.4;  % Vel. Intermedia, 1 [min]
+            34.4 40.5   % Vel. Máx., 1 [min]
+            ];
     case 'A2'
         txt1 = 'D';
         txt2 = 'E';
         IMU=datos_totales_A(2).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
-        Intervalos=[1.8 3.2;    % Calentamiento, 2 [min]
-            3.2 3.9;    % Vel. Mín., 1 [min]
-            3.9 4.6;    % Vel. Intermedia, 1 [min]
-            4.6 5.3     % Vel. Máx., 1 [min]
-            ]*10;
+        Intervalos=[20 32;    % Calentamiento, 2 [min]
+            32 39;    % Vel. Mín., 1 [min]
+            40 46;    % Vel. Intermedia, 1 [min]
+            46.1 53     % Vel. Máx., 1 [min]
+            ];
     case 'A3'
         txt1 = 'D';
         txt2 = 'E';
       IMU=datos_totales_A(3).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[220 250];
-        Intervalos=[0.7 2.1;     % Calentamiento, 2 [min]
-            2.1 2.8;     % Vel. Mín., 1 [min]
-            2.8 3.5;     % Vel. Intermedia, 1 [min]
-            3.5 4.2;     % Vel. Máx., 1 [min]
-            ]*10;
+        Intervalos=[12 21;     % Calentamiento, 2 [min]
+            21 28;     % Vel. Mín., 1 [min]
+            29 35;     % Vel. Intermedia, 1 [min]
+            35.1 42;     % Vel. Máx., 1 [min]
+            ];
     case 'A4'
         txt1 = 'D';
         txt2 = 'E';
       IMU=datos_totales_A(4).IMU1; %IMU=IMU1;
       Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
-        Intervalos=[0.6 2.0;     % Calentamiento, 2 [min]
-            2.0 2.7;     % Vel. Mín., 1 [min]
-            2.7 3.4;     % Vel. Intermedia, 1 [min]
-            3.4 4.1;     % Vel. Máx., 1 [min]
-            ]*10;
+        Intervalos=[7 20;     % Calentamiento, 2 [min]
+            20 27;     % Vel. Mín., 1 [min]
+            27.2 34;     % Vel. Intermedia, 1 [min]
+            34.3 41;     % Vel. Máx., 1 [min]
+            ];
     case 'A5'
         txt1 = 'D';
         txt2 = 'E';
         IMU=datos_totales_A(5).IMU1; 
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
-        Intervalos=[0.48 1.88;     % Calentamiento, 2 [min]
-            1.88 2.58;     % Vel. Mín., 1 [min]
-            2.58 3.28;     % Vel. Intermedia, 1 [min]
-            3.28 3.98;     % Vel. Máx., 1 [min]
-            ]*10;
+        Intervalos=[7.2 18.8;     % Calentamiento, 2 [min]
+            19.1 25.8;     % Vel. Mín., 1 [min]
+            25.8 32.8;     % Vel. Intermedia, 1 [min]
+            33 39.8;     % Vel. Máx., 1 [min]
+            ];
     case 'A6'
         txt1 = 'D';
         txt2 = 'E';
         IMU=datos_totales_A(6).IMU1; %IMU=IMU1;
         Rcalib=[ 3 , -2, 1];
         IntervalEstatico=[50 90];
-        Intervalos=[7 10;  % Calentamiento, 2 [min]
-            10 22.2;       % Vel. Mín., 1 [min]
-            22.2 34.4;     % Vel. Intermedia, 1 [min]
-            34.4 46.6];    % Vel. Máx., 1 [min]
+        Intervalos=[9.4 10;  % Calentamiento, 2 [min]
+            10.9 22.2;       % Vel. Mín., 1 [min]
+            22.3 34.4;     % Vel. Intermedia, 1 [min]
+            34.4 46.5];    % Vel. Máx., 1 [min]
     case 'B1'
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
