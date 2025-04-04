@@ -122,7 +122,7 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                         MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
                     end
                     MP_segmentados=cell2mat(MP_segmentados);
-                    MP=MP_segmentados;
+                    MP=MP_segmentados';
                     % *************************************************************
                 end
             end
