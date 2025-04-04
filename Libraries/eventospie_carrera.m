@@ -102,6 +102,10 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     else
                         MVP=[MVP, NaN];
                     end
+                    % -----------------------
+                    % CÁLCULO DE EVENTO MP
+                    % -----------------------
+                    % Opción 1: Versión inicial de Diego
                     % mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
                     % if ~isempty(mp)
                     %     MP=[MP, mp(1)];
@@ -110,20 +114,22 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % end
 
                     % *************************************************************
-                    % CÁLCULO DE EVENTO MP
+                    % Opción 2: Definir ventana deslizante de n muestras y 
+                    % calcular std en cada ventana. El evento MP se detecta
+                    % cuando la std sea menor que un umbral.
                     % Calcular std en componente antero-posterior del giroscopio
                     % Tamaño de la ventana deslizante
                     windowSize = 4; % [muestras]
                     % Calcular la desviación estándar en la ventana deslizante
                     std_gyroant = movstd(gyrpron_fil, windowSize);
-                    umbral = 20;                          % THRESHOLD expresado en [°/s]
+                    umbral = 20;                           % THRESHOLD expresado en [°/s]
                     MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
                     MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
                     for i = 1:length(IC)
                         aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
-                        if ~isempty(aux)
-                            MP_segmentados{i} = aux(1);
-                        else
+                        if ~any(isempty(aux))              % Si no hay ningún valor NaN:
+                            MP_segmentados{i} = aux(1);    % Escogemos la muestra de la primera std
+                        else                              
                             MP_segmentados{i} = NaN;
                         end
                         %MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
