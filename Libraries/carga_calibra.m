@@ -68,7 +68,7 @@ clear Intervalos
 % end
 
 
-% Según su ID, cargamos variables propias de cada experimento:
+% Según su ID (txt0), cargamos variables propias de cada experimento:
 % - Intervalos: muestras de estudio (en miles)
 % - IntervaloEstatico: intervalo de muestras en reposo para reorientacion
 % - IMU: uno de los varios IMUs utilizados en el experimento
@@ -78,91 +78,19 @@ clear Intervalos
 % -
 switch txt0
     case 'A1'
-        txt1 = 'D';
-        txt2 = 'E';
-        IMU=datos_totales_A(1).IMU1;
-        %IMU=IMU1;
-        Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[50 90];
-        Intervalos=[8.2 20;       % Calentamiento, 2 [min]
-            20.7 27.2;    % Vel. Mín., 1 [min]
-            27.9 34.4;  % Vel. Intermedia, 1 [min]
-            34.4 40.5   % Vel. Máx., 1 [min]
-            ];
+        eval(datos_totales_A{1,2})
     case 'A2'
-        txt1 = 'D';
-        txt2 = 'E';
-        IMU=datos_totales_A(2).IMU1; %IMU=IMU1;
-        Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[50 90];
-        Intervalos=[20 32;    % Calentamiento, 2 [min]
-            32 39;    % Vel. Mín., 1 [min]
-            40 46;    % Vel. Intermedia, 1 [min]
-            46.1 53     % Vel. Máx., 1 [min]
-            ];
+        eval(datos_totales_A{2,2})
     case 'A3'
-        txt1 = 'D';
-        txt2 = 'E';
-      IMU=datos_totales_A(3).IMU1; %IMU=IMU1;
-        Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[220 250];
-        Intervalos=[12 21;     % Calentamiento, 2 [min]
-            21.1 28;     % Vel. Mín., 1 [min]
-            29 35;     % Vel. Intermedia, 1 [min]
-            35.1 42;     % Vel. Máx., 1 [min]
-            ];
+        eval(datos_totales_A{3,2})
     case 'A4'
-        txt1 = 'D';
-        txt2 = 'E';
-      IMU=datos_totales_A(4).IMU1; %IMU=IMU1;
-      Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[50 90];
-        Intervalos=[7 20;     % Calentamiento, 2 [min]
-            20 27;     % Vel. Mín., 1 [min]
-            27.2 34;     % Vel. Intermedia, 1 [min]
-            34.3 41;     % Vel. Máx., 1 [min]
-            ];
+        eval(datos_totales_A{4,2})
     case 'A5'
-        txt1 = 'D';
-        txt2 = 'E';
-        IMU=datos_totales_A(5).IMU1; 
-        Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[50 90];
-        Intervalos=[7.2 18.8;     % Calentamiento, 2 [min]
-            19.1 25.8;     % Vel. Mín., 1 [min]
-            25.8 32.8;     % Vel. Intermedia, 1 [min]
-            33 39.8;     % Vel. Máx., 1 [min]
-            ];
+        eval(datos_totales_A{5,2})
     case 'A6'
-        txt1 = 'D';
-        txt2 = 'E';
-        IMU=datos_totales_A(6).IMU1; %IMU=IMU1;
-        Rcalib=[ 3 , -2, 1];
-        IntervalEstatico=[50 90];
-        Intervalos=[9.4 10;  % Calentamiento, 2 [min]
-            10.9 22.2;       % Vel. Mín., 1 [min]
-            22.3 34.4;     % Vel. Intermedia, 1 [min]
-            34.4 46.5];    % Vel. Máx., 1 [min]
+        eval(datos_totales_A{6,2})
     case 'B1'
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'L';
-        if txt1 == 'D'
-            IMU=datos_totales_B(1).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-            Rcalib=[ 2 , 3, 1];
-            IntervalEstatico=[10 25];
-        else
-            IMU=datos_totales_B(1).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-            Rcalib=[ -2 , -3, 1];
-            IntervalEstatico=[70 90];
-        end
-        Intervalos=[1 36; 40 55; 55 90; 95 110; 115 140; 145 160; 165 195;
-            200 215; 220 255; 260 275; 280 310; 320 335; 340 365; 375 390; 395 430; 440 465];
+        condiciones;
     case 'B2'
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
@@ -171,12 +99,12 @@ switch txt0
         end
         txt2 = 'L';
         if txt1 == 'D'
-                  IMU=datos_totales_B(2).IMU1; %IMU=IMU1;
+            IMU=datos_totales_B(2).IMU1; %IMU=IMU1;
             %IMU=IMU1;
             Rcalib=[ 2 , 3, 1];
             IntervalEstatico=[60 80];
         else
-                  IMU=datos_totales_B(2).IMU2; %IMU=IMU1;
+            IMU=datos_totales_B(2).IMU2; %IMU=IMU1;
             %IMU=IMU2;
             Rcalib=[ -2 , -3, 1];
             IntervalEstatico=[10 30];
@@ -205,7 +133,7 @@ switch txt0
         end
         Intervalos=[1 20; 20 60; 60 72; 72 84; 84 89; 89 102; 102 108; 108 120; 120 126; 126 141; 141 147; 147 168];
         %Intervalos=[60 72; 72 84];
-    case 'B4'       
+    case 'B4'
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
         if isempty(txt1)
@@ -217,7 +145,7 @@ switch txt0
             %IMU=IMU1;
             Rcalib=[ -2, -3, 1];
         else
-            IMU=datos_totales_B(4).IMU2; %IMU=IMU1; 
+            IMU=datos_totales_B(4).IMU2; %IMU=IMU1;
             %IMU=IMU2;
             Rcalib=[ 2 , 3, 1];
         end
@@ -253,10 +181,10 @@ switch txt0
         end
         txt2 = 'T';
         if txt1 == 'D'
-                       IMU=datos_totales_B(6).IMU1; %IMU=IMU1;
+            IMU=datos_totales_B(6).IMU1; %IMU=IMU1;
             %IMU=IMU1;
         else
-                       IMU=datos_totales_B(6).IMU2; %IMU=IMU1;
+            IMU=datos_totales_B(6).IMU2; %IMU=IMU1;
             %IMU=IMU2;
         end
         Rcalib=[ 1 , -2, -3];
