@@ -106,14 +106,14 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % else
                     %     MP=[MP, NaN];
                     % end
-                    
+
                     % *************************************************************
                     % CÁLCULO DE EVENTO MP
                     % Calcular std en componente antero-posterior del giroscopio
                     % Tamaño de la ventana deslizante
                     windowSize = 6; % [muestras]
                     % Calcular la desviación estándar en la ventana deslizante
-                    std_gyroant = movstd(gyroant, windowSize);
+                    std_gyroant = movstd(gyropron, windowSize);
                     umbral = 110;                          % THRESHOLD expresado en [°/s]
                     MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
                     MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
