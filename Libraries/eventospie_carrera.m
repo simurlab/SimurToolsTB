@@ -121,7 +121,12 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
                     for i = 1:length(IC)
                         aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
-                        MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
+                        if ~isempty(aux)
+                            MP_segmentados{i} = aux(1);
+                        else
+                            MP_segmentados{i} = NaN;
+                        end
+                        %MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
                     end
                     MP_segmentados=cell2mat(MP_segmentados);
                     MP=MP_segmentados';
