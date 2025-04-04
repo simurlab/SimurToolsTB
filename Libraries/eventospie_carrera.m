@@ -100,12 +100,30 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     else
                         MVP=[MVP, NaN];
                     end
-                    mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
-                    if ~isempty(mp)
-                        MP=[MP, mp(1)];
-                    else
-                        MP=[MP, NaN];
+                    % mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
+                    % if ~isempty(mp)
+                    %     MP=[MP, mp(1)];
+                    % else
+                    %     MP=[MP, NaN];
+                    % end
+                    
+                    % *************************************************************
+                    % CÁLCULO DE EVENTO MP
+                    % Calcular std en componente antero-posterior del giroscopio
+                    % Tamaño de la ventana deslizante
+                    windowSize = 6; % [muestras]
+                    % Calcular la desviación estándar en la ventana deslizante
+                    std_gyroant = movstd(gyroant, windowSize);
+                    umbral = 110;                          % THRESHOLD expresado en [°/s]
+                    MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
+                    MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
+                    for i = 1:length(IC)
+                        aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
+                        MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
                     end
+                    MP_segmentados=cell2mat(MP_segmentados);
+                    MP=MP_segmentados;
+                    % *************************************************************
                 end
             end
         end
