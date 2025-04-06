@@ -46,28 +46,6 @@ clear Intervalos
 
 %% PARTE DE CARGA DE DATOS, EN FUNCION DEL ID
 %
-%
-% prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
-% txt_visualiza = input(prompt,"s");
-% if isempty(txt_visualiza)
-%     txt_visualiza = 'N';
-% end
-% 
-% 
-% % Carga de los datos experimentales que se van a analizar: experimento y sensor:
-% % La variable global txt0 será la ID del expe.
-% %
-% if nargin==0
-%     prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
-%     txt0 = input(prompt,"s");
-%     if isempty(txt0)
-%         txt0 = 'A1';
-%     end
-% else
-%     txt0=IDexp;
-% end
-
-
 % Según su ID (txt0), cargamos variables propias de cada experimento:
 % - Intervalos: muestras de estudio (en miles)
 % - IntervaloEstatico: intervalo de muestras en reposo para reorientacion
@@ -78,118 +56,29 @@ clear Intervalos
 % -
 switch txt0
     case 'A1'
-        eval(datos_totales_A{1,2})
+        eval(datos_totales_A{1,2});
     case 'A2'
-        eval(datos_totales_A{2,2})
+        eval(datos_totales_A{2,2});
     case 'A3'
-        eval(datos_totales_A{3,2})
+        eval(datos_totales_A{3,2});
     case 'A4'
-        eval(datos_totales_A{4,2})
+        eval(datos_totales_A{4,2});
     case 'A5'
-        eval(datos_totales_A{5,2})
+        eval(datos_totales_A{5,2});
     case 'A6'
-        eval(datos_totales_A{6,2})
+        eval(datos_totales_A{6,2});
     case 'B1'
-        condiciones;
+        eval(datos_totales_B{1,2});
     case 'B2'
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'L';
-        if txt1 == 'D'
-            IMU=datos_totales_B(2).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-            Rcalib=[ 2 , 3, 1];
-            IntervalEstatico=[60 80];
-        else
-            IMU=datos_totales_B(2).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-            Rcalib=[ -2 , -3, 1];
-            IntervalEstatico=[10 30];
-        end
-        Intervalos=[1 30; 34 37; 37 40; 40 44; 44 47; 47 51; 51 54; 54 57; 57 62;
-            62 66; 66 74; 74 76; 76 79; 79 83; 83 86; 86 90; 90 96; 96 100; 100 104;
-            104 106; 106 114; 114 116; 116 121; 121 125;125 133; 133 135; 135 141; 141 144; 144 147; 147 149; 149 157];
+        eval(datos_totales_B{2,2});
     case 'B3'
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'L';
-
-        if txt1 == 'D'
-            IMU=datos_totales_B(3).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-            Rcalib=[ 2 , 3, 1];
-            IntervalEstatico=[10 40];
-        else
-            IMU=datos_totales_B(3).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-            Rcalib=[ -2 , -3, 1];
-            IntervalEstatico=[70 100];
-        end
-        Intervalos=[1 20; 20 60; 60 72; 72 84; 84 89; 89 102; 102 108; 108 120; 120 126; 126 141; 141 147; 147 168];
-        %Intervalos=[60 72; 72 84];
+        eval(datos_totales_B{3,2});
     case 'B4'
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'L';
-        if txt1 == 'D'
-            IMU=datos_totales_B(4).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-            Rcalib=[ -2, -3, 1];
-        else
-            IMU=datos_totales_B(4).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-            Rcalib=[ 2 , 3, 1];
-        end
-        IntervalEstatico=[50 90];
-        Intervalos=[40 45; 45 54; 55 60; 66 67;  67 71; 71 75; 75 79; 79 89;
-            89 93; 93 104; 104 116; 116 132; 132 146; 146 161; 161 175; 175 190; 190 205; 205 220];
-        % Las series correspondientes a acel-decel:
-        % Intervalos=[103.5 116.5; 131.5 146.5; 160 175 ];
+        eval(datos_totales_B{4,2});
     case 'B5'
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'T';
-        if txt1 == 'D'
-            IMU=datos_totales_B(5).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-        else
-            IMU=datos_totales_B(5).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-        end
-        Rcalib=[ 1 , -2, -3];
-        IntervalEstatico=[50 90];
-        Intervalos=[1 28; 28 48;48 64; 64 78;78 110; 110 125; 125 140];
-        % el primero intervalo son escalones de 15'' de 8km/h a 18km/h;
-        % el segundo fueron 15+15+10+... hasta 20km/h, bajada rápida; el tercero de 10''
-    case 'B6'  % cross en el talón; el IMU1 se desconectó a media prueba.
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'T';
-        if txt1 == 'D'
-            IMU=datos_totales_B(6).IMU1; %IMU=IMU1;
-            %IMU=IMU1;
-        else
-            IMU=datos_totales_B(6).IMU2; %IMU=IMU1;
-            %IMU=IMU2;
-        end
-        Rcalib=[ 1 , -2, -3];
-        IntervalEstatico=[50 90];
-        Intervalos=[5 75; 75.5 83; 84 87; 87 134];
+        eval(datos_totales_B{5,2});
+    case 'B6'  
+        eval(datos_totales_B{6,2});
     case 'B7'  % empeine alto
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
