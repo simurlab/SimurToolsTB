@@ -119,24 +119,53 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % cuando la std sea menor que un umbral.
                     % Calcular std en componente antero-posterior del giroscopio
                     % Tamaño de la ventana deslizante
-                    windowSize = 4; % [muestras]
+                    % windowSize = 4; % [muestras]
                     % Calcular la desviación estándar en la ventana deslizante
-                    std_gyroant = movstd(gyrpron_fil, windowSize);
-                    umbral = 20;                           % THRESHOLD expresado en [°/s]
-                    MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
-                    MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
-                    for i = 1:length(IC)
-                        aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
-                        if ~any(isempty(aux))              % Si no hay ningún valor NaN:
-                            MP_segmentados{i} = aux(1);    % Escogemos la muestra de la primera std
-                        else                              
-                            MP_segmentados{i} = NaN;
-                        end
-                        %MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
-                    end
-                    MP_segmentados=cell2mat(MP_segmentados);
-                    MP=MP_segmentados';
-                    % *************************************************************
+                    % std_gyroant = movstd(gyrpron_fil, windowSize);
+                    % umbral = 20;                           % THRESHOLD expresado en [°/s]
+                    % MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
+                    % MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
+                    % for i = 1:length(IC)
+                    %     aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
+                    %     if ~any(isempty(aux))              % Si no hay ningún valor NaN:
+                    %         MP_segmentados{i} = aux(1);    % Escogemos la muestra de la primera std
+                    %     else                              
+                    %         MP_segmentados{i} = NaN;
+                    %     end
+                    %     %MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
+                    % end
+                    % MP_segmentados=cell2mat(MP_segmentados);
+                    % MP=MP_segmentados';
+                    % ***************************************************************
+
+                    % ***************************************************************
+                    % Opción 3: Calcular el coeficiente de variación a lo
+                    % largo de la señal gyrpron
+                    windowSize = 4;                                                         % Tamaño de la ventana deslizante
+                    cvValues = movstd(gyrpron, windowSize) ./ movmean(gyrpron, windowSize); % Calcular el coeficiente de variación en ventanas móviles
+                    cvThreshold = 0.1;                                                      % Umbral para CV
+                    constantCV = cvValues < cvThreshold;                                    % Detectar zonas con CV bajo
+                    aux=find(constantCV);                                                   % Identificamos índices en los que el vector lógico es 1
+                    min_after_MVP = [];                                                     % Inicializa un vector para guardar los mínimos posteriores
+                    for i = 1:length(MVP)                                                   % Para cada evento MVP --> HACER:
+                        mins_after = aux(aux> MVP(i));                                      % Busca los mínimos que ocurren después del evento actual   
+                        if ~isempty(mins_after)                                             % Si hay alguno, toma el primero (el más cercano después del evento)
+                            min_after_MVP(end+1) = mins_after(1);                           % Escogemos la primera a estado alto después del evento MP
+                        end                                                                 % Fin de sentencia if
+                    end                                                                     % Fin de bucle for
+                    MP=min_after_MVP;                                                       % Guardamos el evento MP detectado
+                    % Visualización
+                    % figure;
+                    % %subplot(2,1,1);
+                    % plot(gyrpron, 'b');
+                    % title('Señal Original');
+                    % xlabel('Tiempo');
+                    % ylabel('Valor');
+                    % hold on
+                    % plot(1000*constantCV, 'r', 'LineWidth', 2);
+                    % plot(MVP, gyrpron(MVP), '^')
+                    % grid
+                    % ***************************************************************
                 end
             end
         end
