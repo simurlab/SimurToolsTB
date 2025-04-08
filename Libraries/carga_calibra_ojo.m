@@ -46,6 +46,28 @@ clear Intervalos
 
 %% PARTE DE CARGA DE DATOS, EN FUNCION DEL ID
 %
+%
+% prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+% txt_visualiza = input(prompt,"s");
+% if isempty(txt_visualiza)
+%     txt_visualiza = 'N';
+% end
+% 
+% 
+% % Carga de los datos experimentales que se van a analizar: experimento y sensor:
+% % La variable global txt0 será la ID del expe.
+% %
+% if nargin==0
+%     prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
+%     txt0 = input(prompt,"s");
+%     if isempty(txt0)
+%         txt0 = 'A1';
+%     end
+% else
+%     txt0=IDexp;
+% end
+
+
 % Según su ID (txt0), cargamos variables propias de cada experimento:
 % - Intervalos: muestras de estudio (en miles)
 % - IntervaloEstatico: intervalo de muestras en reposo para reorientacion
@@ -56,33 +78,29 @@ clear Intervalos
 % -
 switch txt0
     case 'A1'
-        eval(datos_totales_A{1,2});
+        eval(datos_totales_A{1,2})
     case 'A2'
-        eval(datos_totales_A{2,2});
+        eval(datos_totales_A{2,2})
     case 'A3'
-        eval(datos_totales_A{3,2});
+        eval(datos_totales_A{3,2})
     case 'A4'
-        eval(datos_totales_A{4,2});
+        eval(datos_totales_A{4,2})
     case 'A5'
-        eval(datos_totales_A{5,2});
+        eval(datos_totales_A{5,2})
     case 'A6'
-        eval(datos_totales_A{6,2});
+        eval(datos_totales_A{6,2})
     case 'B1'
-        eval(datos_totales_B{1,2});
+        eval(datos_totales_B{1,2})
     case 'B2'
-        eval(datos_totales_B{2,2});
+        eval(datos_totales_B{2,2})        
     case 'B3'
-        eval(datos_totales_B{3,2});
+        eval(datos_totales_B{3,2})
     case 'B4'
-        eval(datos_totales_B{4,2});
+        eval(datos_totales_B{4,2})
     case 'B5'
-        eval(datos_totales_B{5,2});
-    case 'B6'  
-        eval(datos_totales_B{6,2});
-        case 'D1'  
-        eval(datos_totales_D{1,2});
-            case 'D2'  
-        eval(datos_totales_D{2,2});
+        eval(datos_totales_B{5,2})
+    case 'B6'  % cross en el talón; el IMU1 se desconectó a media prueba.
+        eval(datos_totales_B{6,2})
     case 'B7'  % empeine alto
         prompt = "pie Dcho o pie Izdo? D/I [D]: ";
         txt1 = input(prompt,"s");
