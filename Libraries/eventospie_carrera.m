@@ -106,12 +106,14 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % CÁLCULO DE EVENTO MP
                     % -----------------------
                     % Opción 1: Versión inicial de Diego
-                    % mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
-                    % if ~isempty(mp)
-                    %     MP=[MP, mp(1)];
-                    % else
-                    %     MP=[MP, NaN];
-                    % end
+                    mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
+                    % trampa provisional de sustitucion por 1/3-2/3:
+                    mp(1)=mins_paso(1) + round((mins_paso(ifc+1)-mins_paso(1))/3);
+                    if ~isempty(mp)
+                        MP=[MP, mp(1)];
+                    else
+                        MP=[MP, NaN];
+                    end
 
                     % *************************************************************
                     % Opción 2: Definir ventana deslizante de n muestras y 
@@ -120,7 +122,7 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % Calcular std en componente antero-posterior del giroscopio
                     % Tamaño de la ventana deslizante
                     % windowSize = 4; % [muestras]
-                    % Calcular la desviación estándar en la ventana deslizante
+                    % % Calcular la desviación estándar en la ventana deslizante
                     % std_gyroant = movstd(gyrpron_fil, windowSize);
                     % umbral = 20;                           % THRESHOLD expresado en [°/s]
                     % MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
@@ -141,19 +143,19 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % ***************************************************************
                     % Opción 3: Calcular el coeficiente de variación a lo
                     % largo de la señal gyrpron
-                    windowSize = 4;                                                         % Tamaño de la ventana deslizante
-                    cvValues = movstd(gyrpron, windowSize) ./ movmean(gyrpron, windowSize); % Calcular el coeficiente de variación en ventanas móviles
-                    cvThreshold = 0.1;                                                      % Umbral para CV
-                    constantCV = cvValues < cvThreshold;                                    % Detectar zonas con CV bajo
-                    aux=find(constantCV);                                                   % Identificamos índices en los que el vector lógico es 1
-                    min_after_MVP = [];                                                     % Inicializa un vector para guardar los mínimos posteriores
-                    for i = 1:length(MVP)                                                   % Para cada evento MVP --> HACER:
-                        mins_after = aux(aux> MVP(i));                                      % Busca los mínimos que ocurren después del evento actual   
-                        if ~isempty(mins_after)                                             % Si hay alguno, toma el primero (el más cercano después del evento)
-                            min_after_MVP(end+1) = mins_after(1);                           % Escogemos la primera a estado alto después del evento MP
-                        end                                                                 % Fin de sentencia if
-                    end                                                                     % Fin de bucle for
-                    MP=min_after_MVP;                                                       % Guardamos el evento MP detectado
+                    % windowSize = 4;                                                         % Tamaño de la ventana deslizante
+                    % cvValues = movstd(gyrpron, windowSize) ./ movmean(gyrpron, windowSize); % Calcular el coeficiente de variación en ventanas móviles
+                    % cvThreshold = 0.1;                                                      % Umbral para CV
+                    % constantCV = cvValues < cvThreshold;                                    % Detectar zonas con CV bajo
+                    % aux=find(constantCV);                                                   % Identificamos índices en los que el vector lógico es 1
+                    % min_after_MVP = [];                                                     % Inicializa un vector para guardar los mínimos posteriores
+                    % for i = 1:length(MVP)                                                   % Para cada evento MVP --> HACER:
+                    %     mins_after = aux(aux> MVP(i));                                      % Busca los mínimos que ocurren después del evento actual   
+                    %     if ~isempty(mins_after)                                             % Si hay alguno, toma el primero (el más cercano después del evento)
+                    %         min_after_MVP(end+1) = mins_after(1);                           % Escogemos la primera a estado alto después del evento MP
+                    %     end                                                                 % Fin de sentencia if
+                    % end                                                                     % Fin de bucle for
+                    % MP=min_after_MVP;                                                       % Guardamos el evento MP detectado
                     % Visualización
                     % figure;
                     % %subplot(2,1,1);
@@ -166,6 +168,7 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     % plot(MVP, gyrpron(MVP), '^')
                     % grid
                     % ***************************************************************
+
                 end
             end
         end

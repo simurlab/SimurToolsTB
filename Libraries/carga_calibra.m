@@ -1,48 +1,116 @@
 %% carga_calibra
 %
-% Utilidad para cargar y calibrar los datos de una prueba, a partir de su ID
+% Funcion para cargar y calibrar los datos de una prueba, a partir de su ID
 %
 
-function [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp,Visualiza)
+function [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp,queSensor,Visualiza)
 
-% Suponemos que hay un archivo con datos matlab.mat accesible:
-load;
-freq=120; % por ahora...
-
-global num_intervalos;
-num_intervalos=0;
-
-% limpiamos variables intermedias para evitar problemas:
-clear zonas
-clear Intervalos
+% Suponemos que hay un archivo con datos matlab.mat con la estructura 
+% BD-InnovaIM accesible localmente:
 
  % Cuenta el número de argumentos
  numArgs = nargin;
 
+% if  numArgs==0
+%          prompt = "Introduzca el ID del experimento [a1]: ";
+%          txt0 = input(prompt,"s");
+%          IDexp=txt0;
+%          if isempty(txt0)
+%              IDexp = 'a1';
+%          end     
+% 
+%          prompt = "Introduzca el Sensor de interés (1/2/3) [1]: ";
+%          queSensor = input(prompt);
+%          if isempty(queSensor)
+%              queSensor = 1;
+%          end 
+% 
+%          prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+%          Visualiza = input(prompt,"s");
+%          if isempty(Visualiza)
+%              Visualiza = 'N';
+%          end
+% end
+
+
+
+
+%load;
+freq=120; % por ahora...
+
+
+% global num_intervalos;
+% num_intervalos=0;
+% 
+% % limpiamos variables intermedias para evitar problemas:
+% clear zonas
+% clear Intervalos
+
+
+
  switch numArgs
      case 0
-         prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
-         txt_visualiza = input(prompt,"s");
-         if isempty(txt_visualiza)
-             txt_visualiza = 'N';
-         end
-         % Carga de los datos experimentales que se van a analizar: experimento y sensor:
-         % La variable global txt0 será la ID del expe.
-         %
-
-         prompt = "Introduzca el ID del experimento correspondiente al matlab.mat (A/B + 1/2/3/4/5/6) [A1]: ";
+         prompt = "Introduzca el ID del experimento [a1]: ";
          txt0 = input(prompt,"s");
+         IDexp=txt0;
          if isempty(txt0)
-             txt0 = 'A1';
+             IDexp = 'a1';
+         end     
+         
+         prompt = "Introduzca el Sensor de interés (1/2/3) [1]: ";
+         queSensor = input(prompt);
+         if isempty(queSensor)
+             queSensor = 1;
+         end 
+         
+         prompt = "¿Quiere Visualizar los pasos intermedios? (S/N) [N]: ";
+         Visualiza = input(prompt,"s");
+         if isempty(Visualiza)
+             Visualiza = 'N';
          end
      case 1
         txt0 = IDexp;
+        queSensor=1;
         txt_visualiza = 'N';
      case 2
-          txt0 = IDexp;
-          txt_visualiza = Visualiza; 
+        txt0 = IDexp;
+        txt_visualiza = Visualiza; 
      otherwise
  end
+
+
+ %% Carga del .mat
+ % cuando son individuales:
+
+     IDexpfile=IDexp;
+     [~, ~, ext] = fileparts(IDexp);
+     if isempty(ext)
+         IDexpfile = [IDexp, '.mat'];
+     end
+  
+     % Verificar si el archivo existe
+     if ~isfile(IDexpfile)
+         separarCeldaPorFila('ax.mat','datos_totales');
+     end
+
+
+     % Verificar si el archivo existe
+     if isfile(IDexpfile)    
+         load(IDexpfile);
+         disp('Archivo cargado correctamente.');
+     else
+         error('El archivo no existe: %s', IDexpfile);
+     end
+   
+     %separarCeldaPorFila('ax.mat','datos_totales');
+      %   error('El archivo no existe: %s', IDexpfile);
+     
+     % cuando son de una grupo de experimentos _x.mat
+ %     if ~contains(IDexp, 'x')
+ %  else
+ %     disp('La letra "x" SÍ está en la cadena.');
+ % end
+
 
 %% PARTE DE CARGA DE DATOS, EN FUNCION DEL ID
 %
@@ -54,70 +122,51 @@ clear Intervalos
 % - txt1: localización del IMU (Derecha/Izda/Sacro)
 % - txt2: colocación del IMU(Empeine/Lateral/Talon)
 % -
-switch txt0
-    case 'A1'
-        eval(datos_totales_A{1,2});
-    case 'A2'
-        eval(datos_totales_A{2,2});
-    case 'A3'
-        eval(datos_totales_A{3,2});
-    case 'A4'
-        eval(datos_totales_A{4,2});
-    case 'A5'
-        eval(datos_totales_A{5,2});
-    case 'A6'
-        eval(datos_totales_A{6,2});
-    case 'B1'
-        eval(datos_totales_B{1,2});
-    case 'B2'
-        eval(datos_totales_B{2,2});
-    case 'B3'
-        eval(datos_totales_B{3,2});
-    case 'B4'
-        eval(datos_totales_B{4,2});
-    case 'B5'
-        eval(datos_totales_B{5,2});
-    case 'B6'  
-        eval(datos_totales_B{6,2});
-        case 'D1'  
-        eval(datos_totales_D{1,2});
-            case 'D2'  
-        eval(datos_totales_D{2,2});
-    case 'B7'  % empeine alto
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'E';
-        if txt1 == 'D'
-            IMU=IMU1;
-        else
-            IMU=IMU2;
-        end
-        Rcalib=[ 1 , -2, -3];
-        IntervalEstatico=[50 90];
-        Intervalos=[3 104; 104 120];
+eval(datos_totales{1,2});
 
-    case 'B8'  % empeine bajo
-        prompt = "pie Dcho o pie Izdo? D/I [D]: ";
-        txt1 = input(prompt,"s");
-        if isempty(txt1)
-            txt1 = 'D';
-        end
-        txt2 = 'E';
-        if txt1 == 'D'
-            IMU=IMU1;
-        else
-            IMU=IMU2;
-        end
-        Rcalib=[ 1 , -2, -3];
-        IntervalEstatico=[50 90];
-        Intervalos=[3 17; 17 30; 30 46; 46 59.7; 59.7 77; 77 96; 96 111];
-end
+% switch IDexp
+%     case 'a1'
+%         eval(datos_totales{1,2});
+%     case 'a2'
+%         eval(datos_totales{2,2});
+%     case 'a3'
+%         eval(datos_totales{3,2});
+%     case 'a4'
+%         eval(datos_totales{4,2});
+%     case 'a5'
+%         eval(datos_totales{5,2});
+%     case 'a6'
+%         eval(datos_totales{6,2});
+%     case 'b1'
+%         eval(datos_totales{1,2});
+%     case 'b2'
+%         eval(datos_totales{2,2});
+%     case 'b3'
+%         eval(datos_totales{3,2});
+%     case 'b4'
+%         eval(datos_totales{4,2});
+%     case 'b5'
+%         eval(datos_totales{5,2});
+%     case 'b6'  
+%         eval(datos_totales{6,2});
+% end
+
 
 % El numero de intervalos a estudiar:
 num_intervalos=size(Intervalos,1);
+
+ 
+switch queSensor
+    case 1
+        IMU=datos_totales{1}.IMU1; 
+    case 2
+        IMU=datos_totales{1}.IMU2;
+    case 3
+        IMU=datos_totales{1}.IMU3;
+end
+Rcal=Rcalib(queSensor,:);
+
+
 
 
 %% PARTE DE CALIBRACION
@@ -146,7 +195,7 @@ ini=IntervalEstatico(1,1);
 fin=IntervalEstatico(1,2);
 
 % Matriz de re-orientación vertical, en coordenadas anatómicas:
-Mrot=calibra_anatomical(acc(ini:fin,:), Rcalib);
+Mrot=calibra_anatomical(acc(ini:fin,:), Rcal);
 
 % Acss y gyros re-orientados en coor.anatómicas:
 acc_cal=acc*Mrot'; 
@@ -160,34 +209,12 @@ g_cal=Anatomical2ISB(gyr_cal);
 
 
 
-%% PARTE DE VISUALIZACION:
+%% FIGURAS PARA INSPECCIONAR QUE LA CARGA Y CALIBRACION ESTAN OK
 %
 %
-if txt_visualiza == 'S'
+if Visualiza == 'S'
 
-    %% Figura larga para visualizar todo el experimento;
-    fig_new=figure;
-    plot(accx);
-    hAx = gca; % Handle to current axes
-    % Adjust font sizes
-    hAx.FontSize = 28;
-    grid
-    posi = [21        1717        3791        410];
-    fig_new.OuterPosition=posi;
-
-
-    %% Calibracion anatómica
-    % Figura larga para ayudar a identificar una zona de reposo
-    fig_new=figure;
-    plot(accx(1:400));
-    hAx = gca; % Handle to current axes
-    % Adjust font sizes
-    hAx.FontSize = 28;
-    grid
-    posi = [21        1717        3791        410];
-    fig_new.OuterPosition=posi;
-
-    % figura para chequear que la re-orientación fue correcta:
+    % figura para chequear que la re-orientación es la correcta:
     figure;
     subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
     subplot(212); plot(a_cal(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
