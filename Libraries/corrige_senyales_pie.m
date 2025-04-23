@@ -28,9 +28,9 @@ gyroap = gyroap(~isnan(gyroap)); % Eliminación de todos los valores NaN
 ccalidad(1)=cantidad_NaN_gyroml;
 ccalidad(2)=cantidad_NaN_gyroant;
 
-
 % Volcado de resultados para cortar y pegar en una hoja de cálculo:
 %
- fprintf('%.0f \t  %.0f  \n', ccalidad');
+fprintf('\n NaNs eliminados del giroML y giroAP : '); 
+fprintf('%.0f \t  %.0f  \n', ccalidad');
 
 end

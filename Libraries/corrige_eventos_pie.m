@@ -38,8 +38,14 @@ end
 %
 ccalidad=vnumNaN;
 
-% % Volcado de resultados para cortar y pegar en una hoja de cálculo:
-% %
+% Volcado crudo, optimo para cortar y pegar en una hoja de cálculo:
+% 
+%fprintf('%.0f  \t', ccalidad);
+%fprintf('\n');
+
+% Volcado legible:
+% 
+fprintf('NaNs sustituídos en cada evento: ');
 fprintf('%.0f  \t', ccalidad);
 fprintf('\n');
 
