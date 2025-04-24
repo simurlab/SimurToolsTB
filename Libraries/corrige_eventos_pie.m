@@ -11,6 +11,7 @@ function [mat_eventos]=corrige_eventos_pie(mat_eventos, freq)
 %
 numNaN = sum(isnan(mat_eventos), 'all');
 vnumNaN=sum(isnan(mat_eventos)');
+vnumNaN=[size(mat_eventos,2) vnumNaN];
 
 % % Sustitucion del evento MP por 1/3-2/3:
 % %

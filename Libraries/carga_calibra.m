@@ -82,15 +82,25 @@ end
 % uno múltiple y lo separamos localmente:
 %
 if ~isfile(IDexpfile)
-    %separarCeldaPorFila('ax.mat','datos_totales');
-    separarCeldaPorFila(IDexpfile,'datos_totales');
+    if exist('ax.mat', 'file')
+        separarCeldaPorFila('ax.mat','datos_totales');
+    end
+  if exist('bx.mat', 'file')
+        separarCeldaPorFila('bx.mat','datos_totales');
+    end
+    if exist('cx.mat', 'file')
+        separarCeldaPorFila('cx.mat','datos_totales');
+    end
+    if exist('dx.mat', 'file')
+        separarCeldaPorFila('dx.mat','datos_totales');
+    end
 end
 
 % Ahora ya debe estar disponible el archivo, salvo error, y lo cargamos:
 %
 if isfile(IDexpfile)
     load(IDexpfile);
-    disp('Archivo cargado correctamente.');
+    fprintf('Archivo %s cargado correctamente. \n', IDexpfile);
 else
     error('El archivo no existe: %s', IDexpfile);
 end
