@@ -45,8 +45,11 @@ ccalidad=vnumNaN;
 
 % Volcado legible:
 % 
-fprintf('NaNs sustituídos en cada evento: ');
-fprintf('%.0f  \t', ccalidad);
-fprintf('\n');
+%fprintf('NaNs sustituídos en cada evento: ');
+%fprintf('%.0f  \t', ccalidad);
+%fprintf('\n');
+
+%a = 42;
+assignin('base', 'cal_eventos', ccalidad);  % Guarda ccalidad en el workspace base
 
 end
