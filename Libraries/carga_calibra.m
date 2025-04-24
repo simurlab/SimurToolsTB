@@ -128,22 +128,44 @@ Rcal=Rcalib(queSensor,:);
 accx=IMU.Acc_X;
 accy=IMU.Acc_Y;
 accz=IMU.Acc_Z;
+acc=[accx accy accz];
+
 gyrx=IMU.Gyr_X;
 gyry=IMU.Gyr_Y;
 gyrz=IMU.Gyr_Z;
-quat_w = IMU.Quat_W;
-quat_x = IMU.Quat_X;
-quat_y = IMU.Quat_Y;
-quat_z = IMU.Quat_Z;
-acc=[accx accy accz];
 gyr=[gyrx gyry gyrz];
-quat = [quat_w quat_x quat_y quat_z];
-M_orientacion=quat2rotm(quat);
+
+if ismember('Quat_W', IMU.Properties.VariableNames)
+    quat_w = IMU.Quat_W;
+end
+if ismember('Quat_X', IMU.Properties.VariableNames)
+    quat_x = IMU.Quat_X;
+end
+if ismember('Quat_Y', IMU.Properties.VariableNames)
+    quat_y = IMU.Quat_Y;
+end
+if ismember('Quat_Z', IMU.Properties.VariableNames)
+    quat_z = IMU.Quat_Z;
+    quat = [quat_w quat_x quat_y quat_z];
+end
+
+if ismember('Euler_X', IMU.Properties.VariableNames)
+    euler_x = IMU.Euler_X;
+end
+if ismember('Euler_Y', IMU.Properties.VariableNames)
+    euler_y = IMU.Euler_Y;
+end
+if ismember('Euler_Z', IMU.Properties.VariableNames)
+    euler_z = IMU.Euler_Z;
+    euler = [euler_x euler_y euler_z];
+end
+
+
 
 % Calibracion en coordenadas anatómicas:
-%
-ini=IntervalEstatico(1,1);
-fin=IntervalEstatico(1,2);
+% Zona de reposo para calibrar:
+ini=IntervalEstatico(queSensor,1);
+fin=IntervalEstatico(queSensor,2);
 
 % Matriz de re-orientación vertical, en coordenadas anatómicas:
 Mrot=calibra_anatomical(acc(ini:fin,:), Rcal);
@@ -151,12 +173,22 @@ Mrot=calibra_anatomical(acc(ini:fin,:), Rcal);
 %  Re-orientados en coor.anatómicas:
 acc_cal=acc*Mrot';
 gyr_cal=gyr*Mrot';
-M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
-quat_cal=rotm2quat(M_orientacion_cal);
 
 % Paso a coordenadas ISB:
 a_cal=Anatomical2ISB(acc_cal);
 g_cal=Anatomical2ISB(gyr_cal);
+
+
+% % Intento de reorientar los cuaterniones con la calibracion:
+% if ismember('Quat_Z', IMU.Properties.VariableNames)
+%     M_orientacion=quat2rotm(quat);
+%     M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
+%     quat_cal=rotm2quat(M_orientacion_cal);
+% end
+
+
+
+
 
 
 
