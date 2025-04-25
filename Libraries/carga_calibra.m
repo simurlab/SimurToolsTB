@@ -190,11 +190,11 @@ g_cal=Anatomical2ISB(gyr_cal);
 
 
 % % Intento de reorientar los cuaterniones con la calibracion:
-% if ismember('Quat_Z', IMU.Properties.VariableNames)
-%     M_orientacion=quat2rotm(quat);
-%     M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
-%     quat_cal=rotm2quat(M_orientacion_cal);
-% end
+if ismember('Quat_Z', IMU.Properties.VariableNames)
+    M_orientacion=quat2rotm(quat);
+    M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
+    quat_cal=rotm2quat(M_orientacion_cal);
+end
 
 
 
@@ -205,15 +205,15 @@ g_cal=Anatomical2ISB(gyr_cal);
 %% PARTE OPCIONAL, FIGURA PARA INSPECCIONAR QUE LA CARGA Y CALIBRACION ESTAN OK
 %
 %
-if Visualiza == 'S'
-
-    % figura para chequear que la re-orientación es la correcta:
-    figure;
-    subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
-    subplot(212); plot(a_cal(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
-    sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
-
-end
+% if Visualiza == 'S'
+% 
+%     % figura para chequear que la re-orientación es la correcta:
+%     figure;
+%     subplot(211); plot(acc(ini:fin,:), 'LineWidth', 3); grid; title('Accs originales', 'FontSize', 12, 'FontWeight', 'bold');
+%     subplot(212); plot(a_cal(ini:fin,:), 'LineWidth', 3); grid; title('Accs calibradas', 'FontSize', 12, 'FontWeight', 'bold');
+%     sgtitle('Chequeo del resultado de la calibracion', 'FontSize', 16, 'FontWeight', 'bold');
+% 
+% end
 
 end
 %-------------------------- Fin de carga_calibra --------------
