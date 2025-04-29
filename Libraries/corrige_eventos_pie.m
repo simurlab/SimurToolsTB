@@ -11,6 +11,7 @@ function [mat_eventos]=corrige_eventos_pie(mat_eventos, freq)
 %
 numNaN = sum(isnan(mat_eventos), 'all');
 vnumNaN=sum(isnan(mat_eventos)');
+vnumNaN=[size(mat_eventos,2) vnumNaN];
 
 % % Sustitucion del evento MP por 1/3-2/3:
 % %
@@ -38,9 +39,18 @@ end
 %
 ccalidad=vnumNaN;
 
-% % Volcado de resultados para cortar y pegar en una hoja de cálculo:
-% %
-fprintf('%.0f  \t', ccalidad);
-fprintf('\n');
+% Volcado crudo, optimo para cortar y pegar en una hoja de cálculo:
+% 
+%fprintf('%.0f  \t', ccalidad);
+%fprintf('\n');
+
+% Volcado legible:
+% 
+%fprintf('NaNs sustituídos en cada evento: ');
+%fprintf('%.0f  \t', ccalidad);
+%fprintf('\n');
+
+%a = 42;
+assignin('base', 'cal_eventos', ccalidad);  % Guarda ccalidad en el workspace base
 
 end
