@@ -1,4 +1,4 @@
-function [IC,FC]=eventosespalda_carrera4(acc)
+function [IC,FC]=eventosCOG_carrera(acc)
 
 %opcion1: minimos y maximos de la acc resultante
 acc_r_nof=sqrt(sum(acc.^2,2));
