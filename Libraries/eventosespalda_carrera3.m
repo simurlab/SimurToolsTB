@@ -12,7 +12,7 @@ b = (1/windowSize)*ones(1,windowSize);
 a = 1;
 acc = filtfilt(b,a,acc-acc(1))+acc(1);
 
-v_acc=acc(:,1);
+v_acc=acc(:,2);
 tam=size(v_acc);% tamaño de la señal de aceleración de entrada
 tam=tam(1);
 

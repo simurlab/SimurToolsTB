@@ -1,7 +1,4 @@
-
-
-function [IC,FC]=eventosespalda1(acc,th)
-
+function [IC,FC]=eventosespalda_carrera1(acc)
 
 %opcion1: minimos y maximos de la acc resultante
 acc_r=sqrt(sum(acc.^2,2));
@@ -23,11 +20,6 @@ Datos2=Datos2>=0;
 % Obtencion de las señal de pulsos:
 Datos2=Datos2(1:tam-2)-Datos2(2:tam-1);
 
-
-IC=[];
-FC=[];
-
-
 ultimos_IC=[];
 ultimos_FC=[];
 
@@ -36,18 +28,15 @@ FC_aux=[];
 
 for i=51:(tam-2)
     th=(max(acc_r(i-50:i))+min(acc_r(i-50:i)))/2;
-    IC_aux(i)=0;
+    IC_aux(i)=0; %#ok<*AGROW>
     FC_aux(i)=0;
-   
     if (Datos2(i)<0) % se detecta un IC
          ultimos_IC= [ultimos_IC i];
     end
     if (Datos2(i)>0) % se detecta un FC
         ultimos_FC= [ultimos_FC i];
     end
-
-    if(Datos2(i)>0 && acc_r(i)>th)% maximo del ciclo
-        
+    if(Datos2(i)>0 && acc_r(i)>th)% maximo del ciclo        
         if ~isempty(ultimos_IC)
             IC_aux(ultimos_IC(end))=1;
             ultimos_IC=[];
@@ -56,15 +45,10 @@ for i=51:(tam-2)
             FC_aux(ultimos_FC(end))=1;
             ultimos_FC=[];
         end
-            
     end
 end
-
-
 IC=find(IC_aux==1)+1;
 FC=find(FC_aux==1)+1;
-
-
 end
 
 
