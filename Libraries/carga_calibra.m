@@ -94,6 +94,9 @@ if ~isfile(IDexpfile)
     if exist('dx.mat', 'file')
         separarCeldaPorFila('dx.mat','datos_totales');
     end
+    if exist('ex.mat', 'file')
+        separarCeldaPorFila('ex.mat','datos_totales');
+    end
 end
 
 % Ahora ya debe estar disponible el archivo, salvo error, y lo cargamos:
