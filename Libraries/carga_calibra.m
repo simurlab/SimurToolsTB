@@ -21,7 +21,7 @@
 
 function [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp,queSensor,Visualiza)
 
-freq=120; % por ahora...
+%freq=120; % por ahora...
 
 % Cuenta el número de argumentos
 numArgs = nargin;
@@ -192,7 +192,8 @@ a_cal=Anatomical2ISB(acc_cal);
 g_cal=Anatomical2ISB(gyr_cal);
 
 
-% % Intento de reorientar los cuaterniones con la calibracion:
+% % Intento de reorientar los cuaterniones con la calibracion.
+% Ahora sirve solo para los DOTS:
 if ismember('Quat_Z', IMU.Properties.VariableNames)
     M_orientacion=quat2rotm(quat);
     M_orientacion_cal = pagemtimes(M_orientacion, Mrot);
