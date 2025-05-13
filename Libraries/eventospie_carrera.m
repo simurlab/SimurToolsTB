@@ -66,7 +66,7 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
         %El 1 ha quedado en la última muestra positiva
         pasosceropron=find(Datos3==1);
         %Lo cambio por el siguiente si el siguiente está más próximo al 0
-        for i=length(pasosceropron)
+        for i=1:length(pasosceropron)
             if abs(gyrpron(pasosceropron(i)))>abs(gyrpron(pasosceropron(i)+1))
                 pasosceropron(i)=pasosceropron(i)+1;
             end
