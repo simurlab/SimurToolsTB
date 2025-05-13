@@ -51,17 +51,26 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
     pasos_cero_mins=find(diff(gyr>0)==+1);
 
     if nargin==4
-        orden=5;
-        corte=5/freq;
-    	%maximos y minimos de la pronacion
-    	gyrpron_fil=filtro0(gyrpron,orden,corte);
+        %maximos de la pronacion
     	% Obtencion de la señal rectangular:
     	Datos2=gyrpron(2:tam)-gyrpron(1:tam-1);
     	Datos2=Datos2>=0;
     	% Obtencion de las señal de pulsos de pronacion:
     	Datos2=Datos2(1:tam-2)-Datos2(2:tam-1);
     	maximospron=find(Datos2==1)+1;
-    	minimospron=find(Datos2==-1)+1;
+    	
+        %Pasos por cero de positivo a negativo
+        % Obtencion de la señal rectangular:
+    	Datos3=gyrpron<0;
+        Datos3=diff(Datos3);
+        %El 1 ha quedado en la última muestra positiva
+        pasosceropron=find(Datos3==1);
+        %Lo cambio por el siguiente si el siguiente está más próximo al 0
+        for i=length(pasosceropron)
+            if abs(gyrpron(pasosceropron(i)))>abs(gyrpron(pasosceropron(i)+1))
+                pasosceropron(i)=pasosceropron(i)+1;
+            end
+        end
     end
     MVP=[];
     MP=[];
@@ -99,76 +108,17 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     mvp=maximospron(maximospron>IC(end)& maximospron<FC(end));
                     if ~isempty(mvp)
                         MVP=[MVP, mvp(1)];
+                        % CÁLCULO DE EVENTO MP solo si hay MVP
+                        mp=pasosceropron(pasosceropron>MVP(end)& pasosceropron<FC(end));
+                        if ~isempty(mp)
+                            MP=[MP, mp(1)];
+                        else
+                            MP=[MP, NaN];
+                        end
                     else
                         MVP=[MVP, NaN];
-                    end
-                    % -----------------------
-                    % CÁLCULO DE EVENTO MP
-                    % -----------------------
-                    % Opción 1: Versión inicial de Diego
-                    mp=minimospron(minimospron>IC(end)& minimospron<FC(end));
-                    % trampa provisional de sustitucion por 1/3-2/3:
-                    mp(1)=mins_paso(1) + round((mins_paso(ifc+1)-mins_paso(1))/3);
-                    if ~isempty(mp)
-                        MP=[MP, mp(1)];
-                    else
                         MP=[MP, NaN];
                     end
-
-                    % *************************************************************
-                    % Opción 2: Definir ventana deslizante de n muestras y 
-                    % calcular std en cada ventana. El evento MP se detecta
-                    % cuando la std sea menor que un umbral.
-                    % Calcular std en componente antero-posterior del giroscopio
-                    % Tamaño de la ventana deslizante
-                    % windowSize = 4; % [muestras]
-                    % % Calcular la desviación estándar en la ventana deslizante
-                    % std_gyroant = movstd(gyrpron_fil, windowSize);
-                    % umbral = 20;                           % THRESHOLD expresado en [°/s]
-                    % MP = find(std_gyroant < umbral);       % Tendremos un evento MP cuando la std de gyroant sea menor que un umbral
-                    % MP_segmentados = cell(length(IC), 1);  % Inicialización de array de celdas para almacenar los eventos MP.
-                    % for i = 1:length(IC)
-                    %     aux = MP(MP>=IC(i) & MP<=FC(i));   % Máximos locales comprendidos entre IC y FC.
-                    %     if ~any(isempty(aux))              % Si no hay ningún valor NaN:
-                    %         MP_segmentados{i} = aux(1);    % Escogemos la muestra de la primera std
-                    %     else                              
-                    %         MP_segmentados{i} = NaN;
-                    %     end
-                    %     %MP_segmentados{i} = aux(1);        % Escogemos la primera muestra en la que la std de gyroant es menor que un umbral
-                    % end
-                    % MP_segmentados=cell2mat(MP_segmentados);
-                    % MP=MP_segmentados';
-                    % ***************************************************************
-
-                    % ***************************************************************
-                    % Opción 3: Calcular el coeficiente de variación a lo
-                    % largo de la señal gyrpron
-                    % windowSize = 4;                                                         % Tamaño de la ventana deslizante
-                    % cvValues = movstd(gyrpron, windowSize) ./ movmean(gyrpron, windowSize); % Calcular el coeficiente de variación en ventanas móviles
-                    % cvThreshold = 0.1;                                                      % Umbral para CV
-                    % constantCV = cvValues < cvThreshold;                                    % Detectar zonas con CV bajo
-                    % aux=find(constantCV);                                                   % Identificamos índices en los que el vector lógico es 1
-                    % min_after_MVP = [];                                                     % Inicializa un vector para guardar los mínimos posteriores
-                    % for i = 1:length(MVP)                                                   % Para cada evento MVP --> HACER:
-                    %     mins_after = aux(aux> MVP(i));                                      % Busca los mínimos que ocurren después del evento actual   
-                    %     if ~isempty(mins_after)                                             % Si hay alguno, toma el primero (el más cercano después del evento)
-                    %         min_after_MVP(end+1) = mins_after(1);                           % Escogemos la primera a estado alto después del evento MP
-                    %     end                                                                 % Fin de sentencia if
-                    % end                                                                     % Fin de bucle for
-                    % MP=min_after_MVP;                                                       % Guardamos el evento MP detectado
-                    % Visualización
-                    % figure;
-                    % %subplot(2,1,1);
-                    % plot(gyrpron, 'b');
-                    % title('Señal Original');
-                    % xlabel('Tiempo');
-                    % ylabel('Valor');
-                    % hold on
-                    % plot(1000*constantCV, 'r', 'LineWidth', 2);
-                    % plot(MVP, gyrpron(MVP), '^')
-                    % grid
-                    % ***************************************************************
-
                 end
             end
         end
