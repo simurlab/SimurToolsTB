@@ -31,7 +31,7 @@ opts.DataLines = dataLines;
 opts.Delimiter = ",";
 
 % Specify column names and types
-opts.VariableNames = ["PacketCounter", "SampleTimeFine", "Quat_W", "Quat_X", "Quat_Y", "Quat_Z", "Acc_X", "Acc_Y", "Acc_Z", "Gyr_X", "Gyr_Y", "Gyr_Z", "Mag_X", "Mag_Y", "Mag_Z", "Status", "VarName17"];
+opts.VariableNames = ["PacketCounter", "Timestamp", "Quat_W", "Quat_X", "Quat_Y", "Quat_Z", "Acc_X", "Acc_Y", "Acc_Z", "Gyr_X", "Gyr_Y", "Gyr_Z", "Mag_X", "Mag_Y", "Mag_Z", "Status", "VarName17"];
 opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "string"];
 
 % Specify file level properties
@@ -46,8 +46,19 @@ opts = setvaropts(opts, "VarName17", "EmptyFieldRule", "auto");
 medicion = readtable(filename, opts);
 
 % time from relative microseconds to absolute miliseconds: 
-ts=(medicion.SampleTimeFine-medicion.SampleTimeFine(1))/1000;
-medicion.SampleTimeFine=ts;
+ts=(medicion.Timestamp-medicion.Timestamp(1))/1000;
+medicion.Timestamp=ts;
+
+%IMU.PacketCounter=(1:height(medicion))';
+
 IMUout=medicion;
+
+%% Frecuencia de muestreo real.
+%
+frq_ms=median(diff(ts));
+freq=1000/frq_ms;
+disp('Muestreo (Hz): ');
+disp(freq)
+
 
 end

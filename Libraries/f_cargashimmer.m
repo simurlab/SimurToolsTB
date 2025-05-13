@@ -45,16 +45,16 @@ medicion = readtable(filename, opts);
 
 % Convertimos los datos al formato std (tipo DOTS):
 %
-ts=(medicion.Timestamp-medicion.Timestamp(1));
-%ini=81000;
-%fin=81500;
-%ts=ts(ini:fin,:);
-%plot(tmillis,medicion.Acc_X);
 
+% tiempos en ms:
+ts=(medicion.Timestamp-medicion.Timestamp(1));
+
+%% Corrección de muestreos irregulares:
+%
 [ts_ext, IMU.Acc_X, idx_interp, huecos] = rellenarHuecosInterpolacion(ts, medicion.Acc_X, 1.6);
-signal=medicion.Acc_X;
-sig_ext=IMU.Acc_X;
-Calidad(1)=100*(1-(-size(signal)+size(sig_ext))/size(signal));
+% signal=medicion.Acc_X;
+% sig_ext=IMU.Acc_X;
+% Calidad(1)=100*(1-(-size(signal)+size(sig_ext))/size(signal));
 [ts_ext, IMU.Acc_Y, idx_interp, huecos] = rellenarHuecosInterpolacion(ts, medicion.Acc_Y, 1.6);
 % signal=medicion.Acc_Y;
 % sig_ext=IMU.Acc_Y;
@@ -84,16 +84,31 @@ Calidad(1)=100*(1-(-size(signal)+size(sig_ext))/size(signal));
 % sig_ext=IMU.Mag_Y;
 % Calidad(8)=100*(1-(-size(signal)+size(sig_ext))/size(signal));
 [ts_ext, IMU.Mag_Z, idx_interp, huecos] = rellenarHuecosInterpolacion(ts, medicion.Mag_Z, 1.6);
-% signal=medicion.Mag_Z;
-% sig_ext=IMU.Mag_Z;
-% Calidad(9)=100*(1-(-size(signal)+size(sig_ext))/size(signal));
 
+%% testigo del numero de muestras interpoladas:
+%
+signal=medicion.Mag_Z;
+sig_ext=IMU.Mag_Z;
+Calidad=100*(1-(-size(signal)+size(sig_ext))/size(signal));
 disp('Calidad (% de señal no interpolada):');
 disp(Calidad)
 
-IMU.SampleTimeMs=ts_ext;
+%% completar los campus del IMU std que no tiene el shimmer:
+%
+% Timestamp en ms:
+IMU.Timestamp=ts_ext;
+
+% Conteo de paquetes
+IMU.PacketCounter=(1:height(IMU.Timestamp))';
+
+% Tabla std IMU
 IMUout=struct2table(IMU);
 
-
+%% Frecuencia de muestreo real.
+%
+frq_ms=median(diff(ts_ext));
+freq=1000/frq_ms;
+disp('Muestreo (Hz): ');
+disp(freq)
 
 end
