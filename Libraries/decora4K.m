@@ -1,4 +1,4 @@
-function decora (freq)
+function decora4k(freq)
 
 % Engordar lineas:
 h = findobj(gca, 'Type', 'Line'); % Find the line object
@@ -15,3 +15,5 @@ hAx.XLabel.FontSize = 18;                   % X-axis label
 hAx.YLabel.FontSize = 18;                   % Y-axis label
 hAx.Title.FontSize = 18;                    % Title
 %legend(hPlot, 'sin(x)', 'FontSize', 14);    % Legend
+
+end
