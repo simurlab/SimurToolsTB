@@ -9,33 +9,34 @@
 %
 % Parametros de entrada:
 %    gyr           - vector con la velocidad de giro en el eje mediolateral
-%    th            - velocidad mínima a alcanzar para detectar eventos. Aconsejado 150
+%    th            - velocidad mÃ­nima a alcanzar para detectar eventos. Aconsejado 150
 %    frecuencia    - frecuencia de muestreo.
 %    gyrpron       - vector con la velocidad de giro en el eje frontal(opcional. 
-%                    Sin este parámetro MVP Y MP devolveran un array vacio
+%                    Sin este parÃ¡metro MVP Y MP devolveran un array vacio
 %
 % Parametros de salida:
 %    IC  :  muestras en las que se ha detectado el contacto con el suelo
 %    FC  :  muestras en las que se ha detectado el final del contacto con el suelo
 %    MaxS:  muestras en las que se ha detectado el maximo swing(hacia delante)(NaN=no detectado)
 %    MinS:  muestras en las que se ha detectado el minimo swing(hacia atras)  (NaN=no detectado)
-%    MVP :  muestras en las que se detecta la máxima velocidad de pronación (NaN=no detectado)
+%    MVP :  muestras en las que se detecta la mÃ¡xima velocidad de pronaciÃ³n (NaN=no detectado)
 function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
  
     % filtrado
-    orden=5;
+    orden = 4+floor(freq / 100); % orden mÃ­nimo 3. A mÃ¡s fm mÃ¡s potente debe ser el filtro
     corte=6/freq;
    
     gyr=filtro0(gyr,orden,corte);
-    
-    tam=size(gyr);% tamaño de la señal de aceleración de entrada
+    gyrpron=filtro0(gyrpron,orden,corte);
+
+    tam=size(gyr);% tamaÃ±o de la seÃ±al de aceleraciÃ³n de entrada
     tam=tam(1);
 
-    % Obtencion de la señal rectangular:
+    % Obtencion de la seÃ±al rectangular:
     Datos2=gyr(2:tam)-gyr(1:tam-1);
     Datos2=Datos2>=0;
 
-    % Obtencion de las señal de pulsos:
+    % Obtencion de las seÃ±al de pulsos:
     Datos2=Datos2(1:tam-2)-Datos2(2:tam-1);
     maximos=find(Datos2==1)+1;
     minimos=find(Datos2==-1)+1;
@@ -52,20 +53,20 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
 
     if nargin==4
         %maximos de la pronacion
-    	% Obtencion de la señal rectangular:
+    	% Obtencion de la seÃ±al rectangular:
     	Datos2=gyrpron(2:tam)-gyrpron(1:tam-1);
     	Datos2=Datos2>=0;
-    	% Obtencion de las señal de pulsos de pronacion:
+    	% Obtencion de las seÃ±al de pulsos de pronacion:
     	Datos2=Datos2(1:tam-2)-Datos2(2:tam-1);
     	maximospron=find(Datos2==1)+1;
     	
         %Pasos por cero de positivo a negativo
-        % Obtencion de la señal rectangular:
+        % Obtencion de la seÃ±al rectangular:
     	Datos3=gyrpron<0;
         Datos3=diff(Datos3);
-        %El 1 ha quedado en la última muestra positiva
+        %El 1 ha quedado en la Ãºltima muestra positiva
         pasosceropron=find(Datos3==1);
-        %Lo cambio por el siguiente si el siguiente está más próximo al 0
+        %Lo cambio por el siguiente si el siguiente estÃ¡ mÃ¡s prÃ³ximo al 0
         for i=1:length(pasosceropron)
             if abs(gyrpron(pasosceropron(i)))>abs(gyrpron(pasosceropron(i)+1))
                 pasosceropron(i)=pasosceropron(i)+1;
@@ -86,8 +87,8 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                 FC=[FC mins_paso(ifc+1)];
                 IC=[IC mins_paso(1)];
 
-                %maxs es el último evento. se tiene que buscar antes del IC
-                %del siguiente paso. pero aún no tenemos el ic del
+                %maxs es el Ãºltimo evento. se tiene que buscar antes del IC
+                %del siguiente paso. pero aÃºn no tenemos el ic del
                 %siguiente paso
                 %maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end-1)& pasos_cero_maxs<IC(end));
                 maxs=pasos_cero_maxs(pasos_cero_maxs>max_paso(end));
@@ -108,7 +109,7 @@ function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
                     mvp=maximospron(maximospron>IC(end)& maximospron<FC(end));
                     if ~isempty(mvp)
                         MVP=[MVP, mvp(1)];
-                        % CÁLCULO DE EVENTO MP solo si hay MVP
+                        % CÃLCULO DE EVENTO MP solo si hay MVP
                         mp=pasosceropron(pasosceropron>MVP(end)& pasosceropron<FC(end));
                         if ~isempty(mp)
                             MP=[MP, mp(1)];
