@@ -2,6 +2,9 @@
 num_intervalos=size(Intervalos,1);
 freq=120;
 tabla_total = table();  % Tabla vacía inicial
+tabla_total_resumen = table();  % Tabla vacía inicial
+
+
 for i=1:num_intervalos
     % Convertir los límites de los intervalos a enteros
     inicio=int32(Intervalos(i,1)); % Las muestras de intervalos ya están expresadas en miles, IMPORTANTE!!!
@@ -49,15 +52,19 @@ for i=1:num_intervalos
     
     % Filtro y detección (requiere la TB de SP de Matlab):
     th=150;                                                                   % Umbral para detección de eventos
-    [IC, FC, MaxS, MinS, MVP, MP]=eventospie_carrera(gyroml,th,freq,gyroant); % Detectar eventos
-    [z1,z2,z3,vz1, vz2, vz3, eventos]=test(gyroml, Intervalos(i,:), i,gyroant);       % Realizar pruebas y obtener eventos
+    [IC, FC, MaxS, MinS, MVP, MP]=eventospie_carrera(gyroml,th,freq,gyroant);   % Detectar eventos
+    [z1,z2,z3,vz1, vz2, vz3, eventos, eventos_resumen]=test(gyroml, Intervalos(i,:), i,gyroant); % Realizar pruebas y obtener eventos
     tabla_total = [tabla_total; eventos];                                     % Acumulación de eventos en la tabla total
+    tabla_total_resumen = [tabla_total_resumen; eventos_resumen];
     zonas(i,1)=z1;                                                            % Almacenar resultados en zonas
     zonas(i,2)=z2;
     zonas(i,3)=z3;
     zonas(i,4)=mean(vz3);                                                     % Calcular media
     zonas(i,5)=std(vz3);                                                      % Calcular desviación estándar
     % sum(zonas(:,3))
+
+    tabla_resumen_todos_los_experimentos = [tabla_resumen_todos_los_experimentos;tabla_total_resumen];
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 % Mostrar tabla en ventana emergente
@@ -66,5 +73,14 @@ f = figure('Name', sprintf('Experimento  %s', identificador), ...
            'Position', [100 100 600 300]);
 uitable(f, 'Data', table2cell(tabla_total), ...
            'ColumnName', tabla_total.Properties.VariableNames, ...
+           'Units', 'Normalized', ...
+           'Position', [0 0 1 1]);
+
+
+f = figure('Name', sprintf('Experimento  %s resumen', identificador), ...
+           'NumberTitle', 'off', ...
+           'Position', [100 100 600 300]);
+uitable(f, 'Data', table2cell(tabla_total_resumen), ...
+           'ColumnName', tabla_total_resumen.Properties.VariableNames, ...
            'Units', 'Normalized', ...
            'Position', [0 0 1 1]);
