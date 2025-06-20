@@ -1,13 +1,12 @@
 % CARGA_CALIBRA Funcion para cargar y orientar en formato ISB los datos 
 % de una prueba. Supone que hay un archivo con datos tipo BD-InnovaIM 
-% accesible, dado por su ID.
-% Utiliza la funcion calibra_anatomical. 
+% accesible, su ID (apoyado en calibra_anatomical). .
 %
 % Sintax: [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp, numSensor, Visualiza)
 %
 % Parametros de entrada:
-%    IDexp              - Código de identificación de la prueba (letra+numero)
-%    numSensor          - Entero que identifica el sensor (1,2,3) == pie derecho, izdo o COG respect.
+%    IDexp              - Código de identificación del sensor (letra+numero)
+%    numSensor          - Entero que identifica el sensor Sensor (1,2,3) == pie derecho, izdo o COG respect.
 %    Visualiza          - Opción de gráficas aux. para debugging ('S', 'N')
 %
 % Parametros de salida:
@@ -18,9 +17,11 @@
 
 function [a_cal, g_cal, Intervalos, quat_cal]=carga_calibra(IDexp,queSensor,Visualiza)
 
+%freq=120; % por ahora...
 
 % Cuenta el número de argumentos
 numArgs = nargin;
+
 
 switch numArgs
     case 0
