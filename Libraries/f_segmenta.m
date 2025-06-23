@@ -139,7 +139,7 @@ function f_segmenta(varargin)
             frag.metadata = datos.metadata;
         end
 
-        nombre = sprintf('%s%02d.mat', baseName, k);
+        nombre = sprintf('%s%02d_RAW.mat', baseName, k);
         save(nombre, '-struct', 'frag');
         fprintf('💾 Guardado fragmento: %s\n', nombre);
 
