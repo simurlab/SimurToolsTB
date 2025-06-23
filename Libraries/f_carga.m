@@ -66,6 +66,8 @@ for i = 1:length(subdirs)
             Modelos{nSensores,1} = modelo;
             Frecuencias(nSensores,1) = frecuencia;
             Ubicaciones{nSensores,1} = patron;
+            Rutas{nSensores,1} = ruta;   % <- ESTA LÍNEA ES LA QUE FALTABA
+
         end
     end
 end
@@ -109,7 +111,6 @@ for i = 1:nSensores
     metadata(i).Modelo     = Modelos{i};
     metadata(i).Frecuencia = Frecuencias(i);
     metadata(i).Ubicacion  = Ubicaciones{i};
-    metadata(i).Ruta       = Rutas{i};
     if incluirActividad
         metadata(i).Actividad = actividad;
     end

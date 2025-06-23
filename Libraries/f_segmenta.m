@@ -14,7 +14,7 @@ function f_segmenta(varargin)
     intentosPath = p.Results.intentos_path;
 
     usarIntentosExternos = ~isempty(intentosPath);
-    intentos = struct('sensor', {}, 'segmento', {}, 'inicio', {}, 'fin', {}, 'archivoDestino', {});
+    intentos = struct('sensor', {}, 'segmento', {}, 'inicio', {}, 'fin', {});
 
     % -------------------- Buscar archivo base --------------------
     archivos = dir('*.mat');
@@ -101,9 +101,7 @@ function f_segmenta(varargin)
                             'sensor', sensor, ...
                             'segmento', segNum, ...
                             'inicio', i1, ...
-                            'fin', i2, ...
-                            'archivoDestino', '' ...
-                        );
+                            'fin', i2);
                         segNum = segNum + 1;
                     else
                         warning('❌ Intervalo inválido.');
@@ -145,14 +143,6 @@ function f_segmenta(varargin)
         save(nombre, '-struct', 'frag');
         fprintf('💾 Guardado fragmento: %s\n', nombre);
 
-        % Actualizar campo archivoDestino si es segmentación manual
-        if ~usarIntentosExternos
-            for j = 1:numel(intentos)
-                if intentos(j).segmento == k
-                    intentos(j).archivoDestino = nombre;
-                end
-            end
-        end
     end
 
     % -------------------- Guardar intentos si fueron creados manualmente --------------------
