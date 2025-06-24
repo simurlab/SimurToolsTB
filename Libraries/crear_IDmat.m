@@ -7,9 +7,12 @@ function crea_IDmat (prueba_name)
 
 %Prueba='a1';
 Prueba=prueba_name;
-load('matlab.mat');
+myfilen= string(string('Prueba_') + Prueba)
+load(myfilen);
 condiciones;
 I1=IMU1; I2=IMU2; I3=IMU3;
+
+for numimus=1:NumSensores,
 
 IM1total=[];
 IM2total=[];
@@ -23,15 +26,15 @@ for ii=1:length(Intervalos(:,1)),
     IM2total=[IM2total ; IM2];
     IM3total=[IM3total ; IM3];
 
-   myfilen= string(Prueba + string(ii))
+   myfilen= string(Prueba +  string('0') + string(ii))
    
     %datos_totales = {load(IM1), fileread(fullfile('condiciones.m')) };
     datos_totales = {IM1, IM2, IM3, fileread(fullfile('condiciones.m')) };
     save(myfilen, 'datos_totales')
 
 end
- 
-myfilen= string(Prueba + string('x'))
+
+myfilen= string(Prueba + string('xx'))
    
     %datos_totales = {load(IM1), fileread(fullfile('condiciones.m')) };
     datos_totales = {IM1total, IM2total, IM3total, fileread(fullfile('condiciones.m')) };
