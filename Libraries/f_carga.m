@@ -3,14 +3,7 @@ function f_carga(varargin)
 %
 % USO:
 %   f_carga()              -> guarda los datos sin información de actividad.
-%   f_carga('Vallas')      -> guarda los datos con actividad especificada en metadata.
-%
-% DESCRIPCIÓN:
-% - Busca carpetas en el directorio actual que comiencen con 'FR', 'FL' o 'COG'.
-% - Detecta si son sensores Xsens (.csv) o Bimu (.bin).
-% - Carga los datos y los guarda como archivo .mat con nombre generado a partir
-%   de las carpetas contenedoras (ej: h01.mat si está en ...\h Carpeta\01 Prueba).
-% - Incluye metadata con modelo, frecuencia, ubicación y ruta. Actividad solo si se especifica.
+%   f_carga('Vallas')      -> guarda los datos con actividad especificada.
 
 % -------------------- Validación de argumentos --------------------
 if nargin > 1
@@ -37,7 +30,7 @@ Frecuencias = [];
 Ubicaciones = {};
 Rutas = {};
 
-% Prefijos válidos de carpetas de sensores
+% Prefijos válidos
 patrones = {'FR', 'FL', 'COG'};
 
 for i = 1:length(subdirs)
@@ -49,7 +42,6 @@ for i = 1:length(subdirs)
             archivos_csv = dir(fullfile(ruta, '*.csv'));
             archivos_bin = dir(fullfile(ruta, '*.bin'));
 
-            % Determinar tipo de sensor
             if ~isempty(archivos_csv)
                 modelo = 'Xsens Dot';
                 frecuencia = 120;
@@ -61,13 +53,11 @@ for i = 1:length(subdirs)
                 continue;
             end
 
-            % Guardar información del sensor
             nSensores = nSensores + 1;
             Modelos{nSensores,1} = modelo;
             Frecuencias(nSensores,1) = frecuencia;
             Ubicaciones{nSensores,1} = patron;
-            Rutas{nSensores,1} = ruta;   % <- ESTA LÍNEA ES LA QUE FALTABA
-
+            Rutas{nSensores,1} = ruta;
         end
     end
 end
@@ -76,48 +66,46 @@ if nSensores == 0
     error('❌ No se detectaron sensores válidos en las carpetas actuales.');
 end
 
-% -------------------- Inicialización de estructuras de salida --------------------
+% -------------------- Procesamiento --------------------
 tablasGuardadas = struct();
 ubicacionContadores = struct('FR', 0, 'FL', 0, 'COG', 0);
 
-% -------------------- Procesamiento de cada sensor --------------------
 for i = 1:nSensores
     modelo = Modelos{i};
+    frecuencia = Frecuencias(i);
     ubicacion = Ubicaciones{i};
     ruta = Rutas{i};
 
     try
-        % Procesar según tipo de sensor
         if strcmp(modelo, 'Xsens Dot')
-            tabla = f_carga_DOT('folder_path', ruta);
+            [tabla, info_segmentos] = f_carga_DOT('ruta_carpeta', ruta);
         elseif strcmp(modelo, 'Bimu')
-            tabla = f_carga_BIMU('folder_path', ruta);
+            [tabla, info_segmentos] = f_carga_BIMU('ruta_carpeta', ruta);
         else
             error('Tipo de sensor desconocido: %s', modelo);
         end
+
+        % Añadir campos comunes a cada struct en info_segmentos
+        for j = 1:numel(info_segmentos)
+            info_segmentos(j).modelo = modelo;
+            info_segmentos(j).frecuencia = frecuencia;
+            if incluirActividad
+                info_segmentos(j).actividad = actividad;
+            end
+        end
+
+        % Asignar nombre y guardar
+        ubicacionContadores.(ubicacion) = ubicacionContadores.(ubicacion) + 1;
+        nombreBase = sprintf('%s_%d', ubicacion, ubicacionContadores.(ubicacion));
+        tablasGuardadas.(nombreBase) = tabla;
+        tablasGuardadas.([nombreBase '_metadata']) = info_segmentos;
+
     catch e
         error('Error al procesar sensor %d (%s):\n%s', i, ubicacion, e.message);
     end
-
-    % Asignar nombre único por ubicación
-    ubicacionContadores.(ubicacion) = ubicacionContadores.(ubicacion) + 1;
-    nombreBase = sprintf('%s_%d', ubicacion, ubicacionContadores.(ubicacion));
-    tablasGuardadas.(nombreBase) = tabla;
 end
 
-% -------------------- Crear metadata --------------------
-metadata = struct([]);
-for i = 1:nSensores
-    metadata(i).Modelo     = Modelos{i};
-    metadata(i).Frecuencia = Frecuencias(i);
-    metadata(i).Ubicacion  = Ubicaciones{i};
-    if incluirActividad
-        metadata(i).Actividad = actividad;
-    end
-end
-tablasGuardadas.metadata = metadata;
-
-% -------------------- Construir nombre de archivo de salida --------------------
+% -------------------- Construir nombre archivo salida --------------------
 rutaActual = pwd;
 rutasPartes = strsplit(rutaActual, filesep);
 
@@ -125,24 +113,14 @@ if numel(rutasPartes) < 3
     error('Ruta demasiado corta para determinar nombre de archivo.');
 end
 
-nombreCarpetaLetra = rutasPartes{end-1};
-nombreCarpetaNum   = rutasPartes{end};
+letraMatch = regexp(rutasPartes{end-1}, '^[a-zA-Z]', 'match');
+numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
 
-% Extraer letra y dos dígitos del nombre de las carpetas
-letraMatch = regexp(nombreCarpetaLetra, '^[a-zA-Z]', 'match');
-numMatch   = regexp(nombreCarpetaNum, '^\d{2}', 'match');
-
-if isempty(letraMatch)
-    error('No se encontró letra al principio en la carpeta superior: "%s"', nombreCarpetaLetra);
-end
-if isempty(numMatch)
-    error('No se encontraron 2 dígitos al principio en la carpeta actual: "%s"', nombreCarpetaNum);
+if isempty(letraMatch) || isempty(numMatch)
+    error('❌ Formato de carpeta no válido para generar nombre de archivo.');
 end
 
-letra = lower(letraMatch{1});
-numStr = numMatch{1};
-
-nombreArchivo = [letra numStr '.mat'];
+nombreArchivo = [lower(letraMatch{1}) numMatch{1} '.mat'];
 
 % -------------------- Guardar archivo final --------------------
 save(fullfile(rutaActual, nombreArchivo), '-struct', 'tablasGuardadas', '-v7.3');

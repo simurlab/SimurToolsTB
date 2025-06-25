@@ -1,10 +1,10 @@
-function tabla = f_carga_BIMU(varargin)
+function [tabla, info_segmentos] = f_carga_BIMU(varargin)
 % f_carga_BIMU  Carga y procesa archivos .bin de una IMU personalizada.
 %
 % tabla = f_carga_BIMU('Name', Value, ...)
 %
 % Parámetros nombre-valor (opcionales):
-%   'folder_path' - Ruta a la carpeta con archivos .bin. Por defecto: carpeta actual.
+%   'ruta_carpeta' - Ruta a la carpeta con archivos .bin. Por defecto: carpeta actual.
 %   'acc_scale'   - Escala para el acelerómetro. Por defecto: 0.000488.
 %   'gyr_scale'   - Escala para el giroscopio. Por defecto: 0.070.
 %   'save'        - 'y' para guardar tabla como bimu_YYMMDD.mat. Por defecto: 'n'.
@@ -16,7 +16,7 @@ function tabla = f_carga_BIMU(varargin)
     acc_scale = 0.000488;
     gyr_scale = 0.070;
     save_flag = 'n';
-    folder_path = pwd;
+    ruta_carpeta = pwd;
 
     % -------------------- Procesar argumentos nombre-valor --------------------
     for i = 1:2:length(varargin)
@@ -29,8 +29,8 @@ function tabla = f_carga_BIMU(varargin)
                 gyr_scale = value;
             case 'save'
                 save_flag = value;
-            case 'folder_path'
-                folder_path = value;
+            case 'ruta_carpeta'
+                ruta_carpeta = value;
             otherwise
                 error('Parámetro desconocido: %s', name);
         end
@@ -41,9 +41,9 @@ function tabla = f_carga_BIMU(varargin)
     SAMPLE_PERIOD = 25e-6;
 
     % -------------------- Buscar archivos --------------------
-    files = dir(fullfile(folder_path, '*.bin'));
+    files = dir(fullfile(ruta_carpeta, '*.bin'));
     if isempty(files)
-        error('No se encontraron archivos .bin en %s', folder_path);
+        error('No se encontraron archivos .bin en %s', ruta_carpeta);
     end
 
     % Ordenar archivos numéricamente
@@ -62,7 +62,7 @@ function tabla = f_carga_BIMU(varargin)
 
     % -------------------- Leer y procesar archivos --------------------
     for k = 1:numel(files)
-        fname = fullfile(folder_path, files(k).name);
+        fname = fullfile(ruta_carpeta, files(k).name);
         fid = fopen(fname, 'rb');
         if fid == -1, error('No se pudo abrir: %s', fname); end
         raw = fread(fid, Inf, 'uint8=>uint8'); fclose(fid);
@@ -119,6 +119,26 @@ function tabla = f_carga_BIMU(varargin)
     % -------------------- Guardar archivo si se solicita --------------------
     if strcmpi(save_flag, 'y')
         fecha = datestr(now, 'yymmdd');
-        save(fullfile(folder_path, ['bimu_' fecha '.mat']), 'tabla');
+        save(fullfile(ruta_carpeta, ['bimu_' fecha '.mat']), 'tabla');
     end
+
+    % -------------------- Crear info_segmentos compatible --------------------
+    [~, nombre_carpeta] = fileparts(ruta_carpeta);
+    carpeta_tipo = regexp(nombre_carpeta, '^(FR|FL|COG)', 'match', 'once');
+    
+    info_segmentos = struct('IMU', {}, 'ubicacion', {}, 'modelo', {}, ...
+                        'frecuencia', {}, 'segmento', {}, ...
+                        'orientacion', {});
+
+    info_segmentos(end+1) = struct( ...
+        'IMU', 'B1', ...
+        'ubicacion', carpeta_tipo, ...
+        'modelo', 'Xsens Dot', ...
+        'frecuencia', 120, ...
+        'segmento', [1 height(tabla)], ...
+        'orientacion', [1 2 3] ...
+    );
+
+
+
 end

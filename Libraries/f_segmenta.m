@@ -1,56 +1,56 @@
 function f_segmenta(varargin)
-% F_SEGMENTA Segmenta señales de sensores a partir de archivo tipo letraNN.mat.
+% FSEGMENTA Segmenta señales de sensores a partir de archivo tipo letraNN.mat.
 %
 % - Busca archivo con formato [letra][NN].mat (ej. h01.mat)
-% - Para cada sensor (FR_X, FL_X, COG_X) permite segmentar interactivamente Acc_Y,
-%   o bien utiliza un archivo .mat con intervalos predefinidos (via 'intentos_path')
-% - Crea archivos [letraNNXX].mat donde XX es el número de segmento sincronizado entre sensores
-% - Incluye metadata original en cada archivo
+% - Para cada sensor (FR_X, FL_X, COG_X) permite segmentar Acc_Y interactivamente
+%   o con archivo externo de intervalos ('intentosPath')
+% - Crea archivos [letraNNXX].mat con señales y metadatos filtrados (si corresponde)
+% - La metadata se filtra por coincidencia exacta entre el intervalo y el campo segmento
+% - Se añade campo 'intervaloIntento' en los metadatos si hay una única coincidencia
 
-    % -------------------- Procesar argumentos --------------------
-    p = inputParser;
-    addParameter(p, 'intentos_path', '', @(x) ischar(x) || isstring(x));
-    parse(p, varargin{:});
-    intentosPath = p.Results.intentos_path;
+    % -------------------- Argumentos --------------------
+    parser = inputParser;
+    addParameter(parser, 'intentosPath', '', @(x) ischar(x) || isstring(x));
+    parse(parser, varargin{:});
+    rutaIntentos = parser.Results.intentosPath;
 
-    usarIntentosExternos = ~isempty(intentosPath);
-    intentos = struct('sensor', {}, 'segmento', {}, 'inicio', {}, 'fin', {});
+    usarIntentosExternos = ~isempty(rutaIntentos);
+    listaIntentos = struct('sensor', {}, 'intento', {}, 'inicio', {}, 'fin', {});
 
-    % -------------------- Buscar archivo base --------------------
+    % -------------------- Archivo base --------------------
     archivos = dir('*.mat');
-    baseMatch = regexp({archivos.name}, '^[a-zA-Z]\d{2}\.mat$', 'match', 'once');
-    baseFile = archivos(~cellfun('isempty', baseMatch));
+    coincidencias = regexp({archivos.name}, '^[a-zA-Z]\d{2}\.mat$', 'match', 'once');
+    archivoBase = archivos(~cellfun('isempty', coincidencias));
 
-    if isempty(baseFile)
-        error('❌ No se encontró un archivo .mat con formato letraNN (ej: h01.mat)');
+    if isempty(archivoBase)
+        error('❌ No se encontró archivo con formato letraNN (ej: h01.mat)');
     end
 
-    baseFile = baseFile(1).name;
-    baseName = baseFile(1:end-4);
-    fprintf('📂 Cargando archivo base: %s\n', baseFile);
+    archivoBase = archivoBase(1).name;
+    nombreBase = archivoBase(1:end-4);
+    fprintf('📂 Cargando archivo base: %s\n', archivoBase);
 
-    datos = load(baseFile);
-    campos = fieldnames(datos);
-    sensores = campos(contains(campos, {'FR_', 'FL_', 'COG_'}));
+    datos = load(archivoBase);
+    nombresCampos = fieldnames(datos);
+    sensores = nombresCampos(contains(nombresCampos, {'FR_', 'FL_', 'COG_'}) & ~endsWith(nombresCampos, '_metadata'));
 
     if isempty(sensores)
-        error('❌ No se encontraron sensores FR_, FL_ o COG_ en el archivo.');
+        error('❌ No se encontraron sensores esperados en el archivo.');
     end
 
-    segmentos = struct();  % estructura con campos por sensor
-    maxSegmentos = 0;
+    segmentos = struct();
 
-    % -------------------- Cargar intentos externos si se usa --------------------
+    % -------------------- Intentos externos --------------------
     if usarIntentosExternos
-        datosIntentos = load(intentosPath);
-        if ~isfield(datosIntentos, 'intentos')
-            error('❌ El archivo %s no contiene una variable llamada intentos.', intentosPath);
+        datosExternos = load(rutaIntentos);
+        if ~isfield(datosExternos, 'intentos')
+            error('❌ El archivo %s no contiene variable "intentos".', rutaIntentos);
         end
-        intentos = datosIntentos.intentos;
-        fprintf('📄 Usando intervalos predefinidos desde: %s\n', intentosPath);
+        listaIntentos = datosExternos.intentos;
+        fprintf('📄 Usando intervalos desde: %s\n', rutaIntentos);
     end
 
-    % -------------------- Procesar cada sensor --------------------
+    % -------------------- Procesar sensores --------------------
     for s = 1:numel(sensores)
         sensor = sensores{s};
         tabla = datos.(sensor);
@@ -64,26 +64,29 @@ function f_segmenta(varargin)
         fprintf('\n=== Segmentación de %s ===\n', sensor);
 
         if usarIntentosExternos
-            % -------------------- Usar intervalos de archivo --------------------
-            intentosSensor = intentos(strcmp({intentos.sensor}, sensor));
+            intentosSensor = listaIntentos(strcmp({listaIntentos.sensor}, sensor));
             for i = 1:numel(intentosSensor)
                 i1 = intentosSensor(i).inicio;
                 i2 = intentosSensor(i).fin;
                 segmentos.(sensor){end+1} = tabla(i1:i2, :);
-                fprintf('%s: [%d %d], segmento %d\n', sensor, i1, i2, intentosSensor(i).segmento);
+                fprintf('%s: [%d %d], intento %d\n', sensor, i1, i2, intentosSensor(i).intento);
             end
         else
-            % -------------------- Segmentación interactiva --------------------
             figure('Name', sensor); clf;
             plot(tabla.Acc_Y); grid on;
             xlabel('Muestra'); ylabel('Acc_Y');
 
-            segNum = 1;
+            numeroIntento = 1;
             while true
-                prompt = sprintf('Intervalo [%d %d] para segmento %02d o "q" para siguiente sensor: ', ...
-                    1, height(tabla), segNum);
+                prompt = sprintf('Intervalo [%d %d] para intento %02d o "q": ', ...
+                    1, height(tabla), numeroIntento);
                 entrada = input(prompt, 's');
 
+                if isempty(entrada)
+                    fprintf('%s: intento vacío, se omite.\n', sensor);
+                    numeroIntento = numeroIntento + 1;
+                    continue;
+                end
                 if strcmpi(entrada, 'q')
                     break;
                 end
@@ -96,58 +99,92 @@ function f_segmenta(varargin)
                         i2 = min(height(tabla), floor(partes(2)));
                         segmentos.(sensor){end+1} = tabla(i1:i2, :);
 
-                        fprintf('%s: [%d %d], segmento %d\n', sensor, i1, i2, segNum);
-                        intentos(end+1) = struct( ...
+                        fprintf('%s: [%d %d], intento %d\n', sensor, i1, i2, numeroIntento);
+                        listaIntentos(end+1) = struct( ...
                             'sensor', sensor, ...
-                            'segmento', segNum, ...
+                            'intento', numeroIntento, ...
                             'inicio', i1, ...
                             'fin', i2);
-                        segNum = segNum + 1;
                     else
                         warning('❌ Intervalo inválido.');
                     end
                 catch
                     warning('❌ Entrada no válida.');
                 end
+                numeroIntento = numeroIntento + 1;
             end
         end
-
-        maxSegmentos = max(maxSegmentos, numel(segmentos.(sensor)));
     end
 
-    % -------------------- Guardar archivos por segmento --------------------
-    if maxSegmentos == 0
-        fprintf('🛑 No se definieron segmentos. Nada que guardar.\n');
+    % -------------------- Guardar fragmentos --------------------
+    if isempty(listaIntentos)
+        fprintf('🛑 No hay intentos definidos.\n');
         return;
     end
 
-    for k = 1:maxSegmentos
-        frag = struct();
+    intentosUnicos = unique([listaIntentos.intento]);
+
+    for i = 1:numel(intentosUnicos)
+        idIntento = intentosUnicos(i);
+        fragmento = struct();
+
         for s = 1:numel(sensores)
             sensor = sensores{s};
-            lista = segmentos.(sensor);
-            if k <= numel(lista)
-                frag.(sensor) = lista{k};
+            listaSegmentos = segmentos.(sensor);
+
+            indices = find(strcmp({listaIntentos.sensor}, sensor) & [listaIntentos.intento] == idIntento);
+            if numel(indices) == 1
+                fragmento.(sensor) = listaSegmentos{end};
+                intervalo = [listaIntentos(indices).inicio, listaIntentos(indices).fin];
+            elseif isempty(indices)
+                continue;
+            else
+                error('❌ Múltiples entradas para intento %d del sensor %s.', idIntento, sensor);
+            end
+
+            campoMeta = [sensor '_metadata'];
+            if isfield(datos, campoMeta) && isfield(fragmento, sensor)
+                metadataTotal = datos.(campoMeta);
+
+                coincidencias = [];
+                for m = 1:numel(metadataTotal)
+                    seg = metadataTotal(m).segmento;
+                    if intervalo(1) >= seg(1) && intervalo(2) <= seg(2)
+                        coincidencias(end+1) = m;
+                    end
+                end
+
+                if numel(coincidencias) == 1
+                    metaFiltrada = metadataTotal(coincidencias);
+                    if isfield(metaFiltrada, 'carpeta')
+                        metaFiltrada = rmfield(metaFiltrada, 'carpeta');
+                    end
+                    metaFiltrada.intervaloIntento = intervalo;
+                    fragmento.(campoMeta) = metaFiltrada;
+                elseif isempty(coincidencias)
+                    warning('⚠️ Sin coincidencia en metadata para %s [%d %d].', sensor, intervalo);
+                else
+                    error('❌ Intervalo [%d %d] en %s coincide con múltiples segmentos.', intervalo, sensor);
+                end
             end
         end
 
-        if isempty(fieldnames(frag))
+        if isempty(fieldnames(fragmento))
             continue;
         end
 
         if isfield(datos, 'metadata')
-            frag.metadata = datos.metadata;
+            fragmento.metadata = datos.metadata;
         end
 
-        nombre = sprintf('%s%02d_RAW.mat', baseName, k);
-        save(nombre, '-struct', 'frag');
-        fprintf('💾 Guardado fragmento: %s\n', nombre);
-
+        nombreArchivo = sprintf('%s%02d.mat', nombreBase, idIntento);
+        save(nombreArchivo, '-struct', 'fragmento');
+        fprintf('📅 Guardado: %s\n', nombreArchivo);
     end
 
-    % -------------------- Guardar intentos si fueron creados manualmente --------------------
+    % -------------------- Guardar archivo de intentos --------------------
     if ~usarIntentosExternos
-        save('intentos.mat', 'intentos');
-        fprintf('📝 Guardado log de intervalos en intentos.mat\n');
+        save('intentos.mat', 'listaIntentos');
+        fprintf('📍 Guardado intentos.mat\n');
     end
 end
