@@ -2,7 +2,26 @@ function f_segmenta()
 % F_SEGMENTA Interactivamente segmenta zonas estáticas e intentos por ubicación.
 % Genera archivos tipo h0101.mat, h0102.mat, etc., incluyendo la zona estática.
 
-    datos = load('h01.mat');
+% -------------------- Construir nombre archivo salida --------------------
+rutaActual = pwd;
+rutasPartes = strsplit(rutaActual, filesep);
+
+if numel(rutasPartes) < 3
+    error('Ruta demasiado corta para determinar nombre de archivo.');
+end
+
+letraMatch = regexp(rutasPartes{end-2}, '^[a-zA-Z]', 'match');
+numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
+
+if isempty(letraMatch) || isempty(numMatch)
+    error('❌ Algo salió mal en la carga del archivo...');
+end
+
+nombreArchivo = [lower(letraMatch{1}) numMatch{1} '.mat'];
+
+%datos = load('h01.mat');
+datos = load(nombreArchivo);
+
     campos = fieldnames(datos);
     ubicaciones = unique(regexprep(campos, '_\d+(_metadata)?$', ''));
 
@@ -89,8 +108,10 @@ function f_segmenta()
 
     % ----------- Guardado agrupado por intento global -----------
     intentosUnicos = unique([intentosGlobales.intento]);
-    nombreBase = 'h01';
-
+    %nombreBase = 'h01';
+    nombreArchivo2 = [lower(letraMatch{1}) numMatch{1}];
+    nombreBase=nombreArchivo2;
+    
     for i = 1:numel(intentosUnicos)
         idIntento = intentosUnicos(i);
         fragmento = struct();
