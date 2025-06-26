@@ -1,24 +1,25 @@
-function [tabla, info_segmentos] = f_carga_BIMU(varargin)
-% f_carga_BIMU  Carga y procesa archivos .bin de una IMU personalizada.
+function [tabla, info_sensor] = f_carga_BIMU(varargin)
+% f_carga_BIMU  Carga y procesa archivos .bin de una IMU personalizada (BIMU).
 %
-% tabla = f_carga_BIMU('Name', Value, ...)
+% [tabla, info_sensor] = f_carga_BIMU('ruta_carpeta', RUTA, 'save', 'y')
 %
-% Parámetros nombre-valor (opcionales):
+% Parámetros:
 %   'ruta_carpeta' - Ruta a la carpeta con archivos .bin. Por defecto: carpeta actual.
-%   'acc_scale'   - Escala para el acelerómetro. Por defecto: 0.000488.
-%   'gyr_scale'   - Escala para el giroscopio. Por defecto: 0.070.
-%   'save'        - 'y' para guardar tabla como bimu_YYMMDD.mat. Por defecto: 'n'.
+%   'acc_scale'    - Escala para el acelerómetro. Por defecto: 0.000488.
+%   'gyr_scale'    - Escala para el giroscopio. Por defecto: 0.070.
+%   'save'         - 'y' para guardar tabla como bimu_YYMMDD.mat. Por defecto: 'n'.
 %
-% Salida:
-%   tabla         - Tabla con los datos procesados.
+% Salidas:
+%   tabla        - Tabla unificada con datos de todos los bin.
+%   info_sensor  - Estructura con info: IMU, ubicación, modelo, frecuencia, orientación.
 
-    % -------------------- Valores por defecto --------------------
+    % -------------------- Parámetros por defecto --------------------
     acc_scale = 0.000488;
     gyr_scale = 0.070;
     save_flag = 'n';
     ruta_carpeta = pwd;
 
-    % -------------------- Procesar argumentos nombre-valor --------------------
+    % -------------------- Argumentos --------------------
     for i = 1:2:length(varargin)
         name = lower(varargin{i});
         value = varargin{i+1};
@@ -32,21 +33,21 @@ function [tabla, info_segmentos] = f_carga_BIMU(varargin)
             case 'ruta_carpeta'
                 ruta_carpeta = value;
             otherwise
-                error('Parámetro desconocido: %s', name);
+                error('❌ Parámetro desconocido: %s', name);
         end
     end
 
-    % -------------------- Constantes internas --------------------
+    % -------------------- Constantes --------------------
     MAX_TIMESTAMP = 2^24;
-    SAMPLE_PERIOD = 25e-6;
+    SAMPLE_PERIOD = 1 / 3332;  % frecuencia de 3332 Hz
 
-    % -------------------- Buscar archivos --------------------
+    % -------------------- Archivos .bin --------------------
     files = dir(fullfile(ruta_carpeta, '*.bin'));
     if isempty(files)
-        error('No se encontraron archivos .bin en %s', ruta_carpeta);
+        error('❌ No se encontraron archivos .bin en %s', ruta_carpeta);
     end
 
-    % Ordenar archivos numéricamente
+    % Ordenar numéricamente
     nums = NaN(numel(files),1);
     for k = 1:numel(files)
         [~, name] = fileparts(files(k).name);
@@ -55,12 +56,12 @@ function [tabla, info_segmentos] = f_carga_BIMU(varargin)
     [~, order] = sort(nums);
     files = files(order);
 
-    % Inicializar vectores
+    % -------------------- Inicialización --------------------
     acc_x = []; acc_y = []; acc_z = [];
     gyr_x = []; gyr_y = []; gyr_z = [];
     ts    = [];
 
-    % -------------------- Leer y procesar archivos --------------------
+    % -------------------- Leer archivos --------------------
     for k = 1:numel(files)
         fname = fullfile(ruta_carpeta, files(k).name);
         fid = fopen(fname, 'rb');
@@ -86,7 +87,6 @@ function [tabla, info_segmentos] = f_carga_BIMU(varargin)
             t(i) = uint32(b0) + bitshift(uint32(b1),8) + bitshift(uint32(b2),16);
         end
 
-        % Escalar datos
         gyr_x = [gyr_x; double(gx) * gyr_scale];
         gyr_y = [gyr_y; double(gy) * gyr_scale];
         gyr_z = [gyr_z; double(gz) * gyr_scale];
@@ -105,7 +105,7 @@ function [tabla, info_segmentos] = f_carga_BIMU(varargin)
     end
     ts_corrected = ts + offset * MAX_TIMESTAMP;
 
-    % -------------------- Construir tabla --------------------
+    % -------------------- Crear tabla --------------------
     Time = (ts_corrected - ts_corrected(1)) * SAMPLE_PERIOD;
     PacketCounter = (1:numel(ts_corrected))';
 
@@ -116,29 +116,30 @@ function [tabla, info_segmentos] = f_carga_BIMU(varargin)
                                     'Acc_X','Acc_Y','Acc_Z', ...
                                     'Gyr_X','Gyr_Y','Gyr_Z'});
 
-    % -------------------- Guardar archivo si se solicita --------------------
+    % -------------------- Guardar si se solicita --------------------
     if strcmpi(save_flag, 'y')
         fecha = datestr(now, 'yymmdd');
-        save(fullfile(ruta_carpeta, ['bimu_' fecha '.mat']), 'tabla');
+        nombre_archivo = fullfile(ruta_carpeta, ['bimu_' fecha '.mat']);
+        save(nombre_archivo, 'tabla');
+        fprintf('💾 Archivo guardado: %s\n', nombre_archivo);
     end
 
-    % -------------------- Crear info_segmentos compatible --------------------
+    % -------------------- info_sensor --------------------
     [~, nombre_carpeta] = fileparts(ruta_carpeta);
     carpeta_tipo = regexp(nombre_carpeta, '^(FR|FL|COG)', 'match', 'once');
-    
-    info_segmentos = struct('IMU', {}, 'ubicacion', {}, 'modelo', {}, ...
-                        'frecuencia', {}, 'segmento', {}, ...
-                        'orientacion', {});
 
-    info_segmentos(end+1) = struct( ...
+    fprintf('Sensor %s: BIMU\n', carpeta_tipo);
+    orientacion = input('👉 Introduce orientación del sensor [1 2 3]: ');
+
+    if ~isnumeric(orientacion) || numel(orientacion) ~= 3
+        error('❌ Orientación inválida. Debe ser un vector [1 2 3].');
+    end
+
+    info_sensor = struct( ...
         'IMU', 'B1', ...
         'ubicacion', carpeta_tipo, ...
-        'modelo', 'Xsens Dot', ...
-        'frecuencia', 120, ...
-        'segmento', [1 height(tabla)], ...
-        'orientacion', [1 2 3] ...
+        'modelo', 'BIMU', ...
+        'frecuencia', 3332, ...
+        'orientacion', orientacion ...
     );
-
-
-
 end

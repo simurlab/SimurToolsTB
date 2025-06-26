@@ -43,6 +43,9 @@ for i = 1:length(subdirs)
             archivos_bin = dir(fullfile(ruta, '*.bin'));
 
             if ~isempty(archivos_csv)
+                if numel(archivos_csv) > 1
+                    error('❌ Solo se permite un único archivo .csv en la carpeta: %s', nombre);
+                end
                 modelo = 'Xsens Dot';
                 frecuencia = 120;
             elseif ~isempty(archivos_bin)
@@ -78,19 +81,19 @@ for i = 1:nSensores
 
     try
         if strcmp(modelo, 'Xsens Dot')
-            [tabla, info_segmentos] = f_carga_DOT('ruta_carpeta', ruta);
+            [tabla, info_sensor] = f_carga_DOT('ruta_carpeta', ruta);
         elseif strcmp(modelo, 'Bimu')
-            [tabla, info_segmentos] = f_carga_BIMU('ruta_carpeta', ruta);
+            [tabla, info_sensor] = f_carga_BIMU('ruta_carpeta', ruta);
         else
             error('Tipo de sensor desconocido: %s', modelo);
         end
 
-        % Añadir campos comunes a cada struct en info_segmentos
-        for j = 1:numel(info_segmentos)
-            info_segmentos(j).modelo = modelo;
-            info_segmentos(j).frecuencia = frecuencia;
+        % Añadir campos comunes
+        for j = 1:numel(info_sensor)
+            info_sensor(j).modelo = modelo;
+            info_sensor(j).frecuencia = frecuencia;
             if incluirActividad
-                info_segmentos(j).actividad = actividad;
+                info_sensor(j).actividad = actividad;
             end
         end
 
@@ -98,10 +101,10 @@ for i = 1:nSensores
         ubicacionContadores.(ubicacion) = ubicacionContadores.(ubicacion) + 1;
         nombreBase = sprintf('%s_%d', ubicacion, ubicacionContadores.(ubicacion));
         tablasGuardadas.(nombreBase) = tabla;
-        tablasGuardadas.([nombreBase '_metadata']) = info_segmentos;
+        tablasGuardadas.([nombreBase '_metadata']) = info_sensor;
 
     catch e
-        error('Error al procesar sensor %d (%s):\n%s', i, ubicacion, e.message);
+        error('❌ Error al procesar sensor %d (%s):\n%s', i, ubicacion, e.message);
     end
 end
 

@@ -1,190 +1,120 @@
-function f_segmenta(varargin)
-% FSEGMENTA Segmenta señales de sensores a partir de archivo tipo letraNN.mat.
-%
-% - Busca archivo con formato [letra][NN].mat (ej. h01.mat)
-% - Para cada sensor (FR_X, FL_X, COG_X) permite segmentar Acc_Y interactivamente
-%   o con archivo externo de intervalos ('intentosPath')
-% - Crea archivos [letraNNXX].mat con señales y metadatos filtrados (si corresponde)
-% - La metadata se filtra por coincidencia exacta entre el intervalo y el campo segmento
-% - Se añade campo 'intervaloIntento' en los metadatos si hay una única coincidencia
+function f_segmenta()
+% F_SEGMENTA Interactivamente segmenta zonas estáticas e intentos por ubicación.
+% Genera archivos tipo h0101.mat, h0102.mat, etc., incluyendo la zona estática.
 
-    % -------------------- Argumentos --------------------
-    parser = inputParser;
-    addParameter(parser, 'intentosPath', '', @(x) ischar(x) || isstring(x));
-    parse(parser, varargin{:});
-    rutaIntentos = parser.Results.intentosPath;
+    datos = load('h01.mat');
+    campos = fieldnames(datos);
+    ubicaciones = unique(regexprep(campos, '_\d+(_metadata)?$', ''));
 
-    usarIntentosExternos = ~isempty(rutaIntentos);
-    listaIntentos = struct('sensor', {}, 'intento', {}, 'inicio', {}, 'fin', {});
+    % Estructuras para guardar zonas estáticas y segmentos por ubicación
+    zonasEstaticas = struct();
+    segmentosPorUbicacion = struct();
+    intentosGlobales = [];
 
-    % -------------------- Archivo base --------------------
-    archivos = dir('*.mat');
-    coincidencias = regexp({archivos.name}, '^[a-zA-Z]\d{2}\.mat$', 'match', 'once');
-    archivoBase = archivos(~cellfun('isempty', coincidencias));
+    for i = 1:numel(ubicaciones)
+        ubic = ubicaciones{i};
+        nombreTabla = sprintf('%s_1', ubic);
+        nombreMeta = sprintf('%s_1_metadata', ubic);
 
-    if isempty(archivoBase)
-        error('❌ No se encontró archivo con formato letraNN (ej: h01.mat)');
-    end
-
-    archivoBase = archivoBase(1).name;
-    nombreBase = archivoBase(1:end-4);
-    fprintf('📂 Cargando archivo base: %s\n', archivoBase);
-
-    datos = load(archivoBase);
-    nombresCampos = fieldnames(datos);
-    sensores = nombresCampos(contains(nombresCampos, {'FR_', 'FL_', 'COG_'}) & ~endsWith(nombresCampos, '_metadata'));
-
-    if isempty(sensores)
-        error('❌ No se encontraron sensores esperados en el archivo.');
-    end
-
-    segmentos = struct();
-
-    % -------------------- Intentos externos --------------------
-    if usarIntentosExternos
-        datosExternos = load(rutaIntentos);
-        if ~isfield(datosExternos, 'intentos')
-            error('❌ El archivo %s no contiene variable "intentos".', rutaIntentos);
-        end
-        listaIntentos = datosExternos.intentos;
-        fprintf('📄 Usando intervalos desde: %s\n', rutaIntentos);
-    end
-
-    % -------------------- Procesar sensores --------------------
-    for s = 1:numel(sensores)
-        sensor = sensores{s};
-        tabla = datos.(sensor);
-
-        if ~istable(tabla) || ~ismember('Acc_Y', tabla.Properties.VariableNames)
-            warning('⚠️ Sensor %s no tiene Acc_Y o no es tabla. Se omite.', sensor);
+        if ~isfield(datos, nombreTabla) || ~isfield(datos, nombreMeta)
+            warning('⚠️ Falta tabla o metadata para %s. Se omite.', ubic);
             continue;
         end
 
-        segmentos.(sensor) = {};
-        fprintf('\n=== Segmentación de %s ===\n', sensor);
+        tabla = datos.(nombreTabla);
+        metadata = datos.(nombreMeta);
 
-        if usarIntentosExternos
-            intentosSensor = listaIntentos(strcmp({listaIntentos.sensor}, sensor));
-            for i = 1:numel(intentosSensor)
-                i1 = intentosSensor(i).inicio;
-                i2 = intentosSensor(i).fin;
-                segmentos.(sensor){end+1} = tabla(i1:i2, :);
-                fprintf('%s: [%d %d], intento %d\n', sensor, i1, i2, intentosSensor(i).intento);
-            end
-        else
-            figure('Name', sensor); clf;
-            plot(tabla.Acc_Y); grid on;
-            xlabel('Muestra'); ylabel('Acc_Y');
+        % ----------- Zona estática -----------
+        figure('Name', [ubic ' - Zona Estática']); clf;
+        plot(tabla.Acc_X); hold on;
+        plot(tabla.Acc_Y); plot(tabla.Acc_Z);
+        legend({'Acc_X', 'Acc_Y', 'Acc_Z'}); grid on;
+        title(['Selecciona zona estática para ' ubic]);
 
-            numeroIntento = 1;
-            while true
-                prompt = sprintf('Intervalo [%d %d] para intento %02d o "q": ', ...
-                    1, height(tabla), numeroIntento);
-                entrada = input(prompt, 's');
-
-                if isempty(entrada)
-                    fprintf('%s: intento vacío, se omite.\n', sensor);
-                    numeroIntento = numeroIntento + 1;
+        while true
+            entrada = input('Intervalo estático [i1 i2]: ', 's');
+            partes = sscanf(entrada, '%f');
+            if numel(partes) == 2 && partes(1) < partes(2)
+                i1 = max(1, floor(partes(1)));
+                i2 = min(height(tabla), floor(partes(2)));
+                if (i2 - i1 + 1) < 50
+                    warning('❌ Mínimo 50 muestras requeridas.');
                     continue;
                 end
-                if strcmpi(entrada, 'q')
-                    break;
-                end
-
-                try
-                    entrada = regexprep(entrada, '[\[\],]', ' ');
-                    partes = str2double(strsplit(strtrim(entrada)));
-                    if numel(partes) == 2 && all(~isnan(partes)) && partes(1) < partes(2)
-                        i1 = max(1, floor(partes(1)));
-                        i2 = min(height(tabla), floor(partes(2)));
-                        segmentos.(sensor){end+1} = tabla(i1:i2, :);
-
-                        fprintf('%s: [%d %d], intento %d\n', sensor, i1, i2, numeroIntento);
-                        listaIntentos(end+1) = struct( ...
-                            'sensor', sensor, ...
-                            'intento', numeroIntento, ...
-                            'inicio', i1, ...
-                            'fin', i2);
-                    else
-                        warning('❌ Intervalo inválido.');
-                    end
-                catch
-                    warning('❌ Entrada no válida.');
-                end
-                numeroIntento = numeroIntento + 1;
+                zonasEstaticas.(ubic) = tabla(i1:i1+49, :);
+                break;
+            else
+                warning('❌ Entrada inválida. Intenta de nuevo.');
             end
         end
+
+        % ----------- Intentos -----------
+        segmentos = {};
+        intento = 1;
+        while true
+            prompt = sprintf('Intento %02d [%d-%d] (Enter=salta, q=salir): ', intento, 1, height(tabla));
+            entrada = input(prompt, 's');
+
+            if strcmpi(entrada, 'q')
+                break;
+            elseif isempty(entrada)
+                intento = intento + 1;
+                continue;
+            end
+
+            partes = sscanf(entrada, '%f');
+            if numel(partes) == 2 && partes(1) < partes(2)
+                i1 = max(1, floor(partes(1)));
+                i2 = min(height(tabla), floor(partes(2)));
+                segmento = [zonasEstaticas.(ubic); tabla(i1:i2, :)];
+                segmentos{intento} = segmento;
+
+                intentosGlobales = [intentosGlobales; struct( ...
+                    'intento', intento, ...
+                    'ubicacion', ubic, ...
+                    'inicio', i1, ...
+                    'fin', i2, ...
+                    'inicio_estatico', i1, ...
+                    'fin_estatico', i1 + 49 ...
+                )];
+
+                intento = intento + 1;
+            else
+                warning('❌ Intervalo inválido. Intenta de nuevo.');
+            end
+        end
+
+        segmentosPorUbicacion.(ubic) = segmentos;
     end
 
-    % -------------------- Guardar fragmentos --------------------
-    if isempty(listaIntentos)
-        fprintf('🛑 No hay intentos definidos.\n');
-        return;
-    end
-
-    intentosUnicos = unique([listaIntentos.intento]);
+    % ----------- Guardado agrupado por intento global -----------
+    intentosUnicos = unique([intentosGlobales.intento]);
+    nombreBase = 'h01';
 
     for i = 1:numel(intentosUnicos)
         idIntento = intentosUnicos(i);
         fragmento = struct();
 
-        for s = 1:numel(sensores)
-            sensor = sensores{s};
-            listaSegmentos = segmentos.(sensor);
-
-            indices = find(strcmp({listaIntentos.sensor}, sensor) & [listaIntentos.intento] == idIntento);
-            if numel(indices) == 1
-                fragmento.(sensor) = listaSegmentos{end};
-                intervalo = [listaIntentos(indices).inicio, listaIntentos(indices).fin];
-            elseif isempty(indices)
+        for j = 1:numel(ubicaciones)
+            ubic = ubicaciones{j};
+            segmentos = segmentosPorUbicacion.(ubic);
+            if idIntento > numel(segmentos)
                 continue;
-            else
-                error('❌ Múltiples entradas para intento %d del sensor %s.', idIntento, sensor);
             end
 
-            campoMeta = [sensor '_metadata'];
-            if isfield(datos, campoMeta) && isfield(fragmento, sensor)
-                metadataTotal = datos.(campoMeta);
+            tablaIntento = segmentos{idIntento};
+            nombreCampo = sprintf('%s_1', ubic);
+            fragmento.(nombreCampo) = tablaIntento;
 
-                coincidencias = [];
-                for m = 1:numel(metadataTotal)
-                    seg = metadataTotal(m).segmento;
-                    if intervalo(1) >= seg(1) && intervalo(2) <= seg(2)
-                        coincidencias(end+1) = m;
-                    end
-                end
-
-                if numel(coincidencias) == 1
-                    metaFiltrada = metadataTotal(coincidencias);
-                    if isfield(metaFiltrada, 'carpeta')
-                        metaFiltrada = rmfield(metaFiltrada, 'carpeta');
-                    end
-                    metaFiltrada.intervaloIntento = intervalo;
-                    fragmento.(campoMeta) = metaFiltrada;
-                elseif isempty(coincidencias)
-                    warning('⚠️ Sin coincidencia en metadata para %s [%d %d].', sensor, intervalo);
-                else
-                    error('❌ Intervalo [%d %d] en %s coincide con múltiples segmentos.', intervalo, sensor);
-                end
-            end
-        end
-
-        if isempty(fieldnames(fragmento))
-            continue;
-        end
-
-        if isfield(datos, 'metadata')
-            fragmento.metadata = datos.metadata;
+            metaCampo = sprintf('%s_1_metadata', ubic);
+            meta = datos.(metaCampo);
+            meta.intervaloIntento = [intentosGlobales([intentosGlobales.intento] == idIntento & strcmp({intentosGlobales.ubicacion}, ubic)).inicio, ...
+                                     intentosGlobales([intentosGlobales.intento] == idIntento & strcmp({intentosGlobales.ubicacion}, ubic)).fin];
+            fragmento.(metaCampo) = meta;
         end
 
         nombreArchivo = sprintf('%s%02d.mat', nombreBase, idIntento);
         save(nombreArchivo, '-struct', 'fragmento');
-        fprintf('📅 Guardado: %s\n', nombreArchivo);
-    end
-
-    % -------------------- Guardar archivo de intentos --------------------
-    if ~usarIntentosExternos
-        save('intentos.mat', 'listaIntentos');
-        fprintf('📍 Guardado intentos.mat\n');
+        fprintf('📁 Guardado: %s\n', nombreArchivo);
     end
 end
