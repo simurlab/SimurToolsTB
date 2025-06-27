@@ -2,6 +2,7 @@ function f_segmenta(nombreResumen)
 % F_SEGMENTA Interactivamente (o automáticamente) segmenta zonas estáticas e intentos por ubicación.
 % Si se proporciona un archivo .mat con la tabla 'resumenTabla', se usa como entrada automática.
 
+<<<<<<< HEAD
     % Obtener carpeta actual y su nombre
     carpetaActual = pwd;
     [carpetaPadre, nombreActual] = fileparts(carpetaActual);
@@ -25,6 +26,28 @@ function f_segmenta(nombreResumen)
     end
 
     datos = load(nombreArchivo);
+=======
+% -------------------- Construir nombre archivo salida --------------------
+rutaActual = pwd;
+rutasPartes = strsplit(rutaActual, filesep);
+
+if numel(rutasPartes) < 3
+    error('Ruta demasiado corta para determinar nombre de archivo.');
+end
+
+letraMatch = regexp(rutasPartes{end-2}, '^[a-zA-Z]', 'match');
+numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
+
+if isempty(letraMatch) || isempty(numMatch)
+    error('❌ Algo salió mal en la carga del archivo...');
+end
+
+nombreArchivo = [lower(letraMatch{1}) numMatch{1} '.mat'];
+
+%datos = load('h01.mat');
+datos = load(nombreArchivo);
+
+>>>>>>> 3a414cd8eaf1cbbbef88fddd757dd679a031a1c5
     campos = fieldnames(datos);
     ubicaciones = unique(regexprep(campos, '_\d+(_metadata)?$', ''));
 
@@ -146,8 +169,15 @@ function f_segmenta(nombreResumen)
 
     % ---------- Guardado por intento ----------
     intentosUnicos = unique([intentosGlobales.intento]);
+<<<<<<< HEAD
     nombreBase = sprintf('%s%s', letra, numero);
 
+=======
+    %nombreBase = 'h01';
+    nombreArchivo2 = [lower(letraMatch{1}) numMatch{1}];
+    nombreBase=nombreArchivo2;
+    
+>>>>>>> 3a414cd8eaf1cbbbef88fddd757dd679a031a1c5
     for i = 1:numel(intentosUnicos)
         idIntento = intentosUnicos(i);
         fragmento = struct();

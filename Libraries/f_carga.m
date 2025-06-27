@@ -116,7 +116,6 @@ if numel(rutasPartes) < 3
     error('Ruta demasiado corta para determinar nombre de archivo.');
 end
 
-letraMatch = regexp(rutasPartes{end-1}, '^[a-zA-Z]', 'match');
 numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
 
 if isempty(letraMatch) || isempty(numMatch)
