@@ -2,28 +2,48 @@ function f_segmenta(nombreResumen)
 % F_SEGMENTA Interactivamente (o automáticamente) segmenta zonas estáticas e intentos por ubicación.
 % Si se proporciona un archivo .mat con la tabla 'resumenTabla', se usa como entrada automática.
 
-    % Obtener carpeta actual y su nombre
-    carpetaActual = pwd;
-    [carpetaPadre, nombreActual] = fileparts(carpetaActual);
-    [~, nombrePadre] = fileparts(carpetaPadre);
+    % % Obtener carpeta actual y su nombre
+    % carpetaActual = pwd;
+    % [carpetaPadre, nombreActual] = fileparts(carpetaActual);
+    % [~, nombrePadre] = fileparts(carpetaPadre);
+    % 
+    % % Extraer letra y número para construir nombre base
+    % letra = regexp(nombrePadre, '[a-zA-Z]', 'match', 'once');
+    % if isempty(letra)
+    %     error('❌ No se encontró una letra en el nombre de la carpeta padre.');
+    % end
+    % numero = regexp(nombreActual, '\d+', 'match', 'once');
+    % if isempty(numero)
+    %     error('❌ No se encontró número en el nombre de la carpeta actual.');
+    % end
+    % numero = sprintf('%02d', str2double(numero));
+    % nombreArchivo = sprintf('%s%s.mat', letra, numero);
+    % fprintf('📂 Cargando archivo: %s\n', nombreArchivo);
+    % 
+    % if ~isfile(nombreArchivo)
+    %     error('❌ No se encontró el archivo "%s".', nombreArchivo);
+    % end
 
-    % Extraer letra y número para construir nombre base
-    letra = regexp(nombrePadre, '[a-zA-Z]', 'match', 'once');
-    if isempty(letra)
-        error('❌ No se encontró una letra en el nombre de la carpeta padre.');
-    end
-    numero = regexp(nombreActual, '\d+', 'match', 'once');
-    if isempty(numero)
-        error('❌ No se encontró número en el nombre de la carpeta actual.');
-    end
-    numero = sprintf('%02d', str2double(numero));
-    nombreArchivo = sprintf('%s%s.mat', letra, numero);
-    fprintf('📂 Cargando archivo: %s\n', nombreArchivo);
+    rutaActual = pwd;
+rutasPartes = strsplit(rutaActual, filesep);
 
-    if ~isfile(nombreArchivo)
-        error('❌ No se encontró el archivo "%s".', nombreArchivo);
-    end
+if numel(rutasPartes) < 3
+    error('Ruta demasiado corta para determinar nombre de archivo.');
+end
 
+letraMatch = regexp(rutasPartes{end-2}, '^[a-zA-Z]', 'match');
+numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
+letra=letraMatch{1};
+numero=numMatch{1};
+
+if isempty(letraMatch) || isempty(numMatch)
+    error('❌ Algo salió mal en la carga del archivo...');
+end
+
+nombreArchivo = [lower(letraMatch{1}) numMatch{1} '.mat'];
+
+%datos = load('h01.mat');
+datos = load(nombreArchivo);
     datos = load(nombreArchivo);
     campos = fieldnames(datos);
     ubicaciones = unique(regexprep(campos, '_\d+(_metadata)?$', ''));
@@ -61,8 +81,8 @@ function f_segmenta(nombreResumen)
                 warning('⚠️ No se encontró intervalo estático para %s en resumen. Se omite.', ubic);
                 continue;
             end
-            i1 = filaEst.Intervalo(1);
-            zonasEstaticas.(ubic) = tabla(i1:i1+49, :);
+            i1e = filaEst.Intervalo(1);
+            zonasEstaticas.(ubic) = tabla(i1e:i1e+49, :);
         else
             figure('Name', [ubic ' - Zona Estática']); clf;
             plot(tabla.Acc_X); hold on;
@@ -74,12 +94,12 @@ function f_segmenta(nombreResumen)
                 entrada = input('Intervalo estático [i1 i2]: ', 's');
                 partes = sscanf(entrada, '%f');
                 if numel(partes) == 2 && partes(1) < partes(2)
-                    i1 = max(1, floor(partes(1)));
-                    if (partes(2) - i1 + 1) < 50
+                    i1e = max(1, floor(partes(1)));
+                    if (partes(2) - i1e + 1) < 50
                         warning('❌ Mínimo 50 muestras requeridas.');
                         continue;
                     end
-                    zonasEstaticas.(ubic) = tabla(i1:i1+49, :);
+                    zonasEstaticas.(ubic) = tabla(i1e:i1e+49, :);
                     break;
                 else
                     warning('❌ Entrada inválida. Intenta de nuevo.');
@@ -103,8 +123,8 @@ function f_segmenta(nombreResumen)
                     'ubicacion', ubic, ...
                     'inicio', i1, ...
                     'fin', i2, ...
-                    'inicio_estatico', i1, ...
-                    'fin_estatico', i1 + 49 ...
+                    'inicio_estatico', i1e, ...
+                    'fin_estatico', i1e + 49 ...
                 )];
             end
         else
@@ -131,8 +151,8 @@ function f_segmenta(nombreResumen)
                         'ubicacion', ubic, ...
                         'inicio', i1, ...
                         'fin', i2, ...
-                        'inicio_estatico', i1, ...
-                        'fin_estatico', i1 + 49 ...
+                        'inicio_estatico', i1e, ...
+                        'fin_estatico', i1e + 49 ...
                     )];
                     intento = intento + 1;
                 else
