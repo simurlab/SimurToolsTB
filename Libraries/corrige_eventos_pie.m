@@ -4,14 +4,16 @@
 % y sustitucion por "valores razonables".
 %
 
-function [mat_eventos]=corrige_eventos_pie(mat_eventos, freq)
+function [mat_eventos, ccalidad]=corrige_eventos_pie(mat_eventos, freq)
 
 
 % NaNs en la detección de eventos:
 %
 numNaN = sum(isnan(mat_eventos), 'all');
 vnumNaN=sum(isnan(mat_eventos)');
-vnumNaN=[size(mat_eventos,2) vnumNaN];
+
+% El último numero es el numero de detecciones
+vnumNaN=[vnumNaN size(mat_eventos,2) ];
 
 % % Sustitucion del evento MP por 1/3-2/3:
 % %
@@ -51,6 +53,6 @@ ccalidad=vnumNaN;
 %fprintf('\n');
 
 %a = 42;
-assignin('base', 'cal_eventos', ccalidad);  % Guarda ccalidad en el workspace base
+%assignin('base', 'cal_eventos', ccalidad);  % Guarda ccalidad en el workspace base
 
 end

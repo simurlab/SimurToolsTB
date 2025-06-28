@@ -4,7 +4,7 @@
 % y sustitucion por "valores razonables".
 %
 
-function [gyroml, gyroap]=corrige_senyales_pie(gyroml, gyroap)
+function [gyroml, gyroap, ccalidad]=corrige_senyales_pie(gyroml, gyroap)
 % ***********************************************************************
 % ********** DETECCIÓN Y ELIMINACIÓN DE VALORES NAN DE gyroml ***********
 % En el vector informacion_NaN almacenamos:
@@ -78,7 +78,7 @@ ccalidad(2)=cantidad_NaN_gyroant;
 % fprintf('\n NaNs eliminados del giroML y giroAP : '); 
 % fprintf('%.0f \t  %.0f  \n', ccalidad');
 
-assignin('base', 'cal_senyales', ccalidad);  % Guarda ccalidad en el workspace base
+%assignin('base', 'cal_senyales', ccalidad);  % Guarda ccalidad en el workspace base
 
 
 end
