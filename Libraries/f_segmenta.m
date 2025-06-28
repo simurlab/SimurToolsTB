@@ -223,7 +223,9 @@ datos = load(nombreArchivo);
         end
 
         resumenTabla = table(Tipo, Numero, Ubicacion, Intervalo);
-        save('intentos.mat', 'resumenTabla');
-        fprintf('📄 Resumen tipo tabla guardado como "intentos.mat"\n');
+        nombrearchivo=['intentos' letra numero '.mat'];
+        save(nombrearchivo, 'resumenTabla');
+        %save('intentos.mat', 'resumenTabla');
+        fprintf('📄 Resumen tipo tabla guardado como %s \n', nombrearchivo);
     end
 end
