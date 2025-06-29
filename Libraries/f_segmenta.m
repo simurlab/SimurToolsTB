@@ -33,7 +33,7 @@ end
 
 letraMatch = regexp(rutasPartes{end-2}, '^[a-zA-Z]', 'match');
 numMatch = regexp(rutasPartes{end}, '^\d{2}', 'match');
-letra=letraMatch{1};
+letra=lower(letraMatch{1});
 numero=numMatch{1};
 
 if isempty(letraMatch) || isempty(numMatch)
@@ -166,7 +166,7 @@ datos = load(nombreArchivo);
 
     % ---------- Guardado por intento ----------
     intentosUnicos = unique([intentosGlobales.intento]);
-    nombreBase = sprintf('%s%s', letra, numero);
+    nombreBase = sprintf('%s%s', lower(letra), numero);
 
     for i = 1:numel(intentosUnicos)
         idIntento = intentosUnicos(i);
@@ -223,7 +223,7 @@ datos = load(nombreArchivo);
         end
 
         resumenTabla = table(Tipo, Numero, Ubicacion, Intervalo);
-        nombrearchivo=['intentos' letra numero '.mat'];
+        nombrearchivo=['intentos' lower(letra) numero '.mat'];
         save(nombrearchivo, 'resumenTabla');
         %save('intentos.mat', 'resumenTabla');
         fprintf('📄 Resumen tipo tabla guardado como %s \n', nombrearchivo);
