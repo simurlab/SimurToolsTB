@@ -46,13 +46,9 @@ for i = 1:length(subdirs)
                 if numel(archivos_csv) > 1
                     error('❌ Solo se permite un único archivo .csv en la carpeta: %s', nombre);
                 end
-                if contains(archivos_csv.name, "himmer")
-                    modelo = 'Shimmer';
-                    frecuencia = 1020;
-                else
-                    modelo = 'Xsens Dot';
-                    frecuencia = 120;
-                end
+                if archivos_csv.name
+                modelo = 'Xsens Dot';
+                frecuencia = 120;
             elseif ~isempty(archivos_bin)
                 modelo = 'Bimu';
                 frecuencia = 3332;
@@ -84,14 +80,11 @@ for i = 1:nSensores
     ubicacion = Ubicaciones{i};
     ruta = Rutas{i};
 
-%% cargar sensor
     try
         if strcmp(modelo, 'Xsens Dot')
             [tabla, info_sensor] = f_carga_DOT('ruta_carpeta', ruta);
         elseif strcmp(modelo, 'Bimu')
             [tabla, info_sensor] = f_carga_BIMU('ruta_carpeta', ruta);
-        elseif strcmp(modelo, 'Shimmer')
-            [tabla, info_sensor] = f_carga_Shimmer('ruta_carpeta', ruta);
         else
             error('Tipo de sensor desconocido: %s', modelo);
         end

@@ -1,4 +1,4 @@
-function [IMUout, Calidad] = f_cargashimmer(filename, dataLines)
+function [IMUout, freq, Calidad] = f_cargashimmer(filename, dataLines)
 %f_cargashimmer Import data from a std shimmer csv file
 %  IMU = f_cargashimmer(filename, dataLines)
 %  reads data for the specified row interval(s) of text file FILENAME.
