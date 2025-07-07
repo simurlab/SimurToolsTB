@@ -1,23 +1,31 @@
 %% 0. Semilla fija para reproducibilidad
 rng(42);
+ 
+% %% 1. Generar la señal escalonada
+% t = 0:0.1:40; % Tiempo
+% signal = zeros(size(t));
+% 
+% step_times = [0, 12, 22, 31];
+% step_values = [82, 80, 77, 75];
+% 
+% for i = 1:length(step_times)
+%     signal(t >= step_times(i)) = step_values(i);
+% end
+% 
+% %% 2. Añadir ruido moderado
+% mu = 0; 
+% sigma = 1; % Ruido moderado
+% random_number = normrnd(mu, sigma, 1, length(signal));
+% random_integer = round(random_number);
+% signal_noisy = signal + random_integer;
 
-%% 1. Generar la señal escalonada
-t = 0:0.1:40; % Tiempo
-signal = zeros(size(t));
 
-step_times = [0, 12, 22, 31];
-step_values = [82, 80, 77, 75];
 
-for i = 1:length(step_times)
-    signal(t >= step_times(i)) = step_values(i);
-end
+lostcs=cellfun(@length, cachoOrigen);
 
-%% 2. Añadir ruido moderado
-mu = 0; 
-sigma = 1; % Ruido moderado
-random_number = normrnd(mu, sigma, 1, length(signal));
-random_integer = round(random_number);
-signal_noisy = signal + random_integer;
+signal_noisy= lostcs;
+
+t=1:length(lostcs);
 
 %% 3. Suavizar la señal para reducir ruido pero mantener transiciones
 window_smooth = 5;
@@ -60,12 +68,12 @@ for k = 2:max_k
     silh_avg(k) = mean(silh_vals);
 end
 
-figure;
-plot(2:max_k, silh_avg(2:end), '-o');
-xlabel('Número de clusters (k)');
-ylabel('Silhouette promedio');
-title('Selección automática de k con índice de silueta');
-grid on;
+% figure;
+% plot(2:max_k, silh_avg(2:end), '-o');
+% xlabel('Número de clusters (k)');
+% ylabel('Silhouette promedio');
+% title('Selección automática de k con índice de silueta');
+% grid on;
 
 % Elegir el k que maximiza el índice de silueta
 [~, k_opt] = max(silh_avg);
@@ -113,32 +121,32 @@ title(sprintf('Segmentación por clusters (k = %d) sobre señal original', k_opt
 hold off;
 
 
-%% 10. Visualizar datos en espacio latente con clusters
-dims = size(features, 1);
-
-figure; hold on; grid on;
-colors = lines(k_opt);
-
-if dims >= 3
-    % 3D plot con primeras 3 dimensiones latentes
-    for c = 1:k_opt
-        scatter3(features(1, idx == c), features(2, idx == c), features(3, idx == c), ...
-            50, colors(c,:), 'filled');
-    end
-    xlabel('Latente 1');
-    ylabel('Latente 2');
-    zlabel('Latente 3');
-    title('Datos en espacio latente (3D) con clusters');
-else
-    % 2D plot
-    for c = 1:k_opt
-        scatter(features(1, idx == c), features(2, idx == c), ...
-            50, colors(c,:), 'filled');
-    end
-    xlabel('Latente 1');
-    ylabel('Latente 2');
-    title('Datos en espacio latente (2D) con clusters');
-end
-
-legend(arrayfun(@(x) sprintf('Cluster %d', x), 1:k_opt, 'UniformOutput', false));
-hold off;
+% %% 10. Visualizar datos en espacio latente con clusters
+% dims = size(features, 1);
+% 
+% figure; hold on; grid on;
+% colors = lines(k_opt);
+% 
+% if dims >= 3
+%     % 3D plot con primeras 3 dimensiones latentes
+%     for c = 1:k_opt
+%         scatter3(features(1, idx == c), features(2, idx == c), features(3, idx == c), ...
+%             50, colors(c,:), 'filled');
+%     end
+%     xlabel('Latente 1');
+%     ylabel('Latente 2');
+%     zlabel('Latente 3');
+%     title('Datos en espacio latente (3D) con clusters');
+% else
+%     % 2D plot
+%     for c = 1:k_opt
+%         scatter(features(1, idx == c), features(2, idx == c), ...
+%             50, colors(c,:), 'filled');
+%     end
+%     xlabel('Latente 1');
+%     ylabel('Latente 2');
+%     title('Datos en espacio latente (2D) con clusters');
+% end
+% 
+% legend(arrayfun(@(x) sprintf('Cluster %d', x), 1:k_opt, 'UniformOutput', false));
+% hold off;
