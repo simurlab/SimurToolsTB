@@ -193,6 +193,7 @@ a_cal=Anatomical2ISB(acc_cal);
 g_cal=Anatomical2ISB(gyr_cal);
 
 
+quat_cal=[];
 % % Intento de reorientar los cuaterniones con la calibracion.
 % Ahora sirve solo para los DOTS:
 if ismember('Quat_Z', IMU.Properties.VariableNames)
