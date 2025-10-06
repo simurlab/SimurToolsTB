@@ -1,106 +1,139 @@
-function tiempos = eventos_salto_vertical(aceleracion_vert, freq)
-%EVENTOS_SALTO_VERTICAL Detecta eventos principales de un salto a partir de aceleraciones verticales.
+function [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr, th, freq, gyr_pron)
+% EVENTOS_PIE_CARRERA Detecta los eventos IC y FC a partir de la velocidad angular en el eje mediolateral
+% durante la carrera.
 %
-%   tiempos = eventos_salto_vertical(aceleracion_vert, freq)
+%   [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr, th, freq, gyr_pron)
 %
-%   Esta función detecta automáticamente los eventos principales durante
-%   un salto a partir de la aceleración vertical del centro de gravedad (COG).
-%   Detecta 4 eventos:
-%       - Inicio de salto (mínimo profundo).
-%       - Precontacto (paso por g).
-%       - Fin de salto (máximo fuerte).
-%       - Preparación para el contacto (mínimo cercano al aterrizaje).
+%   Esta función toma como base la velocidad angular del eje mediolateral y realiza un proceso
+%   de filtrado (usando filtro_paso_bajo_f0). A partir de la señal resultante identifica los
+%   eventos de contacto inicial y final del pie (IC y FC), así como otros eventos relevantes del ciclo.
 %
 % INPUT:
-%   aceleracion_vert : vector con la aceleración vertical (puede contener varios saltos).
-%                      Debe incluir saltos completos (no medios saltos).
-%   freq             : frecuencia de muestreo en Hz (opcional, por defecto 100).
+%   gyr        : vector con la velocidad angular en el eje mediolateral (°/s).
+%   th         : velocidad mínima para detectar eventos. (Recomendado: 150)
+%   freq       : frecuencia de muestreo (Hz).
+%   gyr_pron   : velocidad angular en el eje frontal (°/s) [opcional].
+%                Si no se proporciona, MVP y MP se devolverán vacíos.
 %
 % OUTPUT:
-%   tiempos : matriz Nx5 con:
-%       tiempos(:,1) = aceleración vertical original
-%       tiempos(:,2) = inicio de salto (mínimo profundo)
-%       tiempos(:,3) = precontacto (paso por g)
-%       tiempos(:,4) = fin de salto (máximo fuerte)
-%       tiempos(:,5) = preparación para el contacto (mínimo cercano)
+%   ic     : índices de contacto inicial (Initial Contact / Foot-Strike).
+%   fc     : índices de contacto final (Final Contact / Toe-Off).
+%   max_s  : índices de máximo swing (pie hacia adelante).
+%   min_s  : índices de mínimo swing (pie hacia atrás).
+%   mvp    : índices de máxima velocidad de pronación.
+%   mp     : índices de máxima pronación.
 %
-% EJEMPLO:
-%   t = 0:0.01:2;
-%   acc = [zeros(1,30) -12*ones(1,20) 15*ones(1,20) -9.8*ones(1,20) zeros(1,90)];
-%   tiempos = eventos_salto_vertical(acc, 100);
-%   plot(acc); hold on;
-%   plot(find(tiempos(:,2)), acc(tiempos(:,2)==1), 'ro'); % inicio
-%   plot(find(tiempos(:,4)), acc(tiempos(:,4)==1), 'go'); % fin
+% EXAMPLE:
+%   load('pie_data.mat')
+%   [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr_ml, 150, 200, gyr_fr);
+%   plot(gyr_ml); hold on;
+%   plot(ic, gyr_ml(ic), 'g*');
+%   plot(fc, gyr_ml(fc), 'r*');
+%   legend('Velocidad angular','IC','FC')
 %
-%
-% Author:   Alberto Castañón
-% History:  24.01.2007   Diego - adaptación a siloptoolbox
-%           18.12.2007   Diego - adaptación v0.3
-%           29.09.2025   normalizada y modernizada
-%
+% HISTORY:
+%   Original:  Diego Álvarez
+%   
 
-    if nargin < 2
-        freq = 100;
+    % -------------------- FILTRADO DE SEÑALES --------------------
+    orden = 4 + floor(freq / 100);       % orden mínimo 3; a mayor fm, mayor orden
+    corte = 6 / freq;                    % frecuencia de corte normalizada
+
+    gyr = filtro_paso_bajo_f0(gyr, orden, corte);
+    if nargin == 4
+        gyr_pron = filtro_paso_bajo_f0(gyr_pron, orden, corte);
+    else
+        gyr_pron = [];
     end
 
-    % --- Detectar mínimos iniciales ---
-    minimos = buscaMaximosTh(-aceleracion_vert, 1.5);
-    ind_min = find(minimos == 1);
-    num = numel(ind_min);
+    tam = length(gyr);
 
-    % Eliminar mínimos muy cercanos (<1 s)
-    inicio = ind_min(1);
-    for i = 2:num
-        if ind_min(i) - inicio <= freq
-            minimos(ind_min(i)) = 0;
-        else
-            inicio = ind_min(i);
+    % -------------------- DETECCIÓN DE CRUCES Y EXTREMOS --------------------
+    datos2 = gyr(2:tam) - gyr(1:tam-1);
+    datos2 = datos2 >= 0;
+    datos2 = datos2(1:tam-2) - datos2(2:tam-1);
+
+    maximos = find(datos2 == 1) + 1;
+    minimos = find(datos2 == -1) + 1;
+    minimos = minimos(gyr(minimos) < 0);
+
+    max_paso = maximos(1);
+
+    ic = [];
+    fc = [];
+    max_s = [];
+    min_s = [];
+    mvp = [];
+    mp  = [];
+
+    pasos_cero_maxs = find(diff(gyr > 0) == -1);
+    pasos_cero_mins = find(diff(gyr > 0) == +1);
+
+    % -------------------- SI EXISTE GIRO DE PRONACIÓN --------------------
+    if nargin == 4 && ~isempty(gyr_pron)
+        datos3 = gyr_pron(2:tam) - gyr_pron(1:tam-1);
+        datos3 = datos3 >= 0;
+        datos3 = datos3(1:tam-2) - datos3(2:tam-1);
+
+        maximos_pron = find(datos3 == 1) + 1;
+
+        pasos_cero_pron = find(diff(gyr_pron < 0) == 1);
+        for i = 1:length(pasos_cero_pron)
+            if abs(gyr_pron(pasos_cero_pron(i))) > abs(gyr_pron(pasos_cero_pron(i)+1))
+                pasos_cero_pron(i) = pasos_cero_pron(i) + 1;
+            end
+        end
+    else
+        maximos_pron = [];
+        pasos_cero_pron = [];
+    end
+
+    % -------------------- DETECCIÓN DE EVENTOS --------------------
+    for i = 2:length(maximos)
+        if gyr(maximos(i)) >= th
+            mins_paso = minimos(minimos > max_paso(end) & minimos < maximos(i));
+
+            if length(mins_paso) >= 2
+                max_paso = [max_paso, maximos(i)];
+
+                % Contactos iniciales y finales
+                [~, ifc] = min(gyr(mins_paso(2:end)));
+                fc = [fc, mins_paso(ifc + 1)];
+                ic = [ic, mins_paso(1)];
+
+                % Máximo swing antes del siguiente paso
+                maxs = pasos_cero_maxs(pasos_cero_maxs > max_paso(end));
+                if ~isempty(maxs)
+                    max_s = [max_s, maxs(1)];
+                else
+                    max_s = [max_s, NaN];
+                end
+
+                % Mínimo swing entre FC y siguiente máximo
+                mins = pasos_cero_mins(pasos_cero_mins > fc(end) & pasos_cero_mins < max_paso(end));
+                if ~isempty(mins)
+                    min_s = [min_s, mins(end)];
+                else
+                    min_s = [min_s, NaN];
+                end
+
+                % Eventos de pronación
+                if nargin == 4 && ~isempty(maximos_pron)
+                    mvp_local = maximos_pron(maximos_pron > ic(end) & maximos_pron < fc(end));
+                    if ~isempty(mvp_local)
+                        mvp = [mvp, mvp_local(1)];
+                        mp_local = pasos_cero_pron(pasos_cero_pron > mvp(end) & pasos_cero_pron < fc(end));
+                        if ~isempty(mp_local)
+                            mp = [mp, mp_local(1)];
+                        else
+                            mp = [mp, NaN];
+                        end
+                    else
+                        mvp = [mvp, NaN];
+                        mp = [mp, NaN];
+                    end
+                end
+            end
         end
     end
-    ind_min = find(minimos == 1);
-    num_saltos = numel(ind_min);
-
-    % --- Detectar máximos (>20) tras cada mínimo ---
-    maximos = buscaMaximosTh(aceleracion_vert, 20);
-    ind_max = find(maximos);
-
-    ind_max2 = [];
-    j = 1;
-    for i = 1:numel(ind_max)
-        if ind_max(i) > ind_min(j)
-            ind_max2(j) = ind_max(i); %#ok<AGROW>
-            j = j + 1;
-        end
-        if j > num_saltos
-            break;
-        end
-    end
-    ind_max = ind_max2;
-
-    % --- Detectar mínimos cercanos al máximo (<9.81) ---
-    ind_min_cerc = [];
-    for i = 1:num_saltos
-        datos_tramo = -aceleracion_vert(ind_min(i)+1 : ind_max(i)+1);
-        min_loc = buscaMaximosTh(datos_tramo, -9.81);
-        indices = find(min_loc == 1);
-        ind_min_cerc(i) = indices(end) + ind_min(i); %#ok<AGROW>
-    end
-
-    % --- Detectar paso por g (9.81) ---
-    ind_paso_g = [];
-    for i = 1:num_saltos
-        datos_tramo = -abs(aceleracion_vert(ind_min_cerc(i)+1 : ind_max(i)+1) - 9.81);
-        paso_g = buscaMaximos(datos_tramo);
-        indices = find(paso_g == 1);
-        ind_paso_g(i) = indices(1) + ind_min_cerc(i); %#ok<AGROW>
-    end
-
-    % --- Construir matriz de salida ---
-    n = length(aceleracion_vert);
-    tiempos = zeros(n, 5);
-    tiempos(:,1) = aceleracion_vert;
-    tiempos(ind_min,2) = 1;
-    tiempos(ind_paso_g,3) = 1;
-    tiempos(ind_max,4) = 1;
-    tiempos(ind_min_cerc,5) = 1;
 end

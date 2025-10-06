@@ -1,7 +1,7 @@
-function p = integracion_acumulada_cav_simpson(v)
-% CUM_CAM_SIMP Integral numérica acumulada mediante la regla de Cavalieri-Simpson.
+function p = int_acumulada_cam_simp(v)
+% INT_ACUMULADA_CAV_SIMPSON Integral numérica acumulada mediante la regla de Cavalieri-Simpson.
 %
-%   p = integracion_acumulada_cav_simpson(v)
+%   p = int_acumulada_cam_simp(v)
 %
 %   Esta función extiende la idea de cumsum y cumtrapz para realizar la 
 %   integral acumulada de una señal usando la aproximación de 
@@ -17,17 +17,22 @@ function p = integracion_acumulada_cav_simpson(v)
 %
 % EXAMPLE:
 %   x = 0:0.1:10;
-%   v = sin(x);             % señal a integrar
-%   p = integracion_acumulada_cav_simpson(v);    % integral aproximada
+%   v = sin(x);             
+%   p = int_acumulada_cam_simp(v);
 %   plot(x, v, 'b', x, p(1:end-1), 'r')
 %   legend('Señal original','Integral aproximada')
 %
-
+% See also: cumsum, cumtrapz
 %
 % Author:   Diego
 % History:  xx.yy.zz    creación del archivo
 %           29.09.2025  normalizada y modernizada
 %
+
+    % Asegurar vector columna
+    if isrow(v)
+        v = v';
+    end
 
     % Extender señal con ceros para bordes
     v = [0;0;v;0;0];

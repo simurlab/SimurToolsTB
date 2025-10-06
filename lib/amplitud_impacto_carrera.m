@@ -1,4 +1,4 @@
-function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertical)
+function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertical, plot_graph)
 % AMPLITUD_IMPACTO_CARRERA Calcula la aceleración vertical (impacto) durante foot-strike.
 %
 %   [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertical)
@@ -22,6 +22,11 @@ function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertic
 %           29.09.25    normalizada y modernizada
 %
 
+    % ------------------ Valores por defecto ------------------
+    if nargin < 3
+        plot_graph = false;
+    end
+
     % Convertimos IC de celda a matriz para acceder a los valores
     IC = cell2mat(IC);
 
@@ -39,10 +44,12 @@ function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertic
     impact_acc_moda = mode(impact_acc);
 
     % Representación gráfica de la aceleración de impacto en cada foot-strike
-    figure
-    plot(impact_acc, 'r*')  % Se usa '*' para marcar cada punto
-    title('Impact Gs Amplitude')
-    xlabel('Eventos de foot-strike')
-    ylabel('Aceleración de impacto (Gs)')
+    if plot_graph
+        figure
+        plot(impact_acc, 'r*')  % Se usa '*' para marcar cada punto
+        title('Impact Gs Amplitude')
+        xlabel('Eventos de foot-strike')
+        ylabel('Aceleración de impacto (Gs)')
+    end
 
 end

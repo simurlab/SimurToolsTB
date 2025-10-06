@@ -1,4 +1,4 @@
-function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml)
+function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml, plot_graph)
 %RMS_ACELERACION_IMPACTO_CARRERA Calcula la RMS de la aceleración de impacto durante la carrera.
 %
 %   [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml)
@@ -33,6 +33,11 @@ function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_imp
 % History:  xx.yy.zz    versión inicial
 %           29.09.2025  normalizada y modernizada
 
+    % ------------------ Valores por defecto ------------------
+    if nargin < 5
+        plot_graph = false;
+    end
+
     % Asegurar que son vectores columna
     ic = ic(:);
     fc = fc(:);
@@ -60,10 +65,12 @@ function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_imp
     rms_acc_impacto_moda = mode(rms_acc_impacto_segmentos);
 
     % Representación gráfica
-    figure
-    plot(rms_acc_impacto_segmentos, 'b*')
-    title('RMS de aceleración de impacto (carrera)')
-    xlabel('Eventos de foot-strike')
-    ylabel('RMS [Gs]')
-    grid on
+    if plot_graph
+        figure
+        plot(rms_acc_impacto_segmentos, 'b*')
+        title('RMS de aceleración de impacto (carrera)')
+        xlabel('Eventos de foot-strike')
+        ylabel('RMS [Gs]')
+        grid on
+    end
 end

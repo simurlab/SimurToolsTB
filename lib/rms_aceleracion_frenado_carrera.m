@@ -1,4 +1,4 @@
-function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = rms_aceleracion_frenado_carrera(ic, fc, acc_ap, gyr_ml)
+function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = rms_aceleracion_frenado_carrera(ic, fc, acc_ap, gyr_ml, plot_graph)
 %RMS_ACELERACION_FRENADO_CARRERA Calcula la RMS de la aceleración de frenado durante la carrera.
 %
 %   [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = rms_aceleracion_frenado_carrera(ic, fc, acc_ap, gyr_ml)
@@ -33,6 +33,11 @@ function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = rms_aceleracion_fre
 % History:  xx.yy.zz    versión inicial
 %           29.09.2025  normalizada y modernizada
 
+    % ------------------ Valores por defecto ------------------
+    if nargin < 5
+        plot_graph = false;
+    end
+
     % Asegurar que son vectores columna
     ic = ic(:);
     fc = fc(:);
@@ -60,10 +65,12 @@ function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = rms_aceleracion_fre
     rms_acc_frenado_moda = mode(rms_acc_frenado_segmentos);
 
     % Representación gráfica
-    figure
-    plot(rms_acc_frenado_segmentos, 'k*')
-    title('RMS de aceleración de frenado (carrera)')
-    xlabel('Eventos de foot-strike')
-    ylabel('RMS [Gs]')
-    grid on
+    if plot_graph
+        figure
+        plot(rms_acc_frenado_segmentos, 'k*')
+        title('RMS de aceleración de frenado (carrera)')
+        xlabel('Eventos de foot-strike')
+        ylabel('RMS [Gs]')
+        grid on
+    end
 end

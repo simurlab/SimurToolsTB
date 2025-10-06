@@ -1,93 +1,106 @@
-function tiempos = eventosSalto(aceleracionVert, frecuencia)
-%EVENTOSSALTO Detecta eventos principales a partir de aceleraciones verticales.
+function tiempos = eventos_salto_vertical(aceleracion_vert, freq)
+%EVENTOS_SALTO_VERTICAL Detecta eventos principales de un salto a partir de aceleraciones verticales.
 %
-%   tiempos = eventosSalto(aceleracionVert, frecuencia)
+%   tiempos = eventos_salto_vertical(aceleracion_vert, freq)
 %
 %   Esta función detecta automáticamente los eventos principales durante
 %   un salto a partir de la aceleración vertical del centro de gravedad (COG).
-%   Detecta 4 eventos: inicio, preparación, precontacto y fin.
+%   Detecta 4 eventos:
+%       - Inicio de salto (mínimo profundo).
+%       - Precontacto (paso por g).
+%       - Fin de salto (máximo fuerte).
+%       - Preparación para el contacto (mínimo cercano al aterrizaje).
 %
-%   INPUT:
-%       aceleracionVert : vector con la aceleración vertical (puede contener varios saltos).
-%                         Debe contener saltos completos (no medios saltos).
-%       frecuencia      : frecuencia de muestreo en Hz (por defecto 100).
+% INPUT:
+%   aceleracion_vert : vector con la aceleración vertical (puede contener varios saltos).
+%                      Debe incluir saltos completos (no medios saltos).
+%   freq             : frecuencia de muestreo en Hz (opcional, por defecto 100).
 %
-%   OUTPUT:
-%       tiempos : matriz Nx5 con:
-%           tiempos(:,1) = aceleracionVert
-%           tiempos(:,2) = inicio de salto (mínimo profundo)
-%           tiempos(:,3) = precontacto (paso por g)
-%           tiempos(:,4) = fin de salto (máximo fuerte)
-%           tiempos(:,5) = preparación para el contacto (mínimo cercano)
+% OUTPUT:
+%   tiempos : matriz Nx5 con:
+%       tiempos(:,1) = aceleración vertical original
+%       tiempos(:,2) = inicio de salto (mínimo profundo)
+%       tiempos(:,3) = precontacto (paso por g)
+%       tiempos(:,4) = fin de salto (máximo fuerte)
+%       tiempos(:,5) = preparación para el contacto (mínimo cercano)
+%
+% EJEMPLO:
+%   t = 0:0.01:2;
+%   acc = [zeros(1,30) -12*ones(1,20) 15*ones(1,20) -9.8*ones(1,20) zeros(1,90)];
+%   tiempos = eventos_salto_vertical(acc, 100);
+%   plot(acc); hold on;
+%   plot(find(tiempos(:,2)), acc(tiempos(:,2)==1), 'ro'); % inicio
+%   plot(find(tiempos(:,4)), acc(tiempos(:,4)==1), 'go'); % fin
 %
 %
 % Author:   Alberto Castañón
 % History:  24.01.2007   Diego - adaptación a siloptoolbox
 %           18.12.2007   Diego - adaptación v0.3
 %           29.09.2025   normalizada y modernizada
+%
 
     if nargin < 2
-        frecuencia = 100;
+        freq = 100;
     end
 
     % --- Detectar mínimos iniciales ---
-    minimos = buscaMaximosTh(-aceleracionVert, 1.5);
-    indMin = find(minimos == 1);
-    num = numel(indMin);
+    minimos = buscaMaximosTh(-aceleracion_vert, 1.5);
+    ind_min = find(minimos == 1);
+    num = numel(ind_min);
 
-    % Eliminar mínimos muy cercanos (<1s)
-    inicio = indMin(1);
+    % Eliminar mínimos muy cercanos (<1 s)
+    inicio = ind_min(1);
     for i = 2:num
-        if indMin(i) - inicio <= frecuencia
-            minimos(indMin(i)) = 0;
+        if ind_min(i) - inicio <= freq
+            minimos(ind_min(i)) = 0;
         else
-            inicio = indMin(i);
+            inicio = ind_min(i);
         end
     end
-    indMin = find(minimos == 1);
-    numSaltos = numel(indMin);
+    ind_min = find(minimos == 1);
+    num_saltos = numel(ind_min);
 
     % --- Detectar máximos (>20) tras cada mínimo ---
-    maximos = buscaMaximosTh(aceleracionVert, 20);
-    indMax = find(maximos);
+    maximos = buscaMaximosTh(aceleracion_vert, 20);
+    ind_max = find(maximos);
 
-    indMax2 = [];
+    ind_max2 = [];
     j = 1;
-    for i = 1:numel(indMax)
-        if indMax(i) > indMin(j)
-            indMax2(j) = indMax(i); %#ok<AGROW>
+    for i = 1:numel(ind_max)
+        if ind_max(i) > ind_min(j)
+            ind_max2(j) = ind_max(i); %#ok<AGROW>
             j = j + 1;
         end
-        if j > numSaltos
+        if j > num_saltos
             break;
         end
     end
-    indMax = indMax2;
+    ind_max = ind_max2;
 
     % --- Detectar mínimos cercanos al máximo (<9.81) ---
-    indMinCerc = [];
-    for i = 1:numSaltos
-        datosTramo = -aceleracionVert(indMin(i)+1 : indMax(i)+1);
-        minLoc = buscaMaximosTh(datosTramo, -9.81);
-        indices = find(minLoc == 1);
-        indMinCerc(i) = indices(end) + indMin(i); %#ok<AGROW>
+    ind_min_cerc = [];
+    for i = 1:num_saltos
+        datos_tramo = -aceleracion_vert(ind_min(i)+1 : ind_max(i)+1);
+        min_loc = buscaMaximosTh(datos_tramo, -9.81);
+        indices = find(min_loc == 1);
+        ind_min_cerc(i) = indices(end) + ind_min(i); %#ok<AGROW>
     end
 
     % --- Detectar paso por g (9.81) ---
-    indPasoG = [];
-    for i = 1:numSaltos
-        datosTramo = -abs(aceleracionVert(indMinCerc(i)+1 : indMax(i)+1) - 9.81);
-        pasoG = buscaMaximos(datosTramo);
-        indices = find(pasoG == 1);
-        indPasoG(i) = indices(1) + indMinCerc(i); %#ok<AGROW>
+    ind_paso_g = [];
+    for i = 1:num_saltos
+        datos_tramo = -abs(aceleracion_vert(ind_min_cerc(i)+1 : ind_max(i)+1) - 9.81);
+        paso_g = buscaMaximos(datos_tramo);
+        indices = find(paso_g == 1);
+        ind_paso_g(i) = indices(1) + ind_min_cerc(i); %#ok<AGROW>
     end
 
     % --- Construir matriz de salida ---
-    n = length(aceleracionVert);
+    n = length(aceleracion_vert);
     tiempos = zeros(n, 5);
-    tiempos(:,1) = aceleracionVert;
-    tiempos(indMin,2) = 1;
-    tiempos(indPasoG,3) = 1;
-    tiempos(indMax,4) = 1;
-    tiempos(indMinCerc,5) = 1;
+    tiempos(:,1) = aceleracion_vert;
+    tiempos(ind_min,2) = 1;
+    tiempos(ind_paso_g,3) = 1;
+    tiempos(ind_max,4) = 1;
+    tiempos(ind_min_cerc,5) = 1;
 end

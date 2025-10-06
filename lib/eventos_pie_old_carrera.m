@@ -1,4 +1,4 @@
-function [ic, fc] = eventosPieCarreraOLD(gyr, th, freq)
+function [ic, fc] = eventos_pie_old_carrera(gyr, th, freq)
 %EVENTOSPIEOLD [OBSOLETA] Versión básica de detección IC/FC a partir de giro mediolateral.
 %
 %   [ic, fc] = eventosPieOld(gyr, th, freq)

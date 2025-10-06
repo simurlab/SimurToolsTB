@@ -25,8 +25,13 @@ function cadencia = cadencia(ic, freq, metodo)
         metodo = 'global';
     end
 
+    % Asegurar que ic es numérico
+    if iscell(ic)
+        ic = cell2mat(ic);
+    end
+
     % Tiempo total (segundos)
-    tiempo_total = (ic(end) - ic(1)) / freq;
+    tiempo_total = (ic(end)-ic(1)) / freq;
 
     % Número de pasos
     n_pasos = length(ic);

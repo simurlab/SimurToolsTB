@@ -23,9 +23,8 @@ function pos = doble_integracion_ofi(aceleracion, freq)
 % EXAMPLE:
 %   t = 0:0.01:5;
 %   a = [zeros(1,100) 2*ones(1,200) zeros(1,200)];
-%   p = doble_integ_ofi(a, 100);
+%   p = doble_integracion_ofi(a, 100);
 %   plot(t, p), xlabel('Tiempo [s]'), ylabel('Posición [u]')
-%
 %
 % Author:   Diego
 % History:  30.11.2019   renombrada (JC)
@@ -35,17 +34,18 @@ function pos = doble_integracion_ofi(aceleracion, freq)
     % -------------------- Rango de frecuencias candidato --------------------
     rango = 0.01:0.01:0.15;
     error_min = Inf;
+    f_opt = NaN; % Inicialización de seguridad
 
     % -------------------- Búsqueda de frecuencia óptima --------------------
     for f = rango
         [b,a] = butter(2, f/(freq/2), 'high');
         acc_filt = filter(b, a, aceleracion);
 
-        vel_filt = cumcamsimp(acc_filt / freq); % integración personalizada
+        vel_filt = int_acumulada_cam_simp(acc_filt / freq); % integración personalizada
 
         % Condición: velocidad final pequeña
         if abs(vel_filt(end)) < 0.1
-            pos_filt = cumcamsimp(vel_filt / freq);
+            pos_filt = int_acumulada_cam_simp(vel_filt / freq);
             error_actual = abs(pos_filt(end));
 
             if error_actual < error_min
@@ -57,16 +57,22 @@ function pos = doble_integracion_ofi(aceleracion, freq)
         end
     end
 
+    % -------------------- Si no se encontró frecuencia válida --------------------
+    if isnan(f_opt)
+        warning('No se encontró frecuencia óptima; usando valor por defecto f_opt = 0.05');
+        f_opt = 0.05;
+    end
+
     % -------------------- Filtro óptimo --------------------
     [b,a] = butter(2, f_opt/(freq/2), 'high');
     acc_filt = filter(b, a, aceleracion);
 
     % -------------------- Velocidad directa --------------------
-    vel_directa = cumcamsimp(acc_filt / freq);
+    vel_directa = int_acumulada_cam_simp(acc_filt / freq);
 
     % -------------------- Velocidad inversa --------------------
     vel_inversa = zeros(size(vel_directa));
-    vel_inversa(end:-1:1) = cumcamsimp(-acc_filt(end:-1:1) / freq);
+    vel_inversa(end:-1:1) = int_acumulada_cam_simp(-acc_filt(end:-1:1) / freq);
 
     % -------------------- Función de peso suavizada --------------------
     n = length(vel_inversa);
@@ -79,5 +85,5 @@ function pos = doble_integracion_ofi(aceleracion, freq)
     vel_combinada = vel_inversa .* w + vel_directa .* (1 - w);
 
     % -------------------- Integración final → posición --------------------
-    pos = cumcamsimp(vel_combinada / freq);
+    pos = int_acumulada_cam_simp(vel_combinada / freq);
 end
