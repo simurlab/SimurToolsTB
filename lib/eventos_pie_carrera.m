@@ -12,7 +12,7 @@ function [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr, th, freq, gy
 %   gyr        : vector con la velocidad angular en el eje mediolateral (°/s).
 %   th         : velocidad mínima para detectar eventos. (Recomendado: 150)
 %   freq       : frecuencia de muestreo (Hz).
-%   gyr_pron   : velocidad angular en el eje frontal (°/s) [opcional].
+%   gyr_pron   : velocidad angular en el eje de pronación (°/s) [opcional].
 %                Si no se proporciona, MVP y MP se devolverán vacíos.
 %
 % OUTPUT:

@@ -1,10 +1,9 @@
-function resume_intentos(path_dir)
+function procesar_intentos(path_dir)
 %% ------------------------------------------------------------------------
-% RESUME_INTENTOS  Procesa archivos de intentos (e.g. e0101.mat)
-%                  calculando eventos, tiempos, amplitudes, RMS,
-%                  cadencia y tiempo de vuelo (%).
+% PROCESAR_INTENTOS  Procesa archivos de intentos (e.g. e0101.mat)
+%                    calculando eventos, tiempos, cadencia y amplitudes.
 %
-%   resume_intentos(path_dir)
+%   procesar_intentos(path_dir)
 %
 % INPUT:
 %   path_dir (opcional) - Carpeta donde buscar archivos .mat.
@@ -17,9 +16,8 @@ function resume_intentos(path_dir)
 %   - amplitud_impacto_carrera.m
 %   - rms_aceleracion_frenado_carrera.m
 %   - rms_aceleracion_impacto_carrera.m
-%   - cadencia.m
 %
-% Versión: 08/10/2025 - SiMuR Toolbox v1.7.0
+% Versión: 07/10/2025 - SiMuR Toolbox v1.5.2
 % -------------------------------------------------------------------------
 
     if nargin < 1 || isempty(path_dir)
@@ -38,7 +36,7 @@ function resume_intentos(path_dir)
     inicio_paso = 5;    % Paso inicial a considerar para el promedio
     fin_paso    = 30;   % Paso final a considerar para el promedio
 
-    % --- Buscar archivos de intentos ---
+    % --- Buscar archivos de intentos tipo e0101, f0102, etc. ---
     archivos = dir(fullfile(path_dir, '*.mat'));
     archivos = archivos(~cellfun(@isempty, regexp({archivos.name}, '^[a-zA-Z]\d{4}\.mat$', 'once')));
 
@@ -70,12 +68,12 @@ function resume_intentos(path_dir)
             % ---- Señales necesarias ----
             if istable(tabla)
                 gyr_ml   = tabla.Gyr_Y;  % Vel. ang. medio-lateral
-                gyr_pron = tabla.Gyr_Z;  % Vel. ang. de pronación/supinación
+                gyrPron  = tabla.Gyr_Z;  % Vel. ang. de pronación/supinación
                 acc_ap   = tabla.Acc_Y;  % Acel. antero-posterior
                 acc_v    = tabla.Acc_Z;  % Acel. vertical
             elseif isstruct(tabla)
                 gyr_ml   = tabla.Gyr_Y;
-                gyr_pron = tabla.Gyr_Z;
+                gyrPron  = tabla.Gyr_Z;
                 acc_ap   = tabla.Acc_Y;
                 acc_v    = tabla.Acc_Z;
             else
@@ -84,21 +82,14 @@ function resume_intentos(path_dir)
             end
 
             % ---- Detección de eventos (con pronación) ----
-            [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr_ml, th, freq, gyr_pron);
+            [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr_ml, th, freq, gyrPron);
 
             if isempty(ic) || isempty(fc)
                 warning('⚠️ No se detectaron pasos en %s (%s).', nombre, pie);
                 continue;
             end
 
-            % ---- Calcular cadencia ----
-            try
-                cad = cadencia(ic, freq, 'global'); % [pasos/min]
-            catch
-                cad = NaN;
-            end
-
-            % ---- Calcular tiempos de eventos ----
+            % ---- Calcular tiempos ----
             tiempos = tiempos_eventos_carrera(ic, fc, max_s, min_s, mvp, mp, freq);
 
             % ---- Seleccionar pasos definidos (inicio_paso:fin_paso) ----
@@ -120,43 +111,39 @@ function resume_intentos(path_dir)
                 medias_intervalo.(campo) = round(mean(v_sel, 'omitnan') * 1000, 1); % [ms]
             end
 
-            % ---- Calcular amplitudes y RMS ----
+            % ---- Calcular amplitud de frenado ----
             try
                 [~, braking_moda] = amplitud_frenado_carrera({ic}, acc_ap, false);
             catch
                 braking_moda = NaN;
             end
 
+            % ---- Calcular amplitud de impacto ----
             try
                 [~, impact_moda] = amplitud_impacto_carrera({ic}, acc_v);
             catch
                 impact_moda = NaN;
             end
 
+            % ---- Calcular RMS de frenado ----
             try
                 [~, rms_frenado_moda] = rms_aceleracion_frenado_carrera(ic, fc, acc_ap, gyr_ml);
             catch
                 rms_frenado_moda = NaN;
             end
 
+            % ---- Calcular RMS de impacto ----
             try
                 [~, rms_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_v, gyr_ml);
             catch
                 rms_impacto_moda = NaN;
             end
 
-            % ---- Extraer datos de vuelo directamente desde tiempos_eventos_carrera ----
-            vuelo_ms_mean    = round(tiempos.medias.vuelo * 1000, 1);      % [ms]
-            contacto_ms_mean = round(tiempos.medias.fs_to * 1000, 1);      % [ms]
-            vuelo_pct_mean   = round(tiempos.medias.pct_vuelo, 2);         % [%]
-            ic_ic_ms_mean    = round(tiempos.medias.ic_ic * 1000, 1);      % [ms]
-
             % ---- Guardar resultados ----
             resultados(end+1, :) = {nombre, pie, ...
-                medias_intervalo.fs_to, medias_intervalo.fs_mvp, medias_intervalo.mvp_mp, ...
-                medias_intervalo.mp_to, medias_intervalo.to_mins, medias_intervalo.maxs_mins, ...
-                medias_intervalo.maxs_fs, ...
-                cad, vuelo_ms_mean, contacto_ms_mean, vuelo_pct_mean, ic_ic_ms_mean, ...
+                medias_intervalo.fs_to, medias_intervalo.maxs_fs, medias_intervalo.fs_mvp, ...
+                medias_intervalo.mvp_mp, medias_intervalo.mp_to, medias_intervalo.to_mins, ...
+                medias_intervalo.maxs_mins, ...
                 braking_moda, impact_moda, ...
                 rms_frenado_moda, rms_impacto_moda};
         end
@@ -166,12 +153,11 @@ function resume_intentos(path_dir)
     if ~isempty(resultados)
         T = cell2table(resultados, ...
             'VariableNames', {'Archivo','Pie', ...
-            'FS_TO [ms]','FS_MVP [ms]','MVP_MP [ms]','MP_TO [ms]', ...
-            'TO_MinS [ms]','MinS_MaxS [ms]','MaxS_FS [ms]', ...
-            'Cadencia [pasos/min]','Vuelo [ms]','Contacto [ms]','Vuelo [%]','Ciclo [ms]', ...
-            'Frenado [Gs]','Impacto [Gs]','RMS_Frenado [Gs]','RMS_Impacto [Gs]'});
-        
-        fprintf('===== 🧩 Tabla resumen de tiempos (pasos %d–%d), amplitudes, RMS, cadencia y vuelo =====\n', ...
+            'IC_FC [ms]','MaxS_IC [ms]','IC_MVP [ms]','MVP_MP [ms]','MP_FC [ms]', ...
+            'FC_MinS [ms]','MaxS_MinS [ms]', ...
+            'Braking [Gs]','Impact [Gs]','RMS_Frenado [Gs]','RMS_Impacto [Gs]'});
+
+        fprintf('===== 🧩 Tabla resumen de tiempos (pasos %d–%d) y amplitudes de impacto/frenado =====\n', ...
             inicio_paso, fin_paso);
         disp(T);
     else
