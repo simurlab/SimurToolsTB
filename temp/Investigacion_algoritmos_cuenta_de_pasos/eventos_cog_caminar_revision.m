@@ -64,7 +64,8 @@ function tiempos = eventos_cog_caminar_revision(acc_hor, acc_vert, freq)
     tiempos(:,2) = acc_hor;
 
     % -------------------- Foot Flat (FF) preliminar --------------------
-    datos_filt = filtro0(acc_vert, 60, 5/freq);
+    % datos_filt = filtro0(acc_vert, 60, 5/freq);
+    datos_filt = filtro_paso_bajo_f0(acc_vert, 60, 5/freq);
     ff = busca_maximos_umbral(datos_filt, 10.5);
     ff = find(ff == 1);
 

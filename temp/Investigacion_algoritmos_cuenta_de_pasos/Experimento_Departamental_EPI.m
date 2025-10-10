@@ -1,2 +1,0 @@
-ruta_csv_muslo = 'C:\Users\wwwal\OneDrive - Universidad de Oviedo\Archivos de JUAN CARLOS ALVAREZ ALVAREZ - SimurTools\Base de Datos\j 2025-10- Pasillo Departamental JC\Pruebas\THIGH_RIGHT_1\'
-[IMU_MUSLOD, info] = carga_dot('ruta_carpeta', ruta_csv_muslo, 'save', 'y', 'orientacion', [1 2 3]);
