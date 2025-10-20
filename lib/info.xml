@@ -1,0 +1,25 @@
+<productinfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="optional">
+    <?xml-stylesheet type="text/xsl" href="optional"?>
+    <!-- productinfo.xml file for the SiMuR Toolbox -->
+    <!-- Version 1.5.0 -->
+    <!-- Copyright © 2025 SiMuR Lab - University of Oviedo -->
+    
+    <!-- Release of MATLAB compatible with the toolbox -->
+    <matlabrelease>R2020a</matlabrelease>
+
+    <!-- Toolbox title (shown in MATLAB Add-On Manager and Help) -->
+    <name>SiMuR Toolbox v1.5.0 (06/10/2025)</name>
+
+    <!-- Label for the type of add-on -->
+    <type>toolbox</type>
+
+    <!-- Optional icon for the toolbox (PNG, 16x16 or 32x32, relative path) -->
+    <icon></icon>
+
+    <!-- Relative path to the documentation (HTML help files) -->
+    <help_location>html</help_location>
+
+    <!-- Help browser icon (ignored in MATLAB R2015a and later) -->
+    <help_contents_icon></help_contents_icon>
+</productinfo>
