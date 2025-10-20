@@ -23,7 +23,7 @@
 function [IC,FC,MaxS,MinS,MVP,MP]=eventospie_carrera(gyr,th,freq,gyrpron)
  
     % filtrado
-    orden = 4+floor(freq / 100); % orden mínimo 3. A más fm más potente debe ser el filtro
+    orden = 8+floor(freq / 100); % orden mínimo 3. A más fm más potente debe ser el filtro
     corte=6/freq;
    
     gyr=filtro0(gyr,orden,corte);
