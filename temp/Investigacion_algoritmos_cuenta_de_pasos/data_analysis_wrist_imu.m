@@ -55,6 +55,31 @@ xlabel('Frecuencia (Hz)');
 ylabel('Amplitud');
 xlim([0, Fs/2]);
 
+% análisis tiempo-frecuencia (en ventanas)
+win = 2 * Fs; % 2 segundos
+overlap = 0.5 * win;
+spectrogram(magnitud_aceleracion, win, overlap, [], Fs, 'yaxis');
+title('Espectrograma de la Aceleración');
+
+%---
+% Densidad espectral de potencia (PSD)
+Fs = 100;
+[pxx, f] = pwelch(magnitud_aceleracion, hamming(256), 128, 512, Fs);
+figure;
+plot(f, 10*log10(pxx), 'LineWidth',1.5);
+xlabel('Frecuencia (Hz)');
+ylabel('Potencia (dB/Hz)');
+title('Densidad espectral de potencia (PSD)');
+xlim([0, 10]);
+
+%---
+% Análisis de correlación entre ejes
+corr_xy = corr(acc_x_munheca, acc_y_munheca);
+corr_xz = corr(acc_x_munheca, acc_z_munheca);
+corr_yz = corr(acc_y_munheca, acc_z_munheca);
+fprintf('Corr(X,Y)=%.2f  Corr(X,Z)=%.2f  Corr(Y,Z)=%.2f\n', corr_xy, corr_xz, corr_yz);
+
+
 
 %% -------------------------------------------------------------------------
 % Experimento 2 (10/10/2025)
@@ -109,4 +134,10 @@ title('FFT de la Magnitud de la Aceleración');
 xlabel('Frecuencia (Hz)');
 ylabel('Amplitud');
 xlim([0, Fs/2]);
+
+% análisis tiempo-frecuencia (en ventanas)
+win = 2 * Fs; % 2 segundos
+overlap = 0.5 * win;
+spectrogram(magnitud_aceleracion, win, overlap, [], Fs, 'yaxis');
+title('Espectrograma de la Aceleración');
 
