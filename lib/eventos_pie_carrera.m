@@ -36,7 +36,7 @@ function [ic, fc, max_s, min_s, mvp, mp] = eventos_pie_carrera(gyr, th, freq, gy
 %   
 
     % -------------------- FILTRADO DE SEÑALES --------------------
-    orden = 4 + floor(freq / 100);       % orden mínimo 3; a mayor fm, mayor orden
+    orden = 8 + floor(freq / 100);       % orden mínimo 3; a mayor fm, mayor orden
     corte = 6 / freq;                    % frecuencia de corte normalizada
 
     gyr = filtro_paso_bajo_f0(gyr, orden, corte);
