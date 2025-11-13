@@ -1,6 +1,6 @@
 
 
-![logo](./img/logoinersens.png)
+![logo](./img/logoIA2.png)
 # 🧠 SiMuR Tools — MATLAB Toolbox para el Análisis de Movimiento
 
 **Grupo:** SiMuR — Universidad de Oviedo  
@@ -10,7 +10,7 @@
 
 ## 📘 Descripción General
 
-**SiMuR Tools** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores inerciales (IMUs, Shimmer, BiMu, Silop, etc.) en estudios de biomecánica y control del movimiento humano.
+**SiMuR Tools TB** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs (Xsens DOT, Shimmer, Bimu, etc.) 
 
 El toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
@@ -22,7 +22,6 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 
 | Categoría | Funciones Principales | Descripción |
 |------------|-----------------------|--------------|
-| **Carga de Datos** | `carga_bimu`, `carga_shimmer`, `carga_sensores`, `carga_dot`, `carga_silop`, `lectura_archivo_csv` | Lectura y formateo de archivos provenientes de distintos dispositivos de medida. |
 | **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` | Limpieza y filtrado de señales, corrección de eventos y duplicados. |
 | **Cálculo Espacial / Cinemático** | `doble_integracion`, `doble_integracion_ddi`, `doble_integracion_lri`, `doble_integracion_msi`, `doble_integracion_ofi`, `doble_integracion_zijlstra`, `distancia_pendulo`, `distancia_arco`, `distancia_recorrida_extremos`, `trayectoria_marcador` | Integración de aceleraciones y cálculo de distancias y trayectorias. |
 | **Eventos y Segmentación** | `eventos_pie_carrera`, `eventos_cog_carrera`, `eventos_cog_caminar`, `eventos_salto_vertical`, `segmenta_intentos`, `tiempos_eventos_carrera` | Detección automática de eventos de pie, centro de gravedad o salto, y segmentación de intentos. |
@@ -30,6 +29,7 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 | **Orientación y Estimación Angular** | `orientacion_giroscopo`, `orientacion_compas`, `orientacion_kalman`, `estimacion_rotacion_triad` | Estimación de orientación de sólidos rígidos a partir de IMUs mediante distintos métodos (complementario, Kalman, TRIAD). |
 | **Visualización 3D** | `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
 | **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta`, `integracion_acumulada_cav_simpson` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
+| **Gestión de Bases de Datos** |  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_sensores`,  `carga_silop`, `lectura_archivo_csv` | Lectura y formateo de archivos provenientes de distintos dispositivos de medida, para la creación y mantenimiento de Bases de Datos específicas. |
 
 ---
 
