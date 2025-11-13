@@ -1,4 +1,4 @@
-![logo](./img/logoIA3.jpg)
+![logo](./img/logoIA2.png)
 # 🧠 SiMuR Tools — MATLAB Toolbox para el Análisis de Movimiento
 
 **Grupo:** SiMuR — Universidad de Oviedo  
@@ -63,7 +63,9 @@ La carga de datos también incluye los siguientes metadatos referidos al sensor 
 
 El **sistema de referencia IMUstd** sigue el convenio <x,y,z> == <V, ML, AP>
 
-<img src="img/lMUstd.png" alt="IMUstd" width="200"/>
+<img src="./img/lMUstd.png" alt="IMUstd" width="200"/>
+
+![Texto alternativo](./img/lMUstd.png)
 
 ---
 
