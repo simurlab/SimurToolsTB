@@ -1,11 +1,11 @@
-function carga_sensores(varargin)
-% CARGA_SENSORES Carga, procesa y guarda datos de múltiples sensores IMU.
+function db_crea_prueba(varargin)
+% CREA_ INTENTOS Carga, procesa y guarda datos de múltiples sensores IMU.
 %
-%   carga_sensores()
+%   crea_intentos()
 %       Busca carpetas con prefijos FR*, FL*, COG*, carga los sensores y
 %       guarda un archivo .mat unificado sin información de actividad.
 %
-%   carga_sensores('Actividad')
+%   crea_intentos('Actividad')
 %       Igual que lo anterior, pero añade la actividad especificada en el
 %       metadato de cada sensor (por ejemplo, 'Vallas', 'Carrera').
 %
@@ -20,7 +20,7 @@ function carga_sensores(varargin)
 %
 % EXAMPLE:
 %   % Ejecutar dentro de la carpeta del sujeto/session:
-%   carga_sensores('Carrera');
+%   crea_intentos('Carrera');
 %
 % See also: carga_dot, carga_bimu, carga_shimmer
 %
