@@ -38,7 +38,8 @@ Las funciones para la *Carga de Datos* de la TB leen y convierten los archivos d
  
  El **IMUstd** consta de dos partes: datos y metadatos.
  
-### Datos: una matriz que consta de varias de las siguientes columnas de números reales:
+### Datos: 
+una matriz que consta de varias de las siguientes columnas de números reales:
 
 | Tipo de dato | Etiqueta Principales | Unidades |
 |------------|-----------------------|----------------------|
@@ -54,7 +55,8 @@ Las funciones para la *Carga de Datos* de la TB leen y convierten los archivos d
 |Sin Uso|"Var24"| - |
 |Sin Uso|"Index"| - |
 
-### Metadatos: información referida al tipo de sensor y su colocación:
+### Metadatos: 
+información referida al tipo de sensor y su colocación:
 
 | Metadato |  Información | Ejemplo |
 |------------|-----------------------|----------------------|
@@ -66,7 +68,7 @@ Las funciones para la *Carga de Datos* de la TB leen y convierten los archivos d
 |intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
 
 
-![El sistema de referencia de **IMUstd** <V, ML, AP>](./img/lMUstd.jpg)
+![El sistema de referencia de **IMUstd** <V, ML, AP>](img/lMUstd.jpg)
 
 ---
 
