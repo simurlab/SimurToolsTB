@@ -20,7 +20,7 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 
 | Categoría | Funciones Principales | Descripción |
 |------------|-----------------------|--------------|
-| **Carga de Datos ** |  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_sensores`,  `carga_silop`, `lectura_archivo_csv` | Lectura y formateo de archivos provenientes de distintos dispositivos de medida. |
+| **Carga de Datos** |  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_sensores`,  `carga_silop`, `lectura_archivo_csv` | Lectura y formateo de archivos provenientes de distintos dispositivos de medida. |
 | **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` | Limpieza y filtrado de señales, corrección de eventos y duplicados. |
 | **Cálculo Espacial / Cinemático** | `doble_integracion`, `doble_integracion_ddi`, `doble_integracion_lri`, `doble_integracion_msi`, `doble_integracion_ofi`, `doble_integracion_zijlstra`, `distancia_pendulo`, `distancia_arco`, `distancia_recorrida_extremos`, `trayectoria_marcador` | Integración de aceleraciones y cálculo de distancias y trayectorias. |
 | **Eventos y Segmentación** | `eventos_pie_carrera`, `eventos_cog_carrera`, `eventos_cog_caminar`, `eventos_salto_vertical`, `segmenta_intentos`, `tiempos_eventos_carrera` | Detección automática de eventos de pie, centro de gravedad o salto, y segmentación de intentos. |
@@ -31,10 +31,14 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 
 ---
 
-## ⚙️ Tipo de datos principal: IMU estandar (IMUstd)
+## ⚙️ Tipo de datos normalizado: el IMU estándar (IMUstd)
 
-Debido a la diversidad de IMUs disponibles, las funciones para la Carga de Datos convierten los diferentes formatos en un tipo de dato estandarizado llamado IMUstd.
-Este tipo consta de varias o todas de las siguientes columnas de números reales:
+ El **IMUstd** es el tipo de dato estandarizado para la **SIMUR Tools TB**. Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado. 
+Las funciones para la *Carga de Datos* de la TB leen y convierten los archivos de los IMUs reales al formato **IMUstd**.
+ 
+ El **IMUstd** consta de dos partes: datos y metadatos.
+ 
+### Datos: una matriz que consta de varias de las siguientes columnas de números reales:
 
 | Tipo de dato | Etiqueta Principales | Unidades |
 |------------|-----------------------|----------------------|
@@ -50,7 +54,7 @@ Este tipo consta de varias o todas de las siguientes columnas de números reales
 |Sin Uso|"Var24"| - |
 |Sin Uso|"Index"| - |
 
-La carga de datos también incluye los siguientes metadatos referidos al sensor y su colocación:
+### Metadatos: información referida al tipo de sensor y su colocación:
 
 | Metadato |  Información | Ejemplo |
 |------------|-----------------------|----------------------|
@@ -58,18 +62,17 @@ La carga de datos también incluye los siguientes metadatos referidos al sensor 
 |ubicacion | Dónde se colocó el sensor | 'FL' 'FR' 'COG' |
 |modelo | Etiqueta del modelo comercial | 'Xsens Dot' |
 |frecuencia | muestreo del sensor | 30, 60, 100, 120... Hz |
-|orientacion | relativa respecto al **sistema de referencia IMUstd** | [1,2,3] |
-|intervaloIntento | muestra inicio y fin de interés en el archivo raiz| [600, 14000] |
+|orientacion | relativa respecto al **sistema de referencia IMUstd**, de convenio <V, ML, AP> | [3,-1,2] |
+|intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
 
-El **sistema de referencia IMUstd** sigue el convenio <x,y,z> == <V, ML, AP>
 
-![Texto alternativo](./img/lMUstd.png)
+![El sistema de referencia de **IMUstd** <V, ML, AP>](./img/lMUstd.png)
 
 ---
 
 ## 🚀 Instalación
 
-  Se puede instalar mediante el AddsOn Manager propio de Matlab
+Se puede instalar mediante el AddsOn Manager propio de Matlab
 
 ---
 
