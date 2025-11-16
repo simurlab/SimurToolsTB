@@ -68,7 +68,7 @@ información referida al tipo de sensor y su colocación:
 |intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
 
 
-![El sistema de referencia de **IMUstd** <V, ML, AP>](img/lMUstd.jpg)
+![El sistema de referencia de **IMUstd** <V, ML, AP>](img/imustd.jpg)
 
 ---
 
