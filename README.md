@@ -1,4 +1,4 @@
-![logo](./img/logoIA3.jpg)
+![logo](./img/logoIA3.jpeg)
 # 🧠 SiMuR Tools — MATLAB Toolbox para el Análisis de Movimiento
 
 **Grupo:** SiMuR — Universidad de Oviedo  
