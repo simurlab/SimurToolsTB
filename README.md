@@ -64,11 +64,11 @@ información referida al tipo de sensor y su colocación:
 |ubicacion | Dónde se colocó el sensor | 'FL' 'FR' 'COG' |
 |modelo | Etiqueta del modelo comercial | 'Xsens Dot' |
 |frecuencia | muestreo del sensor | 30, 60, 100, 120... Hz |
-|orientacion | relativa respecto al **sistema de referencia IMUstd**, de convenio <V, ML, AP> | [3,-1,2] |
+|orientacion | relativa respecto al **sistema de referencia IMUstd**, de convenio {V, ML, AP} | [3,-1,2] |
 |intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
 
 
-![El sistema de referencia de **IMUstd** <V, ML, AP>](img/imustd.jpg)
+![El sistema de referencia de IMUstd {V, ML, AP}](img/imustd.jpg)
 
 ---
 
