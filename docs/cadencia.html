@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB 2025b"><title>cadencia</title><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 28.8px; min-height: 0px; white-space: pre-wrap; color: rgb(192, 76, 11); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 24px; font-weight: 400; text-align: left;  }
+.S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: 400; text-align: left;  }
+.S2 { margin: 20px 10px 5px 4px; padding: 0px; line-height: 25px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 700; text-align: left;  }
+.S3 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 25px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 700; text-align: left;  }
+.CodeBlock { background-color: #F5F5F5; margin: 10px 15px 10px 0; display: inline-block; min-width: 100%; }
+.S4 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 0px none rgb(33, 33, 33); border-radius: 4px 4px 0px 0px; padding: 6px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S5 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 0px none rgb(33, 33, 33); border-radius: 0px; padding: 0px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S6 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 1px solid rgb(217, 217, 217); border-radius: 0px 0px 4px 4px; padding: 0px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S7 { margin: 10px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: 400; text-align: left;  }
+.S8 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 1px solid rgb(217, 217, 217); border-radius: 4px; padding: 6px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.eoOutputWrapper { width: calc(90vw - 10px) !important; }
+.S9 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 1px solid rgb(217, 217, 217); border-radius: 4px 4px 0px 0px; padding: 6px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S10 { color: rgb(33, 33, 33); padding: 10px 0px 6px 17px; background: rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px; overflow-x: hidden; line-height: 17.234px;  }
+/* Styling that is common to warnings and errors is in diagnosticOutput.css */.embeddedOutputsErrorElement {    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsErrorElement .diagnosticMessage-errorType {    overflow: auto;}
+.embeddedOutputsErrorElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+.embeddedOutputsErrorElement.activeOutput .eoOutputContent button {    user-select: none;    -webkit-user-select: none;}
+.embeddedOutputsErrorElement .eoOutputContent ::selection {}
+.embeddedOutputsErrorElement.inlineElement {}
+.embeddedOutputsErrorElement.rightPaneElement {}
+/* Styling that is common to warnings and errors is in diagnosticOutput.css */.embeddedOutputsWarningElement {    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsWarningElement .diagnosticMessage-warningType {    overflow: auto;}
+.embeddedOutputsWarningElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+.embeddedOutputsWarningElement .eoOutputContent ::selection {}
+.embeddedOutputsWarningElement.inlineElement {}
+.embeddedOutputsWarningElement.rightPaneElement {}
+/* Copyright 2015-2023 The MathWorks, Inc. *//* In this file, styles are not scoped to rtcContainer since they could be in the Dojo Tooltip */.diagnosticMessage-wrapper {    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;    font-size: 12px;}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType {    /*This fallback value will be used for appdesigner warnings*/    color: var(--rtc-warning-output-color, var(--mw-color-matlabWarning));}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType a {    /*This fallback value will be used for appdesigner warnings*/    color: var(--rtc-warning-output-color, var(--mw-color-matlabWarning));    text-decoration: underline;}
+.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-warningType,.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-warningType a {    color: var(--mw-color-matlabWarning) !important;}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType {    /*This fallback value will be used in appdesigner error tooltip text*/    color: var(--rtc-error-output-color, var(--mw-color-matlabErrors));}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType a {    /*This fallback value will be used in appdesigner error tooltip text*/    color: var(--rtc-error-output-color, var(--mw-color-matlabErrors));    text-decoration: underline;}
+.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-errorType,.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-errorType a {    color: var(--mw-color-matlabErrors) !important;}
+.diagnosticMessage-wrapper .diagnosticMessage-messagePart,.diagnosticMessage-wrapper .diagnosticMessage-causePart {    white-space: pre-wrap;}
+.diagnosticMessage-wrapper .diagnosticMessage-stackPart {    white-space: pre;}
+.embeddedOutputsTextElement,.embeddedOutputsVariableStringElement {    white-space: pre;    word-wrap:  initial;    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsTextElement .textElement,.embeddedOutputsVariableStringElement .textElement {    overflow: auto;}
+.embeddedOutputsTextElement.activeOutput .eoOutputContent,.embeddedOutputsVariableStringElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+/*embeddedOutputsTextElement has a different dom structure than embeddedOutputsVariableStringElement.Unlike variableString, the text output has both TEXT nodes and elements as children. Hence we needa selector for each.*/.embeddedOutputsTextElement .eoOutputContent::selection,.embeddedOutputsTextElement .eoOutputContent ::selection,.embeddedOutputsVariableStringElement .eoOutputContent ::selection {}
+.textElement,.rtcDataTipElement .textElement {    padding-top: 2px;}
+.embeddedOutputsTextElement.inlineElement,.embeddedOutputsVariableStringElement.inlineElement {}
+.inlineElement .textElement {}
+.embeddedOutputsTextElement.rightPaneElement,.embeddedOutputsVariableStringElement.rightPaneElement {    min-height: 16px;}
+.rightPaneElement .textElement {    padding-top: 2px;    padding-left: 9px;}</style></head><body><div class = rtcContent><h1  class = 'S0' id = 'H_A0FE6009' ><span style=' text-decoration: underline;'>cadencia</span></h1><div  class = 'S1'><span>Calcula la cadencia de carrera a partir de los eventos de foot-strike.</span></div><h2  class = 'S2'><span style=' text-decoration: underline;'>Syntax</span></h2><div  class = 'S1'><span style=' font-family: monospace;'>[cadencia_valores, cadencia_media] = cadencia(IC, freq);</span></div><h2  class = 'S3'><span style=' text-decoration: underline;'>Description</span></h2><div  class = 'S1' id = 'DBFD3D1C' ><span style=' font-family: monospace;'>cadencia calcula la cadencia de carrera (en pasos por minuto) utilizando los eventos de foot-strike contenidos en IC y la frecuencia de muestreo freq. Devuelve un vector cadencia_valores con la cadencia instantánea entre foot-strikes consecutivos y el valor medio cadencia_media correspondiente a toda la señal.</span></div><div  class = 'S1' id = 'DBFD3D1C' ><span style=' font-family: monospace;'>El parámetro de entrada IC debe ser un vector o celda con los índices de los eventos de foot-strike (talonazo). freq contiene la frecuencia de muestreo en Hz.</span></div><h2  class = 'S3'><span style=' text-decoration: underline;'>Examples</span></h2><div  class = 'S1'><span>Supongamos que disponemos de los índices de foot-strike detectados en una prueba de carrera:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S4'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% Simulamos los índices de foot-strike (cada 0.6 segundos)</span></span></div></div><div class="inlineWrapper"><div  class = 'S5'><span style="white-space: pre"><span >freq = 100; </span><span style="color: rgb(0, 128, 19);">% Hz</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >IC = num2cell(round(0.6*freq:0.6*freq:10*freq));</span></span></div></div></div><div  class = 'S7'><span>Calculamos la cadencia</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S8'><span style="white-space: pre"><span >cad = cadencia(IC, freq);</span></span></div></div></div><div  class = 'S7'><span>Representamos el resultado gráficamente.</span></div><div class="CodeBlock"><div class="inlineWrapper outputs"><div  class = 'S9'><span style="white-space: pre"><span >disp([</span><span style="color: rgb(167, 9, 245);">'Cadencia media: '</span><span >, num2str(cad, </span><span style="color: rgb(167, 9, 245);">'%.2f'</span><span >), </span><span style="color: rgb(167, 9, 245);">' pasos/min'</span><span >]);</span></span></div><div  class = 'S10'><div class="inlineElement eoOutputWrapper disableDefaultGestureHandling embeddedOutputsTextElement" uid="BDDE1F81" prevent-scroll="true" data-testid="output_0" tabindex="-1" style="width: 1145px; white-space: pre; font-style: normal; color: rgb(33, 33, 33); font-size: 12px;"><div class=" textElement eoOutputContent" tabindex="-1" data-previous-available-width="1108" data-previous-scroll-height="17" data-hashorizontaloverflow="false" role="article" aria-roledescription="Use Browse Mode to explore " aria-description="text output " style="max-height: 261px; white-space: pre; font-style: normal; color: rgb(33, 33, 33); font-size: 12px;">Cadencia media: 106.67 pasos/min</div></div></div></div></div><div  class = 'S7'><span>Notas</span></div><div  class = 'S1'><span>- La cadencia se calcula como el número de pasos por minuto: </span></div><div  class = 'S1'><span>  cadencia = (60 * freq) ./ diff(IC);</span></div><div  class = 'S1'><span>- Es recomendable eliminar los primeros y últimos eventos si se producen irregularidades.</span></div><div  class = 'S1'><span>- Esta función forma parte del módulo de análisis de dinámica de carrera de la SIMUR Toolbox.</span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span></span></div><div  class = 'S1'></div>
+<br>
+<!-- 
+##### SOURCE BEGIN #####
+%% cadencia
+% Calcula la cadencia de carrera a partir de los eventos de foot-strike.
+%% Syntax
+% |[cadencia_valores, cadencia_media] = cadencia(IC, freq);|
+%% Description
+% |cadencia calcula la cadencia de carrera (en pasos por minuto) utilizando 
+% los eventos de foot-strike contenidos en IC y la frecuencia de muestreo freq. 
+% Devuelve un vector cadencia_valores con la cadencia instantánea entre foot-strikes 
+% consecutivos y el valor medio cadencia_media correspondiente a toda la señal.|
+% 
+% |El parámetro de entrada IC debe ser un vector o celda con los índices de 
+% los eventos de foot-strike (talonazo). freq contiene la frecuencia de muestreo 
+% en Hz.|
+%% Examples
+% Supongamos que disponemos de los índices de foot-strike detectados en una 
+% prueba de carrera:
+
+% Simulamos los índices de foot-strike (cada 0.6 segundos)
+freq = 100; % Hz
+IC = num2cell(round(0.6*freq:0.6*freq:10*freq));
+%% 
+% Calculamos la cadencia
+
+cad = cadencia(IC, freq);
+%% 
+% Representamos el resultado gráficamente.
+
+disp(['Cadencia media: ', num2str(cad, '%.2f'), ' pasos/min']);
+%% 
+% Notas
+% 
+% - La cadencia se calcula como el número de pasos por minuto: 
+% 
+% cadencia = (60 * freq) ./ diff(IC);
+% 
+% - Es recomendable eliminar los primeros y últimos eventos si se producen irregularidades.
+% 
+% - Esta función forma parte del módulo de análisis de dinámica de carrera de 
+% la SIMUR Toolbox.
+% 
+% 
+% 
+% 
+% 
+%
+##### SOURCE END #####
+-->
+</div></body></html>
