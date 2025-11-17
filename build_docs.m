@@ -22,7 +22,7 @@ function build_docs
     end
 
     %% 1) Publicar documentos .m con publish (solo si han cambiado)
-    mFiles = dir(fullfile(docSrcDir, "doc_*.m"));
+    mFiles = dir(fullfile(docSrcDir, "h_*.m"));
 
     if ~isempty(mFiles)
         opts = struct();
@@ -44,7 +44,7 @@ function build_docs
     end
 
     %% 2) Exportar documentos .mlx con export (solo si han cambiado)
-    mlxFiles = dir(fullfile(docSrcDir, "doc_*.mlx"));
+    mlxFiles = dir(fullfile(docSrcDir, "h_*.mlx"));
 
     if ~isempty(mlxFiles)
         if exist("export", "file") ~= 2
