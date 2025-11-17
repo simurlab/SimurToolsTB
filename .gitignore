@@ -1,7 +1,57 @@
-resources/
+**/.DS_Store
+**/slprj
+**.slxc
+**/.m~
+**/.autosave
 .DS_Store
-*/.DS_Store
+
+## ============================
+# MATLAB / Simulink / Simscape
+# ============================
+
+# Archivos temporales y de autosave
+*.asv
+*.m~  
 *.autosave
-*.html
-Databases/
-data_deprecated/
+
+# Cachés generados por MATLAB
+*.slxc
+sccprj/
+coder/
+codegen/
+.cache/
+
+# Preferencias locales
+*.settings
+*.matlab
+
+# Archivos de Simulink generados
+*.slxc        # Simulink cache
+
+# Archivos creados al ejecutar simulaciones
+*.mex*        # MEX compilados
+*.mdl.r*      # Versiones backup
+*.slx.r*      # Versiones backup
+*.log         # Logs de simulación
+*.out
+
+# Datos de ejecución
+*.mat         # (Opcional: ignóralos si no quieres subir resultados)
+*.csv         # (Opcional)
+
+# Modelos físicos de Simscape compilados
+smssencachedir/
+work/
+
+# Proyectos de MATLAB
+*.prj
+*.slprj
+
+# Carpetas temporales de simulación
+simulink_cache/
+simulink_codegen/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+**/slprj/

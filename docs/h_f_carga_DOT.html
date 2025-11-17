@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB 2025b"><title>f_carga_DOT – Cargar y procesar archivos .csv de sensores Xsens Dot</title><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 28.8px; min-height: 0px; white-space: pre-wrap; color: rgb(192, 76, 11); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 24px; font-weight: 400; text-align: left;  }
+.S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: 400; text-align: left;  }
+.S2 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 25px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 700; text-align: left;  }
+.CodeBlock { background-color: #F5F5F5; margin: 10px 15px 10px 0; display: inline-block; min-width: 100%; }
+.eoOutputWrapper { width: calc(90vw - 10px) !important; }
+.S3 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 1px solid rgb(217, 217, 217); border-radius: 4px 4px 0px 0px; padding: 6px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S4 { color: rgb(33, 33, 33); padding: 10px 0px 6px 17px; background: rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px; overflow-x: hidden; line-height: 17.234px;  }
+/* Styling that is common to warnings and errors is in diagnosticOutput.css */.embeddedOutputsErrorElement {    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsErrorElement .diagnosticMessage-errorType {    overflow: auto;}
+.embeddedOutputsErrorElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+.embeddedOutputsErrorElement.activeOutput .eoOutputContent button {    user-select: none;    -webkit-user-select: none;}
+.embeddedOutputsErrorElement .eoOutputContent ::selection {}
+.embeddedOutputsErrorElement.inlineElement {}
+.embeddedOutputsErrorElement.rightPaneElement {}
+/* Styling that is common to warnings and errors is in diagnosticOutput.css */.embeddedOutputsWarningElement {    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsWarningElement .diagnosticMessage-warningType {    overflow: auto;}
+.embeddedOutputsWarningElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+.embeddedOutputsWarningElement .eoOutputContent ::selection {}
+.embeddedOutputsWarningElement.inlineElement {}
+.embeddedOutputsWarningElement.rightPaneElement {}
+/* Copyright 2015-2023 The MathWorks, Inc. *//* In this file, styles are not scoped to rtcContainer since they could be in the Dojo Tooltip */.diagnosticMessage-wrapper {    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;    font-size: 12px;}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType {    /*This fallback value will be used for appdesigner warnings*/    color: var(--rtc-warning-output-color, var(--mw-color-matlabWarning));}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType a {    /*This fallback value will be used for appdesigner warnings*/    color: var(--rtc-warning-output-color, var(--mw-color-matlabWarning));    text-decoration: underline;}
+.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-warningType,.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-warningType a {    color: var(--mw-color-matlabWarning) !important;}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType {    /*This fallback value will be used in appdesigner error tooltip text*/    color: var(--rtc-error-output-color, var(--mw-color-matlabErrors));}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType a {    /*This fallback value will be used in appdesigner error tooltip text*/    color: var(--rtc-error-output-color, var(--mw-color-matlabErrors));    text-decoration: underline;}
+.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-errorType,.rtcThemeDefaultOverride .diagnosticMessage-wrapper.diagnosticMessage-errorType a {    color: var(--mw-color-matlabErrors) !important;}
+.diagnosticMessage-wrapper .diagnosticMessage-messagePart,.diagnosticMessage-wrapper .diagnosticMessage-causePart {    white-space: pre-wrap;}
+.diagnosticMessage-wrapper .diagnosticMessage-stackPart {    white-space: pre;}
+.embeddedOutputsTextElement,.embeddedOutputsVariableStringElement {    white-space: pre;    word-wrap:  initial;    min-height: 18px;    max-height: 550px;}
+.embeddedOutputsTextElement .textElement,.embeddedOutputsVariableStringElement .textElement {    overflow: auto;}
+.embeddedOutputsTextElement.activeOutput .eoOutputContent,.embeddedOutputsVariableStringElement.activeOutput .eoOutputContent {    user-select: text;    -webkit-user-select: text;}
+/*embeddedOutputsTextElement has a different dom structure than embeddedOutputsVariableStringElement.Unlike variableString, the text output has both TEXT nodes and elements as children. Hence we needa selector for each.*/.embeddedOutputsTextElement .eoOutputContent::selection,.embeddedOutputsTextElement .eoOutputContent ::selection,.embeddedOutputsVariableStringElement .eoOutputContent ::selection {}
+.textElement,.rtcDataTipElement .textElement {    padding-top: 2px;}
+.embeddedOutputsTextElement.inlineElement,.embeddedOutputsVariableStringElement.inlineElement {}
+.inlineElement .textElement {}
+.embeddedOutputsTextElement.rightPaneElement,.embeddedOutputsVariableStringElement.rightPaneElement {    min-height: 16px;}
+.rightPaneElement .textElement {    padding-top: 2px;    padding-left: 9px;}
+.S5 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 0px none rgb(33, 33, 33); border-radius: 0px; padding: 6px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S6 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 0px none rgb(33, 33, 33); border-radius: 0px; padding: 0px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S7 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 1px solid rgb(217, 217, 217); border-radius: 0px 0px 4px 4px; padding: 0px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S8 { margin: 3px; border: 1px solid rgb(191, 191, 191); border-collapse: collapse;  }
+.S9 { background-color: rgb(245, 245, 245);  }
+.S10 { border: 1px solid rgb(191, 191, 191); vertical-align: top;  }
+.S11 { margin: 2px 10px 2px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: break-spaces; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: 400; text-align: left;  }
+.S12 { background-color: rgba(0, 0, 0, 0);  }
+.S13 { margin: 10px 0px 20px; padding-left: 0px; font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-size: 14px;  }
+.S14 { margin-left: 56px; line-height: 21px; min-height: 0px; text-align: left; white-space: pre-wrap;  }
+.S15 { margin: 20px 10px 5px 4px; padding: 0px; line-height: 25px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 700; text-align: left;  }
+.S16 { border-left: 1px solid rgb(217, 217, 217); border-right: 1px solid rgb(217, 217, 217); border-top: 1px solid rgb(217, 217, 217); border-bottom: 0px none rgb(33, 33, 33); border-radius: 4px 4px 0px 0px; padding: 6px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S17 { margin: 10px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: 400; text-align: left;  }</style></head><body><div class = rtcContent><h1  class = 'S0' id = 'H_F9755ED4' ><span style=' font-weight: bold;'>f_carga_DOT</span><span> – Cargar y procesar archivos .csv de sensores Xsens Dot</span></h1><div  class = 'S1'><span>La función </span><span style=' font-family: monospace;'>f_carga_DOT</span><span> permite cargar datos desde un archivo </span><span style=' font-family: monospace;'>.csv</span><span> generado por sensores </span><span style=' font-weight: bold;'>Xsens Dot</span><span>, procesar la columna de tiempo (</span><span style=' font-family: monospace;'>SampleTimeFine</span><span>) y opcionalmente guardar la tabla procesada como archivo </span><span style=' font-family: monospace;'>.mat</span><span>.</span></div><h2  class = 'S2'><span style=' text-decoration: underline;'>Syntax</span></h2><div class="CodeBlock"><div class="inlineWrapper outputs"><div  class = 'S3'><span style="white-space: pre"><span >tabla = f_carga_DOT();</span></span></div><div  class = 'S4'><div class="inlineElement eoOutputWrapper disableDefaultGestureHandling embeddedOutputsErrorElement" uid="F1C7A225" prevent-scroll="true" data-testid="output_0" tabindex="-1" style="width: 1145px; white-space: normal; font-style: normal; color: rgb(33, 33, 33); font-size: 12px;"><div class="diagnosticMessage-wrapper diagnosticMessage-errorType eoOutputContent" tabindex="-1" data-previous-available-width="1108" data-previous-scroll-height="34" data-hashorizontaloverflow="false" role="article" aria-roledescription="Use Browse Mode to explore " aria-description="error output " style="max-height: 261px; white-space: normal; font-style: normal; color: rgb(225, 27, 20); font-size: 12px;"><div class="diagnosticMessage-messagePart" style="white-space: pre-wrap; font-style: normal; color: rgb(225, 27, 20); font-size: 12px;">Error using f_carga_DOT (line 35)<br style="white-space: pre-wrap; font-style: normal; color: rgb(225, 27, 20); font-size: 12px;">❌ No se encontró ningún archivo .csv en la ruta: /Users/juan/GitHub/SimurToolsTB/docs_src</div><div class="diagnosticMessage-stackPart" style="white-space: pre; font-style: normal; color: rgb(225, 27, 20); font-size: 12px;"></div></div></div></div></div><div class="inlineWrapper"><div  class = 'S5'><span style="white-space: pre"><span >tabla = f_carga_DOT(</span><span style="color: rgb(167, 9, 245);">'folder_path'</span><span >, </span><span style="color: rgb(167, 9, 245);">'ruta/a/archivos'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >tabla = f_carga_DOT(</span><span style="color: rgb(167, 9, 245);">'save'</span><span >, </span><span style="color: rgb(167, 9, 245);">'y'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S7'>&nbsp;</div></div></div><h2  class = 'S2'><span style=' text-decoration: underline;'>Description</span></h2><div  class = 'S1'><span style=' text-decoration: underline;'></span></div><table  class = 'S8'><col/><col/><col/><col/><tr  class = 'S9'><td  class = 'S10'><div  class = 'S11'><span style=' font-weight: bold;'>Parámetro</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-weight: bold;'>Tipo</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-weight: bold;'>Descripción</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-weight: bold;'>Valor por defecto</span></div></td></tr><tr  class = 'S12'><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>folder_path</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>string</span></div></td><td  class = 'S10'><div  class = 'S11'><span>Ruta a la carpeta con archivos </span><span style=' font-family: monospace;'>.csv</span></div></td><td  class = 'S10'><div  class = 'S11'><span>Carpeta actual</span></div></td></tr><tr  class = 'S12'><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>save</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>char</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>'y'</span><span> para guardar la tabla como </span><span style=' font-family: monospace;'>dot_YYMMDD.mat</span><span>; </span><span style=' font-family: monospace;'>'n'</span><span> para no guardar</span></div></td><td  class = 'S10'><div  class = 'S11'><span style=' font-family: monospace;'>'n'</span></div></td></tr></table><div  class = 'S1'><span></span></div><h2  class = 'S2'><span style=' font-weight: bold; text-decoration: underline;'>Output</span></h2><div  class = 'S1'><span style=' font-weight: bold; text-decoration: underline;'></span></div><ul  class = 'S13'><li  class = 'S14'><span style=' font-family: monospace;'>tabla</span><span> – Objeto de tipo </span><span style=' font-family: monospace;'>table</span><span> con las columnas del CSV, incluyendo una columna </span><span style=' font-family: monospace;'>Time</span><span> normalizada en segundos.</span></li></ul><h2  class = 'S15'><span style=' text-decoration: underline;'></span></h2><h2  class = 'S2'><span style=' text-decoration: underline;'>Examples</span></h2><div  class = 'S1'><span style=' text-decoration: underline;'></span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S16'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% Usar valores por defecto (carpeta actual, sin guardar)</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >tabla = f_carga_DOT();</span></span></div></div><div class="inlineWrapper"><div  class = 'S7'>&nbsp;</div></div></div><div  class = 'S17'><span></span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S16'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% Graficar un ejemplo si existe una señal de aceleración</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span style="color: rgb(14, 0, 255);">if </span><span >any(strcmp(tabla.Properties.VariableNames, </span><span style="color: rgb(167, 9, 245);">'FreeAcc_X'</span><span >))</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >    plot(tabla.Time, tabla.FreeAcc_X);</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >    xlabel(</span><span style="color: rgb(167, 9, 245);">'Tiempo (s)'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >    ylabel(</span><span style="color: rgb(167, 9, 245);">'Aceleración libre X'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span >    title(</span><span style="color: rgb(167, 9, 245);">'Señal de aceleración en el eje X'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S6'><span style="white-space: pre"><span style="color: rgb(14, 0, 255);">end</span></span></div></div><div class="inlineWrapper"><div  class = 'S7'>&nbsp;</div></div></div><h2  class = 'S2'><span style=' font-weight: bold; text-decoration: underline;'>Notes</span></h2><ul  class = 'S13'><li  class = 'S14'><span>La función utiliza el primer archivo </span><span style=' font-family: monospace;'>.csv</span><span> encontrado en la carpeta.</span></li><li  class = 'S14'><span>Asegúrate de que el archivo contenga la columna </span><span style=' font-family: monospace;'>SampleTimeFine</span><span>.</span></li></ul>
+<br>
+<!-- 
+##### SOURCE BEGIN #####
+%% *f_carga_DOT* – Cargar y procesar archivos .csv de sensores Xsens Dot
+% La función |f_carga_DOT| permite cargar datos desde un archivo |.csv| generado 
+% por sensores *Xsens Dot*, procesar la columna de tiempo (|SampleTimeFine|) y 
+% opcionalmente guardar la tabla procesada como archivo |.mat|.
+%% Syntax
+
+tabla = f_carga_DOT();
+tabla = f_carga_DOT('folder_path', 'ruta/a/archivos');
+tabla = f_carga_DOT('save', 'y');
+
+%% Description
+% 
+%% 
+% *Parámetro*
+%% 
+% *Tipo*
+%% 
+% *Descripción*
+%% 
+% *Valor por defecto*
+%% 
+% |folder_path|
+%% 
+% |string|
+%% 
+% Ruta a la carpeta con archivos |.csv|
+%% 
+% Carpeta actual
+%% 
+% |save|
+%% 
+% |char|
+%% 
+% |'y'| para guardar la tabla como |dot_YYMMDD.mat|; |'n'| para no guardar
+%% 
+% |'n'|
+%% 
+% 
+%% *Output*
+% 
+%% 
+% * |tabla| – Objeto de tipo |table| con las columnas del CSV, incluyendo una 
+% columna |Time| normalizada en segundos.
+%% 
+%% Examples
+% 
+
+% Usar valores por defecto (carpeta actual, sin guardar)
+tabla = f_carga_DOT();
+
+%% 
+% 
+
+% Graficar un ejemplo si existe una señal de aceleración
+if any(strcmp(tabla.Properties.VariableNames, 'FreeAcc_X'))
+    plot(tabla.Time, tabla.FreeAcc_X);
+    xlabel('Tiempo (s)');
+    ylabel('Aceleración libre X');
+    title('Señal de aceleración en el eje X');
+end
+
+%% *Notes*
+%% 
+% * La función utiliza el primer archivo |.csv| encontrado en la carpeta.
+% * Asegúrate de que el archivo contenga la columna |SampleTimeFine|.
+##### SOURCE END #####
+-->
+</div></body></html>
