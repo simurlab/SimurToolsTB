@@ -1,4 +1,4 @@
-function db_crea_prueba(varargin)
+function carga_sensores(varargin)
 % CREA_ INTENTOS Carga, procesa y guarda datos de múltiples sensores IMU.
 %
 %   crea_intentos()

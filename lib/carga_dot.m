@@ -78,6 +78,7 @@ function [tabla, info_sensor] = carga_dot(varargin)
     if isempty(dot_match)
         nombre_dot = 'DOT';
     else
+        error('❌ El nombre del archivo no coincide con el formato esperado: %s', archivo_csv);
         nombre_dot = dot_match{1};
     end
 
