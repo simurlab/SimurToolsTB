@@ -1,12 +1,12 @@
-function segmenta_intentos(varargin)
-%SEGMENTAR_INTENTOS Segmenta zonas estáticas e intentos a partir de datos IMU.
+function db_intentos(varargin)
+%DB_INTENTOS Segmenta zonas estáticas e intentos a partir de datos IMU.
 %
-%   segmentar_intentos()
+%   db_intentos()
 %       Modo interactivo: el usuario selecciona intervalos estáticos e
 %       intentos mediante gráficas e inputs. Guarda fragmentos por intento
 %       y un archivo resumen con todos los intervalos.
 %
-%   segmentar_intentos('resumen','intentos_h01.mat')
+%   db_intentos('resumen','intentos_h01.mat')
 %       Modo automático: utiliza un archivo de resumenTabla previamente
 %       generado para segmentar automáticamente sin interacción.
 %
@@ -17,10 +17,10 @@ function segmenta_intentos(varargin)
 %
 %   EJEMPLOS:
 %       % En carpeta de sujeto/session con h01.mat
-%       segmentar_intentos();
+%       db_intentos();
 %
 %       % Reutilizando un resumen previo
-%       segmentar_intentos('resumen','intentos_h01.mat');
+%       db_intentos('resumen','intentos_h01.mat');
 %
 %   See also: carga_sensores
 
@@ -47,7 +47,7 @@ function segmenta_intentos(varargin)
         error('Ruta demasiado corta para determinar nombre de archivo.');
     end
 
-    letraMatch = regexp(partesRuta{end-2}, '^[a-zA-Z]', 'match');
+    letraMatch = regexp(partesRuta{end-1}, '^[a-zA-Z]', 'match');
     numMatch = regexp(partesRuta{end}, '^\d{2}', 'match');
     if isempty(letraMatch) || isempty(numMatch)
         error('❌ Formato de carpeta no válido.');
