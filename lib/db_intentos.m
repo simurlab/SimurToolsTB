@@ -182,6 +182,12 @@ function db_intentos(varargin)
             if ~isempty(intentosFiltrados)
                 meta.intervaloIntento = [intentosFiltrados.inicio, intentosFiltrados.fin];
             end
+            % añadir en la struct meta los intervalos estático y el del
+            % intento
+            if ~isempty(intentosFiltrados)
+                meta.intervaloIntento = [intentosFiltrados.inicio, intentosFiltrados.fin];
+                meta.intervaloEstatico = [intentosFiltrados.inicio_estatico, intentosFiltrados.fin_estatico];
+            end
             fragmento.(sprintf('%s_1_metadata',ubic)) = meta;
         end
         nombreIntento = sprintf('%s%02d.mat', nombreBase, idIntento);
