@@ -55,6 +55,9 @@ function [MaxAcc,saltos,caidas]=prov_eventos_COG_vallas(acc_vert_raw)
         end
         last=caidas(end);
     end
+    %Cambiamos los indices para estar en la señal global
+    saltos=MaxAcc(saltos);
+    caidas=MaxAcc(caidas);
 
 
  
