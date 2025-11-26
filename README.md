@@ -28,7 +28,7 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 | **Orientación y Estimación Angular** | `orientacion_giroscopo`, `orientacion_compas`, `orientacion_kalman`, `estimacion_rotacion_triad` | Estimación de orientación de sólidos rígidos a partir de IMUs mediante distintos métodos (complementario, Kalman, TRIAD). |
 | **Visualización 3D** | `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
 | **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta`, `integracion_acumulada_cav_simpson` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
-| **Gestión de Bases de Datos** |  `db_prueba`, `db_intento`,  `resume_intentos` | Creación de archivos para la **BD InnovaIM**. |
+| **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `resume_intentos` | Creación de archivos para la **BD InnovaIM**. |
 
 ---
 

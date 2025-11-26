@@ -47,7 +47,7 @@ function segmenta_intentos(varargin)
         error('Ruta demasiado corta para determinar nombre de archivo.');
     end
 
-    letraMatch = regexp(partesRuta{end-2}, '^[a-zA-Z]', 'match');
+    letraMatch = regexp(partesRuta{end-1}, '^[a-zA-Z]', 'match');
     numMatch = regexp(partesRuta{end}, '^\d{2}', 'match');
     if isempty(letraMatch) || isempty(numMatch)
         error('❌ Formato de carpeta no válido.');

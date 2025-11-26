@@ -147,8 +147,10 @@ function [tabla, info_sensor] = carga_bimu(varargin)
     ubicacion = regexp(nombre_carpeta, '^(FR|FL|COG)', 'match', 'once');
 
     if isempty(orientacion)
-        warning('⚠️ No se especificó orientación. Se establece en [1 2 3].');
-        orientacion = [1 2 3];
+        %warning('⚠️ No se especificó orientación. Se establece en [1 2 3].');
+        %orientacion = [1 2 3];
+        warning('⚠️ No se especificó orientación.');
+        orientacion = input('👉 Introduce orientación del sensor [1 2 3]: ');
     end
 
     info_sensor = struct( ...

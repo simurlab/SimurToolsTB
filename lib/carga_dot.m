@@ -78,6 +78,7 @@ function [tabla, info_sensor] = carga_dot(varargin)
     if isempty(dot_match)
         nombre_dot = 'DOT';
     else
+        %error('❌ El nombre del archivo no coincide con el formato esperado: %s', archivo_csv);
         nombre_dot = dot_match{1};
     end
 
@@ -86,8 +87,10 @@ function [tabla, info_sensor] = carga_dot(varargin)
 
     % -------------------- Validar orientación --------------------
     if isempty(orientacion)
-        warning('⚠️ No se especificó orientación. Se establece en [1 2 3].');
-        orientacion = [1 2 3];
+        %warning('⚠️ No se especificó orientación. Se establece en [1 2 3].');
+        %orientacion = [1 2 3];
+        warning('⚠️ No se especificó orientación.');
+        orientacion = input('👉 Introduce orientación del sensor [1 2 3]: ');
     elseif ~isnumeric(orientacion) || numel(orientacion) ~= 3
         error('❌ Orientación inválida. Debe ser un vector [1 2 3].');
     end
