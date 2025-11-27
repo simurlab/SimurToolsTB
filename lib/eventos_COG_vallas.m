@@ -1,7 +1,8 @@
-function [MaxAcc,saltos,caidas]=prov_eventos_COG_vallas(acc_vert_raw)
+function [MaxAcc,saltos,caidas,IC,FC]=eventos_COG_vallas(acc_vert_raw,acc_tot_raw)
     orden=5;
     corte=30/120;
     acc_vert=filtro_paso_bajo_f0(acc_vert_raw,orden,corte);
+    acc_tot=filtro_paso_bajo_f0(acc_tot_raw,orden,corte);
     tam=length(acc_vert);
     % Obtencion del signo de la derivada
     Datos=acc_vert(2:tam)-acc_vert(1:tam-1);
@@ -55,22 +56,31 @@ function [MaxAcc,saltos,caidas]=prov_eventos_COG_vallas(acc_vert_raw)
         end
         last=caidas(end);
     end
-    %Cambiamos los indices para estar en la señal global
-    saltos=MaxAcc(saltos);
-    caidas=MaxAcc(caidas);
+    %Si se quiere cambiar los indices para estar en la señal global
+    %Por ahora se deja sin cambiar. Asi están todos los pasos, y estos 
+    %indices indican cual es el salto y la caida
+    %saltos=MaxAcc(saltos);
+    %caidas=MaxAcc(caidas);
 
+    %Buscamos el mínimo situado en las 10 muestras anteriores al evento
+    for k = 1:length(MaxAcc)
+        if MaxAcc(k) > 10 % Ensure we have enough samples to look back
+            [~,minimo] = min(acc_tot(MaxAcc(k)-10:MaxAcc(k)-1));
+            minimos(k) = minimo; %#ok<AGROW>
+        else
+            minimos(k) = 10; %#ok<AGROW>
+        end
+    end
+    %y desplazamos los eventos esa cantidad
+    IC = MaxAcc - 10 + minimos -1; % Adjust the event based on the minimum value
 
- 
-
-
-    % %Buscamos el mínimo situado en las 10 muestras anteriores al evento
-    % for i = 1:length(eventos_f)
-    %     if eventos_f(i) > 10 % Ensure we have enough samples to look back
-    %         [~,minimo] = min(acc_vert(eventos_f(i)-10:eventos_f(i)-1));
-    %         minimos(i) = minimo; %#ok<AGROW>
-    %     end
-    % end
-    % %y desplazamos los eventos esa cantidad
-    % eventos_f = eventos_f - 10 + minimos -1; % Adjust the event based on the minimum value
-    % eventos=eventos_f;
+    %FC tiempo desde el 1º valor que baje de 20m/s2
+    for k =1:length(MaxAcc)
+        if MaxAcc(k)+30<length(acc_tot_raw)
+            indice = find(acc_tot(MaxAcc(k)+5:MaxAcc(k)+30)<20,1);
+            FC(k) = MaxAcc(k)+5+indice-1; %#ok<AGROW>
+        else
+            FC (k) =length(acc_tot); %#ok<AGROW>
+        end
+    end
 end
