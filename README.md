@@ -12,6 +12,8 @@
 
 El toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
+Las herramientas sirven tanto para trabajar con archivos de datos generados por sensores comerciales, como con datos estandarizados en el formato **IMUstd**, que se describe más adelante. 
+
 ---
 
 ## 🧩 Estructura del Toolbox
@@ -20,27 +22,46 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 
 | Categoría | Funciones Principales | Descripción |
 |------------|-----------------------|--------------|
-| **Carga de Datos** |  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_silop`, `lectura_archivo_csv` | Lectura de archivos provenientes de distintos tipos de sensores, y traducción al formato *IMUstd*.|
+| **Carga de Datos** |   `carga_IMUstd` | Lectura de archivos con formato *IMUstd*.|
 | **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` | Limpieza y filtrado de señales, corrección de eventos y duplicados. |
 | **Cálculo Espacial / Cinemático** | `doble_integracion`, `doble_integracion_ddi`, `doble_integracion_lri`, `doble_integracion_msi`, `doble_integracion_ofi`, `doble_integracion_zijlstra`, `distancia_pendulo`, `distancia_arco`, `distancia_recorrida_extremos`, `trayectoria_marcador` | Integración de aceleraciones y cálculo de distancias y trayectorias. |
-| **Eventos y Segmentación** | `eventos_pie_carrera`, `eventos_cog_carrera`, `eventos_cog_caminar`, `eventos_salto_vertical`, `segmenta_intentos`, `tiempos_eventos_carrera` | Detección automática de eventos de pie, centro de gravedad o salto, y segmentación de intentos. |
+| **Eventos y Segmentación** | `eventos_pie_carrera`, `eventos_cog_carrera`, `eventos_cog_caminar`, `eventos_salto_vertical`, `segmenta_intentos`, `tiempos_eventos_carrera`, `mostrar_eventos`, `mostrar_patrones` | Detección automática de eventos de pie, centro de gravedad o salto, y segmentación de intentos. |
 | **Parámetros de Rendimiento** | `cadencia`, `amplitud_impacto_carrera`, `amplitud_frenado_carrera`, `rms_aceleracion_frenado_carrera`, `rms_aceleracion_impacto_carrera`, `aceleracion_mediolateral_carrera` | Extracción de variables biomecánicas de interés para análisis de carrera o marcha. |
 | **Orientación y Estimación Angular** | `orientacion_giroscopo`, `orientacion_compas`, `orientacion_kalman`, `estimacion_rotacion_triad` | Estimación de orientación de sólidos rígidos a partir de IMUs mediante distintos métodos (complementario, Kalman, TRIAD). |
-| **Visualización 3D** | `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
+| **Visualización 3D** | `mostrar_patrones`, `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
 | **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta`, `integracion_acumulada_cav_simpson` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
-| **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `resume_intentos` | Creación de archivos para la **BD InnovaIM**. |
+| **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_silop`, `lectura_archivo_csv`, `resume_intentos` | Creación de archivos de formato IMUstd. |
 
 ---
 
-## ⚙️ Carga de Datos: el IMU estándar (IMUstd)
+## 🧱 Convenciones y Estructura de Carpetas
 
- El **IMUstd** es el tipo de dato estandarizado para la **SIMUR Tools TB**. Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado. 
-Las funciones para la *Carga de Datos* de la TB (carga_*) leen y convierten los archivos de IMUs reales al formato **IMUstd**.
- 
- El **IMUstd** consta de dos partes: datos y metadatos.
+```
+SimurTools/
+│
+├── carga_*                 % Funciones de lectura de datos
+├── eventos_*               % Detección de eventos biomecánicos
+├── db_*                       % Creación de Bases de Datos en el formato IMUstd 
+├── orientacion_*           % Estimación de orientación
+├── dibujar_*, mostrar_*    % Visualización 3D
+├── doble_integracion_*     % Métodos de integración
+├── amplitud_*, rms_*       % Parámetros de rendimiento
+├── Contents.m              % Índice automático del toolbox
+└── README.md               % Este archivo
+```
+
+---
+
+## ⚙️ El formato IMU estándar (IMUstd)
+
+ El formato **IMUstd** es un tipo de dato estandarizado, especialmente útil para trabajar con la **SIMUR Tools TB**. 
+ Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado.
+  
+ Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localización del cuerpo, y con ciertas propiedades. 
+ Se define con una estructura que consta de dos partes: datos y metadatos.
  
 ### Datos: 
-una matriz que consta de varias de las siguientes columnas de números reales:
+las señales de los sensores ordenadas en columnas:
 
 | Tipo de dato | Etiqueta Principales | Unidades |
 |------------|-----------------------|----------------------|
@@ -53,8 +74,8 @@ una matriz que consta de varias de las siguientes columnas de números reales:
 |Instante de la muestra|"Time"| ms |
 |Estado de la batería|"Battery"| ms |
 |Código de estado|"Status"| ms |
-|Sin Uso|"Var24"| - |
-|Sin Uso|"Index"| - |
+|Uso reservado|"Var24"| - |
+|Uso reservado|"Index"| - |
 
 ### Metadatos: 
 información referida al tipo de sensor y su colocación:
@@ -68,6 +89,8 @@ información referida al tipo de sensor y su colocación:
 |orientacion | relativa respecto al **sistema de referencia IMUstd**, de convenio {V, ML, AP} ("anatómico") | [3,-1,2] |
 |intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
 
+La función *carga_IMUstd* de la TB está pensada para leer un archivo de un **IMUstd** y devolver las señales de acelerómetros y giroscopios referidas a
+un sistema de referencia *anatómico*, de convenio (V, ML, AP).
 
 ![El sistema de referencia de IMUstd {V, ML, AP}](img/IMUstd_mini.png)
 
@@ -98,23 +121,6 @@ cad = cadencia(ic, fc, data.freq);
 
 % 5. Visualizar resultados
 dibujar_sistema_referencia();
-```
-
----
-
-## 🧱 Convenciones y Estructura de Carpetas
-
-```
-SimurTools/
-│
-├── carga_*                 % Funciones de lectura de datos
-├── eventos_*               % Detección de eventos biomecánicos
-├── orientacion_*           % Estimación de orientación
-├── dibujar_*, mostrar_*    % Visualización 3D
-├── doble_integracion_*     % Métodos de integración
-├── amplitud_*, rms_*       % Parámetros de rendimiento
-├── Contents.m              % Índice automático del toolbox
-└── README.md               % Este archivo
 ```
 
 ---
