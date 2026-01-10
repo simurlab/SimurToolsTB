@@ -18,19 +18,106 @@ Las herramientas sirven tanto para trabajar con archivos de datos generados por 
 
 ## 🧩 Estructura del Toolbox
 
-Las funciones están organizadas por **bloques funcionales**, lo que facilita su uso modular dentro de pipelines personalizados de análisis.
+Las funciones están organizadas por **tipo de actividad física**, lo que facilita identificar rápidamente las herramientas disponibles para cada aplicación.
 
-| Categoría | Funciones Principales | Descripción |
-|------------|-----------------------|--------------|
-| **Carga de Datos** |   `carga_IMUstd` | Lectura de archivos con formato *IMUstd*.|
-| **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` | Limpieza y filtrado de señales, corrección de eventos y duplicados. |
-| **Cálculo Espacial / Cinemático** | `doble_integracion`, `doble_integracion_ddi`, `doble_integracion_lri`, `doble_integracion_msi`, `doble_integracion_ofi`, `doble_integracion_zijlstra`, `distancia_pendulo`, `distancia_arco`, `distancia_recorrida_extremos`, `trayectoria_marcador` | Integración de aceleraciones y cálculo de distancias y trayectorias. |
-| **Eventos y Segmentación** | `eventos_pie_carrera`, `eventos_cog_carrera`, `eventos_cog_caminar`, `eventos_salto_vertical`, `segmenta_intentos`, `tiempos_eventos_carrera`, `mostrar_eventos`, `mostrar_patrones` | Detección automática de eventos de pie, centro de gravedad o salto, y segmentación de intentos. |
-| **Parámetros de Rendimiento** | `cadencia`, `amplitud_impacto_carrera`, `amplitud_frenado_carrera`, `rms_aceleracion_frenado_carrera`, `rms_aceleracion_impacto_carrera`, `aceleracion_mediolateral_carrera` | Extracción de variables biomecánicas de interés para análisis de carrera o marcha. |
-| **Orientación y Estimación Angular** | `orientacion_giroscopo`, `orientacion_compas`, `orientacion_kalman`, `estimacion_rotacion_triad` | Estimación de orientación de sólidos rígidos a partir de IMUs mediante distintos métodos (complementario, Kalman, TRIAD). |
-| **Visualización 3D** | `mostrar_patrones`, `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
-| **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta`, `integracion_acumulada_cav_simpson` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
-| **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_silop`, `lectura_archivo_csv`, `resume_intentos` | Creación de archivos de formato IMUstd. |
+### 🏃 Carrera (Running)
+Funciones específicas para análisis de carrera con IMU en pie o centro de gravedad.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_pie_carrera` | Detecta IC, FC, máximos/mínimos del ciclo de zancada |
+| `eventos_cog_carrera` | Eventos biomecánicos desde el centro de gravedad |
+| `tiempos_eventos_carrera` | Calcula tiempos de fase (contacto, vuelo, swing) |
+| `amplitud_impacto_carrera` | Pico de aceleración vertical en heel-strike |
+| `amplitud_frenado_carrera` | Deceleración tras contacto inicial |
+| `rms_aceleracion_impacto_carrera` | RMS de aceleración en fase de impacto |
+| `rms_aceleracion_frenado_carrera` | RMS de aceleración en fase de frenado |
+| `aceleracion_mediolateral_carrera` | Análisis de estabilidad lateral |
+| `excursion_vertical_carrera_COG` | Oscilación vertical del centro de gravedad |
+| `eventos_COG_vallas` | Detección de eventos en carrera con vallas |
+
+### 🚶 Marcha / Caminar (Walking/Gait)
+Funciones para análisis de marcha normal y estimación de distancia.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_cog_caminar` | Detecta IC, TO y eventos intermedios (método Auvinet) |
+| `eventos_cog_tiempo_real_caminar` | Detección online muestra a muestra |
+| `distancia_pendulo` | Estimación de distancia con modelo de péndulo invertido |
+| `distancia_pendulo_parcial` | Péndulo con corrección en fase de doble apoyo |
+| `distancia_arco` | Modelo de arco angular para estimación de paso |
+| `distancia_raiz_cuarta` | Modelo empírico de Weinberg |
+
+### 🦘 Saltos (Jumping)
+Para análisis de salto vertical, vallas y pliometría.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_salto_vertical` | Detecta inicio, despegue, vuelo y aterrizaje |
+| `eventos_COG_vallas` | Identificación de saltos y caídas en carrera con obstáculos |
+
+### ⌚ Actividades con Muñeca (Wrist-based / Wearables)
+Para smartwatches, pulseras de actividad o IMU en muñeca.
+
+| Función | Descripción |
+|---------|-------------|
+| `contar_pasos_muneca` | Conteo de pasos desde acelerómetro de muñeca |
+| `contar_pasos_muneca_fusion` | Conteo con fusión de múltiples sensores |
+| `stepcount` | Algoritmo general de conteo de pasos |
+
+### 🦴 Análisis de Segmentos Corporales (3D Body Segments)
+Para sistemas MOCAP, orientación de extremidades y biomecánica articular.
+
+| Función | Descripción |
+|---------|-------------|
+| `orientacion_giroscopo` | Integración de velocidad angular |
+| `orientacion_compas` | Estimación de heading desde magnetómetro |
+| `orientacion_kalman` | Fusión sensor mediante filtro de Kalman |
+| `estimacion_rotacion_triad` | Algoritmo TRIAD (acelerómetro + magnetómetro) |
+| `mostrar_orientacion_solido_rigido` | Visualización animada de cuaterniones |
+| `mostrar_marcadores_solido_rigido` | Trayectorias de marcadores de MOCAP |
+| `trayectoria_marcador` | Representación de path 3D de un punto |
+| `extraer_info_mocab` | Parser de archivos de captura de movimiento |
+
+### 🔄 Locomoción General (Transversal)
+Funciones aplicables a cualquier actividad de desplazamiento.
+
+| Función | Descripción |
+|---------|-------------|
+| `cadencia` | Cálculo de pasos/min desde eventos IC/FC |
+| `doble_integracion` | Integración básica de aceleración a posición |
+| `doble_integracion_ddi` | Método DDI (Drift Detection Integration) |
+| `doble_integracion_lri` | Método LRI (Sabatini, 2005) |
+| `doble_integracion_msi` | Método MSI (Mean Subtraction Integration) |
+| `doble_integracion_ofi` | Método OFI (Optimal Frequency Integration) |
+| `doble_integracion_zijlstra` | Método de Zijlstra/Kose |
+| `distancia_recorrida_extremos` | Desplazamiento entre máximos y mínimos |
+| `distancia_recorrida_marcador` | Distancia acumulada de un marcador |
+
+### ⚙️ Infraestructura Común (Core/Utils)
+Carga de datos, preprocesamiento y visualización universal.
+
+| Categoría | Funciones |
+|-----------|-----------|
+| **Carga de datos** | `carga_IMUstd`, `carga_dot`, `carga_shimmer`, `carga_bimu`, `carga_silop`, `lectura_archivo_csv` |
+| **Base de datos** | `db_prueba`, `db_intentos`, `resume_intentos` |
+| **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` |
+| **Detección de picos** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral` |
+| **Transformaciones** | `anatomical_to_isb`, `separar_celda_por_fila`, `int_acumulada_cam_simp` |
+| **Visualización** | `mostrar_eventos`, `mostrar_patrones`, `dibujar_sistema_referencia`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` |
+
+### 📊 Resumen por Actividad
+
+```
+SimurToolsTB (70+ funciones)
+├── 🏃 Carrera .............. 10 funciones
+├── 🚶 Marcha ............... 6 funciones
+├── 🦘 Saltos ............... 2 funciones
+├── ⌚ Muñeca/Wearables ..... 3 funciones
+├── 🦴 Segmentos 3D ......... 8 funciones
+├── 🔄 Locomoción general ... 9 funciones
+└── ⚙️ Infraestructura ...... 20+ funciones
+```
 
 ---
 
