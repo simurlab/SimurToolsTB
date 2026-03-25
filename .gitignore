@@ -55,3 +55,6 @@ simulink_codegen/
 .DS_Store
 Thumbs.db
 **/slprj/
+
+# Datos para exploraciones
+datos

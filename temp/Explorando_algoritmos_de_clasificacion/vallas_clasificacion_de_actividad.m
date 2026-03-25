@@ -1,0 +1,1 @@
+dataset_vallas_las_mestas_COG = carga_IMUstd('/Users/alejandro/git/simurlab/SimurToolsTB/datos/g01.mat', 'COG');
