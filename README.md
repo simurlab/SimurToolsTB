@@ -2,7 +2,7 @@
 # 🧠 SiMuR Tools — MATLAB Toolbox para el Análisis de Movimiento
 
 **Grupo:** SiMuR — Universidad de Oviedo  
-**Versión:** 1.5 (Octubre 2025)  
+**Versión:** 1.5.1 (Marzo 2026)  
  
 ---
 
