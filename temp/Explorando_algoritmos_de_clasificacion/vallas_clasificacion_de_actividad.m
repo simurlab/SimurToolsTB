@@ -30,3 +30,26 @@ k = 4;
         dataset_vallas_las_mestas_cog_acc, ...
         dataset_vallas_las_mestas_cog_gyro, ...
         fs, winSec, k);
+
+
+%% Matrix Profile (MP)
+% X = [dataset_vallas_las_mestas_cog_acc, dataset_vallas_las_mestas_cog_gyro];
+% fs = 120;
+% m = fs * 10; % ventana de 10 s
+% [MP, MPI] = matrixProfile(X(:,1), m);  % usar Ax por ejemplo
+% 
+% plot(MP);
+% title("Matrix Profile");
+
+
+%% Feature extraction + clustering clásico
+fs = 120;
+winSec = 10;
+k = 4;
+
+[idx, labelsTS, F] = extractFeaturesAndCluster( ...
+    dataset_vallas_las_mestas_cog_acc, ...
+    dataset_vallas_las_mestas_cog_gyro, ...
+    fs, winSec, k);
+
+plotSignalsWithColorBands(X, labelsTS, fs);
