@@ -152,15 +152,15 @@ las señales de los sensores ordenadas en columnas:
 
 | Tipo de dato | Etiqueta Principales | Unidades |
 |------------|-----------------------|----------------------|
-| Acelerómetro | "Acc_X", "Acc_Y", "Acc_Z" |ms |
-| Giroscopio | "Gyr_X", "Gyr_Y", "Gyr_Z"|ms |
-| Magnético |"Mag_X", "Mag_Y", "Mag_Z"|ms |
-|Ángulos de Euler | "Eul_X", "Eul_Y", "Eul_Z"|ms |
-|Cuaternion|"Quat_W", "Quat_X", "Quat_Y", "Quat_Z"|ms |
-|Número de muestra|"PacketCounter"| ms |
+| Acelerómetro | "Acc_X", "Acc_Y", "Acc_Z" |m/s^2|
+| Giroscopio | "Gyr_X", "Gyr_Y", "Gyr_Z"|º/s |
+| Magnético |"Mag_X", "Mag_Y", "Mag_Z"|u.a.|
+|Ángulos de Euler | "Eul_X", "Eul_Y", "Eul_Z"|º|
+|Cuaternion|"Quat_W", "Quat_X", "Quat_Y", "Quat_Z"|--|
+|Número de muestra|"PacketCounter"|--|
 |Instante de la muestra|"Time"| ms |
-|Estado de la batería|"Battery"| ms |
-|Código de estado|"Status"| ms |
+|Estado de la batería|"Battery"|%|
+|Código de estado|"Status"|--|
 |Uso reservado|"Var24"| - |
 |Uso reservado|"Index"| - |
 
