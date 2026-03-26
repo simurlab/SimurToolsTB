@@ -1,7 +1,7 @@
-function distancia = distancia_pendulo_parcial(acc_vert, TO, freq, h_sensor, pie, KSP)
-% DISTANCIA_PENDULO_PARCIAL Distancia de un paso con el modelo de péndulo invertido parcial.
+function distancia = distancia_pendulo_parcial_cog_caminar(acc_vert, TO, freq, h_sensor, pie, KSP)
+% DISTANCIA_PENDULO_PARCIAL_COG_CAMINAR Distancia de un paso con el modelo de péndulo invertido parcial.
 %
-%   distancia = distancia_pendulo_parcial(acc_vert, TO, freq, h_sensor, pie, KSP)
+%   distancia = distancia_pendulo_parcial_cog_caminar(acc_vert, TO, freq, h_sensor, pie, KSP)
 %
 %   Esta función estima la distancia recorrida en un paso aplicando el
 %   modelo del péndulo invertido durante la fase de single stance y
@@ -26,9 +26,9 @@ function distancia = distancia_pendulo_parcial(acc_vert, TO, freq, h_sensor, pie
 %
 % EXAMPLE:
 %   acc = randn(1,200);  % señal ficticia
-%   d = distancia_pendulo_parcial(acc, 50, 100, 0.8, 0.15, 1)
+%   d = distancia_pendulo_parcial_cog_caminar(acc, 50, 100, 0.8, 0.15, 1)
 %
-% See also: distancia_pendulo, distancia_arco, distancia_raiz_cuarta
+% See also: distancia_pendulo_cog_caminar, distancia_arco_cog_caminar, distancia_raiz_cuarta_cog_caminar
 %
 % Author:   Diego Álvarez, Rafael C. González de los Reyes
 % History:  ??.??.200?   creado

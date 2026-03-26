@@ -1,7 +1,7 @@
-function distancia = distancia_arco(acc_vert, freq, pierna)
-% DISTANCIA_ARCO Calcula la distancia recorrida en un paso usando el modelo de arco.
+function distancia = distancia_arco_cog_caminar(acc_vert, freq, pierna)
+% DISTANCIA_ARCO_COG_CAMINAR Calcula la distancia recorrida en un paso usando el modelo de arco.
 %
-%   distancia = distancia_arco(acc_vert, freq, pierna)
+%   distancia = distancia_arco_cog_caminar(acc_vert, freq, pierna)
 %
 %   Esta función estima la distancia recorrida en un paso aplicando el
 %   modelo de movimiento angular a velocidad constante. El método relaciona
@@ -20,9 +20,9 @@ function distancia = distancia_arco(acc_vert, freq, pierna)
 % EXAMPLE:
 %   % Señal ficticia de aceleración vertical para un paso
 %   acc_vert = [zeros(1,10) -9.5*ones(1,80) zeros(1,10)];
-%   d = distancia_arco(acc_vert, 100, 0.9)
+%   d = distancia_arco_cog_caminar(acc_vert, 100, 0.9)
 %
-% See also: distancia_raiz_cuarta, distancia_pendulo, distancia_pendulo_parcial
+% See also: distancia_raiz_cuarta_cog_caminar, distancia_pendulo_cog_caminar, distancia_pendulo_parcial_cog_caminar
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado

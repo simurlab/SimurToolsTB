@@ -39,10 +39,10 @@
 % orientacion_triad                    - Estimación de rotación con algoritmo TRIAD
 %
 % ===================== Distancias y métricas =====================
-% distancia_arco                       - Distancia por arco de circunferencia
-% distancia_pendulo                    - Distancia usando modelo de péndulo invertido
-% distancia_pendulo_parcial            - Distancia con péndulo en intervalos parciales
-% distancia_raiz_cuarta                - Distancia mediante método de la raíz cuarta
+% distancia_arco_cog_caminar           - Distancia por arco de circunferencia
+% distancia_pendulo_cog_caminar        - Distancia usando modelo de péndulo invertido
+% distancia_pendulo_parcial_cog_caminar - Distancia con péndulo en intervalos parciales
+% distancia_raiz_cuarta_cog_caminar    - Distancia mediante método de la raíz cuarta
 % rango_extremos                       - Distancia entre extremos de segmentos
 % rango_marcador                       - Distancia recorrida por un marcador
 %

@@ -1,7 +1,7 @@
-function distancia = distancia_raiz_cuarta(acc_vert)
-% DISTANCIA_RAIZ_CUARTA Estima la distancia de un paso con el modelo empírico de raíz cuarta.
+function distancia = distancia_raiz_cuarta_cog_caminar(acc_vert)
+% DISTANCIA_RAIZ_CUARTA_COG_CAMINAR Estima la distancia de un paso con el modelo empírico de raíz cuarta.
 %
-%   distancia = distancia_raiz_cuarta(acc_vert)
+%   distancia = distancia_raiz_cuarta_cog_caminar(acc_vert)
 %
 %   Esta función estima la distancia recorrida en un paso aplicando el
 %   modelo empírico que relaciona la distancia con la raíz cuarta de la
@@ -19,9 +19,9 @@ function distancia = distancia_raiz_cuarta(acc_vert)
 %
 % EXAMPLE:
 %   acc = filtro0(randn(1,200), 26, 0.06); % señal filtrada
-%   d = distancia_raiz_cuarta(acc)
+%   d = distancia_raiz_cuarta_cog_caminar(acc)
 %
-% See also: distancia_arco, distancia_pendulo, distancia_pendulo_parcial
+% See also: distancia_arco_cog_caminar, distancia_pendulo_cog_caminar, distancia_pendulo_parcial_cog_caminar
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado
