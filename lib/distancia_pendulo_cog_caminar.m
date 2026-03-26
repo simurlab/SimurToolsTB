@@ -1,7 +1,7 @@
-function distancia = distancia_pendulo(acc_vert, freq, pierna, correccion)
-% DISTANCIA_PENDULO Calcula la distancia de un paso con el modelo del péndulo invertido.
+function distancia = distancia_pendulo_cog_caminar(acc_vert, freq, pierna, correccion)
+% DISTANCIA_PENDULO_COG_CAMINAR Calcula la distancia de un paso con el modelo del péndulo invertido.
 %
-%   distancia = distancia_pendulo(acc_vert, freq, pierna, correccion)
+%   distancia = distancia_pendulo_cog_caminar(acc_vert, freq, pierna, correccion)
 %
 %   Esta función estima la distancia recorrida en un paso aplicando el
 %   modelo del péndulo invertido desde el centro de gravedad (COG). Puede
@@ -19,9 +19,9 @@ function distancia = distancia_pendulo(acc_vert, freq, pierna, correccion)
 %
 % EXAMPLE:
 %   acc_vert = [zeros(1,10) -9.5*ones(1,80) zeros(1,10)];
-%   d = distancia_pendulo(acc_vert, 100, 0.9, 1)
+%   d = distancia_pendulo_cog_caminar(acc_vert, 100, 0.9, 1)
 %
-% See also: distancia_pendulo_parcial, distancia_arco, distancia_raiz_cuarta
+% See also: distancia_pendulo_parcial_cog_caminar, distancia_arco_cog_caminar, distancia_raiz_cuarta_cog_caminar
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado
