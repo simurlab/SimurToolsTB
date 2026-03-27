@@ -259,6 +259,14 @@ Si utilizas este toolbox en una publicación científica, cita de la siguiente m
 
 ---
 
+## 🤝 Contribuir
+
+¿Quieres añadir funciones o mejorar el toolbox? Consulta las instrucciones del equipo:
+
+👉 [**Cómo contribuir → CONTRIBUTING.md**](CONTRIBUTING.md)
+
+---
+
 ## 🧠 Créditos
 
 Desarrollado en el **SiMuR Lab** (Simulación y Movimiento Humano) — Universidad de Oviedo.
