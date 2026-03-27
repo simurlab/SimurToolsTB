@@ -1,4 +1,4 @@
-function desplazamientos=excursion_vertical_cog_carrera(MPL,MPR,acc_Z,fm)
+function desplazamientos=excursion_vert_cog_carrera(MPL,MPR,acc_Z,fm)
     %%% Necesitamos los eventos MP de pie izquierdo y pie derecho.
     %%% Se calcula la excursión vertical entre apoyo y apoyo
     %%% Como la diferencia entre el valor máximo y mínimo de la doble
