@@ -33,9 +33,9 @@
 % aceleracion_vert_impacto_pie_carrera - RMS de la aceleración de impacto
 %
 % ===================== Orientación =====================
-% orientacion_compas                   - Estima orientación con compás (vector magnético)
-% orientacion_giroscopo                - Estima orientación con giroscopio
-% orientacion_kalman                   - Orientación fusionando compás y giroscopio (Kalman)
+% azimut_compas                        - Estima orientación con compás (vector magnético)
+% azimut_giroscopo                     - Estima orientación con giroscopio
+% azimut_kalman                        - Orientación fusionando compás y giroscopio (Kalman)
 % orientacion_triad                    - Estimación de rotación con algoritmo TRIAD
 %
 % ===================== Distancias y métricas =====================
