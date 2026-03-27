@@ -52,7 +52,7 @@
 % carga_sensores                       - Carga general de sensores
 % carga_shimmer                        - Carga de datos Shimmer
 % carga_silop                          - Carga de datos SILOP
-% extraer_info_mocab                   - Extrae información de un archivo MoCap con cabecera
+% extraer_info_mocap                   - Extrae información de un archivo MoCap con cabecera
 % lectura_archivo_csv                  - Lectura de archivo CSV sin cabecera
 % segmenta_intentos                    - Segmentación de intentos de IMUs
 % separar_celda_por_fila               - Separa filas de una celda en archivos .mat
