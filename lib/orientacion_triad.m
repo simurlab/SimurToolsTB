@@ -1,5 +1,5 @@
-function R = estimacion_rotacion_triad(acc, mg, acc0, mg0)
-%ESTIMACION_ROTACIÓN_TRIAD Algoritmo TRIAD para la estimación de la rotación.
+function R = orientacion_triad(acc, mg, acc0, mg0)
+%ORIENTACION_TRIAD Algoritmo TRIAD para la estimación de la rotación.
 %
 %   R = triad_estatico(acc, mg, acc0, mg0)
 %
@@ -25,7 +25,7 @@ function R = estimacion_rotacion_triad(acc, mg, acc0, mg0)
 %       mg   = [0.3, 0.1, -0.5];
 %       acc0 = [0.0, 0.0, 9.81];
 %       mg0  = [0.2, 0.0, -0.6];
-%       R = estimacion_rotacion_triad(acc, mg, acc0, mg0);
+%       R = orientacion_triad(acc, mg, acc0, mg0);
 %
 %
 %   History:

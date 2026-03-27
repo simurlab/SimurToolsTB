@@ -36,7 +36,7 @@
 % orientacion_compas                   - Estima orientación con compás (vector magnético)
 % orientacion_giroscopo                - Estima orientación con giroscopio
 % orientacion_kalman                   - Orientación fusionando compás y giroscopio (Kalman)
-% estimacion_rotacion_triad            - Estimación de rotación con algoritmo TRIAD
+% orientacion_triad                    - Estimación de rotación con algoritmo TRIAD
 %
 % ===================== Distancias y métricas =====================
 % distancia_arco                       - Distancia por arco de circunferencia
