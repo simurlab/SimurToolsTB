@@ -14,7 +14,7 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
 %
 % Requiere:
 %   - eventos_pie_carrera.m
-%   - tiempos_eventos_pie_carrera.m
+%   - tiempos_eventos_carrera.m
 %   - amplitud_frenado_pie_carrera.m
 %   - amplitud_impacto_pie_carrera.m
 %   - aceleracion_vert_frenado_pie_carrera.m
@@ -116,7 +116,7 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
             end
 
             % ---- Calcular tiempos de eventos ----
-            tiempos = tiempos_eventos_pie_carrera(ic, fc, max_s, min_s, mvp, mp, freq);
+            tiempos = tiempos_eventos_carrera(ic, fc, max_s, min_s, mvp, mp, freq);
 
             % ---- Seleccionar pasos definidos (ini:fin) ----
             campos = fieldnames(tiempos.tiempos);

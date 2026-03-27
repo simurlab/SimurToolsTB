@@ -24,7 +24,7 @@
 % eventos_salto_vertical               - Detecta fases principales de un salto vertical
 % corrige_eventos_pie                  - Corrige los eventos de IC/TO detectados
 % corrige_seniales_pie                 - Corrige señales del pie en carrera
-% tiempos_eventos_pie_carrera          - Calcula intervalos temporales entre eventos
+% tiempos_eventos_carrera          - Calcula intervalos temporales entre eventos
 % cadencia                             - Calcula la cadencia de la marcha/carrera
 % aceleracion_mediolateral_pie_carrera - Aceleración mediolateral en carrera
 % amplitud_frenado_pie_carrera         - Amplitud de la aceleración de frenado

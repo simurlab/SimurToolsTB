@@ -1,7 +1,7 @@
-function resultados = tiempos_eventos_pie_carrera(ic, fc, max_s, min_s, mvp, mp, freq)
+function resultados = tiempos_eventos_carrera(ic, fc, max_s, min_s, mvp, mp, freq)
 %TIEMPOS_EVENTOS_CARRERA Calcula intervalos temporales entre eventos de carrera.
 %
-%   resultados = tiempos_eventos_pie_carrera(ic, fc, max_s, min_s, mvp, mp, freq)
+%   resultados = tiempos_eventos_carrera(ic, fc, max_s, min_s, mvp, mp, freq)
 %
 %   INPUT:
 %       ic      : índices de contacto inicial (IC / FS)
