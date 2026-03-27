@@ -17,8 +17,8 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
 %   - tiempos_eventos_carrera.m
 %   - amplitud_frenado_carrera.m
 %   - amplitud_impacto_carrera.m
-%   - rms_aceleracion_frenado_carrera.m
-%   - rms_aceleracion_impacto_carrera.m
+%   - aceleracion_vert_frenado_carrera.m
+%   - aceleracion_vert_impacto_carrera.m
 %   - cadencia.m
 %
 % Versión: 08/10/2025 - SiMuR Toolbox v1.8.0
@@ -152,13 +152,13 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
             end
 
             try
-                [~, rms_frenado_moda] = rms_aceleracion_frenado_carrera(ic, fc, acc_ap, gyr_ml);
+                [~, rms_frenado_moda] = aceleracion_vert_frenado_carrera(ic, fc, acc_ap, gyr_ml);
             catch
                 rms_frenado_moda = NaN;
             end
 
             try
-                [~, rms_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_v, gyr_ml);
+                [~, rms_impacto_moda] = aceleracion_vert_impacto_carrera(ic, fc, acc_v, gyr_ml);
             catch
                 rms_impacto_moda = NaN;
             end

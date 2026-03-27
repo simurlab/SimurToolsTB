@@ -29,8 +29,8 @@
 % aceleracion_mediolateral_carrera     - Aceleración mediolateral en carrera
 % amplitud_frenado_carrera             - Amplitud de la aceleración de frenado
 % amplitud_impacto_carrera             - Amplitud de la aceleración de impacto
-% rms_aceleracion_frenado_carrera      - RMS de la aceleración de frenado
-% rms_aceleracion_impacto_carrera      - RMS de la aceleración de impacto
+% aceleracion_vert_frenado_carrera     - RMS de la aceleración de frenado
+% aceleracion_vert_impacto_carrera     - RMS de la aceleración de impacto
 %
 % ===================== Orientación =====================
 % orientacion_compas                   - Estima orientación con compás (vector magnético)
