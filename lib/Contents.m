@@ -21,7 +21,7 @@
 % eventos_cog_carrera                  - Detecta eventos en el COG durante carrera
 % eventos_cog_caminar                  - Detecta eventos en el COG durante la marcha
 % eventos_cog_tiempo_real_caminar      - Eventos del COG en tiempo real durante la marcha
-% eventos_salto_vertical               - Detecta fases principales de un salto vertical
+% eventos_cog_salto               - Detecta fases principales de un salto vertical
 % corrige_eventos_pie                  - Corrige los eventos de IC/TO detectados
 % corrige_seniales_pie                 - Corrige señales del pie en carrera
 % tiempos_eventos_carrera          - Calcula intervalos temporales entre eventos
