@@ -43,8 +43,8 @@
 % distancia_pendulo                    - Distancia usando modelo de péndulo invertido
 % distancia_pendulo_parcial            - Distancia con péndulo en intervalos parciales
 % distancia_raiz_cuarta                - Distancia mediante método de la raíz cuarta
-% distancia_recorrida_extremos         - Distancia entre extremos de segmentos
-% distancia_recorrida_marcador         - Distancia recorrida por un marcador
+% rango_extremos                       - Distancia entre extremos de segmentos
+% rango_marcador                       - Distancia recorrida por un marcador
 %
 % ===================== Entrada/salida y carga de datos =====================
 % carga_bimu                           - Carga de datos de sensores B-IMU

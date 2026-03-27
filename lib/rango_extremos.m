@@ -1,7 +1,7 @@
-function resultados = distancia_recorrida_extremos(matriz, columnas)
+function resultados = rango_extremos(matriz, columnas)
 % DISTANCIA_RECORRIDA_EXTREMOS Calcula la distancia recorrida entre extremos en un eje.
 %
-%   resultados = distancia_recorrida_extremos(matriz, columnas)
+%   resultados = rango_extremos(matriz, columnas)
 %
 %   Esta función calcula la distancia recorrida entre los valores máximos
 %   y mínimos en las columnas especificadas de una matriz de datos. Es útil
@@ -18,7 +18,7 @@ function resultados = distancia_recorrida_extremos(matriz, columnas)
 %
 % EXAMPLE:
 %   M = rand(100, 20); % datos ficticios
-%   T = distancia_recorrida_extremos(M, [5 17])
+%   T = rango_extremos(M, [5 17])
 %
 % See also: max, min, table
 %
