@@ -8,19 +8,132 @@
 
 ## 📘 Descripción General
 
-**SiMuR Tools TB** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs (Xsens DOT, Shimmer, Bimu, etc.) 
+**SiMuR Tools TB** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
 
 El toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
-Las herramientas sirven tanto para trabajar con archivos de datos generados por sensores comerciales, como con datos estandarizados en el formato **IMUstd**, que se describe más adelante. 
+Las herramientas están optimizadas para trabajar con *archivos de datos estandarizados* en el formato **IMUstd**, que se generaran desde los archivos nativos de sensores comerciales (Xsens DOT, Shimmer, Bimu, etc.) o cualquier otra fuente que se disponga.
 
 ---
 
 ## 🧩 Estructura del Toolbox
 
-Las funciones están organizadas por **bloques funcionales**, lo que facilita su uso modular dentro de pipelines personalizados de análisis.
+Las funciones están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Con ello se facilita identificar rápidamente las herramientas disponibles para cada aplicación.
 
-| Categoría | Funciones Principales | Descripción |
+
+### 📊 Resumen por Actividad
+
+```
+SimurToolsTB (70+ funciones)
+├── 🚶 Caminar ............... 8 funciones
+├── 🏃 Carrera ............... 9 funciones
+├── 🚧 Vallas ................ 1 funciones
+├── 🦘 Saltos ................ 1 funciones
+├── 🦴 Segmentos 3D .......... 5 funciones
+├── 🔄 Utilidades numéricas .. 8 funciones
+├── ⌚ En desarrollo ......... 2 funciones
+└── ⚙️ Infraestructura ....... 20+ funciones
+```
+
+
+---
+
+Las funciones  tiene una estructura `que_como_actividad`:
+
+- `que` que se mide: Eventos, Tiempo, Distancia, Aceleracion, 
+- `como` condición(es) como la colocación del IMU, el método de cálculo, etc.
+- `actividad` Caminar, Saltos, Carrera, Vallas, etc.
+
+
+
+### 🚶 Caminar (Walking/Gait)
+Funciones para análisis de la marcha normal. 
+   
+| Función | Descripción |
+|---------|-------------|
+| `eventos_cog_caminar` | Detecta IC, TO y eventos intermedios (método Auvinet) |
+| `eventos_cog_tiempo_real_caminar` | Detección online muestra a muestra |
+| `distancia_pendulo_cog_caminar` | Estimación de distancia con modelo de péndulo invertido |
+| `distancia_pendulo_parcial_cog_caminar` | Péndulo con corrección en fase de doble apoyo |
+| `distancia_arco_cog_caminar` | Modelo de arco angular para estimación de paso |
+| `distancia_raiz_cuarta_cog_caminar` | Modelo empírico de Weinberg |
+| `pasos_muneca_caminar` | Conteo de pasos desde acelerómetro de muñeca |
+| `pasos_muneca_fusion_caminar` | Conteo con fusión de múltiples sensores |
+
+### 🏃 Carrera (Running)
+Funciones específicas para análisis de carrera con IMU en pie o centro de gravedad.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_pie_carrera` | Detecta IC, FC, máximos/mínimos del ciclo de zancada |
+| `eventos_cog_carrera` | Eventos biomecánicos desde el centro de gravedad |
+| `tiempos_eventos_carrera` | Calcula tiempos de fase (contacto, vuelo, swing) |
+| `amplitud_impacto_pie_carrera` | Pico de aceleración vertical en heel-strike |
+| `amplitud_frenado_pie_carrera` | Deceleración tras contacto inicial |
+| `aceleracion_vert_impacto_pie_carrera` | RMS de aceleración en fase de impacto |
+| `aceleracion_vert_frenado_pie_carrera` | RMS de aceleración en fase de frenado |
+| `aceleracion_mediolateral_pie_carrera` | Análisis de estabilidad lateral |
+| `distancia_vert_cog_carrera` | Oscilación vertical del centro de gravedad |
+
+
+### 🚧 Vallas (Hurdles)
+Para análisis de carreras de vallas.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_cog_vallas` | Detección de eventos en carrera con vallas |
+
+
+
+### 🦘 Saltos (Jumping)
+Para análisis de salto vertical y pliometría.
+
+| Función | Descripción |
+|---------|-------------|
+| `eventos_cog_salto` | Detecta inicio, despegue, vuelo y aterrizaje |
+
+
+
+### 🦴 Análisis de Segmentos Corporales (3D Body Segments)
+Para sistemas MOCAP, orientación de extremidades y biomecánica articular.
+
+| Función | Descripción |
+|---------|-------------|
+| `azimut_giroscopo` | Integración de velocidad angular |
+| `azimut_compas` | Estimación de heading desde magnetómetro |
+| `azimut_kalman` | Fusión sensor mediante filtro de Kalman |
+| `orientacion_triad` | Algoritmo TRIAD (acelerómetro + magnetómetro) |
+| `extraer_info_mocap` | Parser de archivos de captura de movimiento |
+
+
+### 🔄 Utilidades numéricas
+Funciones de diferentes cálculos numéricos de utilidad general.
+
+| Función | Descripción |
+|---------|-------------|
+| `doble_integracion` | Integración básica de aceleración a posición |
+| `doble_integracion_ddi` | Método DDI (Drift Detection Integration) |
+| `doble_integracion_lri` | Método LRI (Sabatini, 2005) |
+| `doble_integracion_msi` | Método MSI (Mean Subtraction Integration) |
+| `doble_integracion_ofi` | Método OFI (Optimal Frequency Integration) |
+| `doble_integracion_zijlstra` | Método de Zijlstra/Kose |
+| `rango_extremos` | Desplazamiento entre máximos y mínimos |
+| `rango_marcador` | Distancia acumulada de un marcador |
+
+
+### ⌚ Funcionalidades en desarrollo
+Utilidades no consolidades, pero utilizables temporalmente.
+
+| Función | Descripción |
+|---------|-------------|
+| `stepcount` | Algoritmo general de conteo de pasos |
+| `cadencia` | Cálculo de pasos/min desde eventos IC/FC |
+
+
+### ⚙️ Infraestructura Común (Core/Utils)
+Carga de datos, preprocesamiento y visualización universal.
+
+| Categoría | Funciones | Descripción |
 |------------|-----------------------|--------------|
 | **Carga de Datos** |   `carga_IMUstd` | Lectura de archivos con formato *IMUstd*.|
 | **Preprocesamiento** | `filtro_paso_bajo_f0`, `eliminar_duplicados`, `corrige_eventos_pie`, `corrige_seniales_pie` | Limpieza y filtrado de señales, corrección de eventos y duplicados. |
@@ -29,7 +142,7 @@ Las funciones están organizadas por **bloques funcionales**, lo que facilita su
 | **Parámetros de Rendimiento** | `cadencia`, `amplitud_impacto_pie_carrera`, `amplitud_frenado_pie_carrera`, `aceleracion_vert_frenado_pie_carrera`, `aceleracion_vert_impacto_pie_carrera`, `aceleracion_mediolateral_pie_carrera` | Extracción de variables biomecánicas de interés para análisis de carrera o marcha. |
 | **Orientación y Estimación Angular** | `azimut_giroscopo`, `azimut_compas`, `azimut_kalman`, `orientacion_triad` | Estimación de orientación de sólidos rígidos a partir de IMUs mediante distintos métodos (complementario, Kalman, TRIAD). |
 | **Visualización 3D** | `mostrar_patrones`, `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
-| **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta_cog_caminar`, `integracion_acumulada_cav_simpson` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
+| **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta_cog_caminar`, `int_acumulada_cam_simp` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
 | **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_silop`, `lectura_archivo_csv`, `resume_intentos` | Creación de archivos de formato IMUstd. |
 
 ---
