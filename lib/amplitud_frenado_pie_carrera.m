@@ -1,8 +1,8 @@
-function [braking_acc, braking_acc_moda] = amplitud_frenado_carrera(IC, acc_antero_posterior, plot_graph)
+function [braking_acc, braking_acc_moda] = amplitud_frenado_pie_carrera(IC, acc_antero_posterior, plot_graph)
 % AMPLITUD_FRENADO_CARRERA Calcula la aceleración anteroposterior (braking) durante foot-strike.
 %
-%   [braking_acc, braking_acc_moda] = amplitud_frenado_carrera(IC, acc_antero_posterior)
-%   [braking_acc, braking_acc_moda] = amplitud_frenado_carrera(IC, acc_antero_posterior, plot_graph)
+%   [braking_acc, braking_acc_moda] = amplitud_frenado_pie_carrera(IC, acc_antero_posterior)
+%   [braking_acc, braking_acc_moda] = amplitud_frenado_pie_carrera(IC, acc_antero_posterior, plot_graph)
 %
 % INPUT:
 %   IC                   - Array de celdas con las muestras de los eventos 
@@ -17,8 +17,8 @@ function [braking_acc, braking_acc_moda] = amplitud_frenado_carrera(IC, acc_ante
 %
 % EXAMPLE:
 %   % A partir de señales de aceleración y eventos:
-%   [brake, brake_moda] = amplitud_frenado_carrera(IC, acc_antero_posterior);
-%   [brake, brake_moda] = amplitud_frenado_carrera(IC, acc_antero_posterior, true); % con gráfico
+%   [brake, brake_moda] = amplitud_frenado_pie_carrera(IC, acc_antero_posterior);
+%   [brake, brake_moda] = amplitud_frenado_pie_carrera(IC, acc_antero_posterior, true); % con gráfico
 %
 % Author:   Alejandro
 % History:  01.07.25    creación del archivo

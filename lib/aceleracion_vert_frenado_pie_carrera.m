@@ -1,7 +1,7 @@
-function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_frenado_carrera(ic, fc, acc_ap, gyr_ml, plot_graph)
+function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_frenado_pie_carrera(ic, fc, acc_ap, gyr_ml, plot_graph)
 %ACELERACION_VERT_FRENADO_CARRERA Calcula la RMS de la aceleración de frenado durante la carrera.
 %
-%   [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_frenado_carrera(ic, fc, acc_ap, gyr_ml)
+%   [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_frenado_pie_carrera(ic, fc, acc_ap, gyr_ml)
 %
 %   Esta función calcula la raíz cuadrática media (RMS) de la aceleración de
 %   frenado en segmentos específicos de la carrera. Cada segmento se define
@@ -25,7 +25,7 @@ function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_fr
 %       fc = [200 350 500];
 %       acc_ap = randn(1,600); % señal ficticia
 %       gyr_ml = randn(1,600) * 100;
-%       [rms_vals, moda_val] = aceleracion_vert_frenado_carrera(ic, fc, acc_ap, gyr_ml);
+%       [rms_vals, moda_val] = aceleracion_vert_frenado_pie_carrera(ic, fc, acc_ap, gyr_ml);
 %
 %   See also: rms, mode
 %

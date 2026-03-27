@@ -14,11 +14,11 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
 %
 % Requiere:
 %   - eventos_pie_carrera.m
-%   - tiempos_eventos_carrera.m
-%   - amplitud_frenado_carrera.m
-%   - amplitud_impacto_carrera.m
-%   - aceleracion_vert_frenado_carrera.m
-%   - aceleracion_vert_impacto_carrera.m
+%   - tiempos_eventos_pie_carrera.m
+%   - amplitud_frenado_pie_carrera.m
+%   - amplitud_impacto_pie_carrera.m
+%   - aceleracion_vert_frenado_pie_carrera.m
+%   - aceleracion_vert_impacto_pie_carrera.m
 %   - cadencia.m
 %
 % Versión: 08/10/2025 - SiMuR Toolbox v1.8.0
@@ -116,7 +116,7 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
             end
 
             % ---- Calcular tiempos de eventos ----
-            tiempos = tiempos_eventos_carrera(ic, fc, max_s, min_s, mvp, mp, freq);
+            tiempos = tiempos_eventos_pie_carrera(ic, fc, max_s, min_s, mvp, mp, freq);
 
             % ---- Seleccionar pasos definidos (ini:fin) ----
             campos = fieldnames(tiempos.tiempos);
@@ -140,25 +140,25 @@ function resume_intentos(inicio_paso, fin_paso, path_dir)
 
             % ---- Calcular amplitudes y RMS ----
             try
-                [~, braking_moda] = amplitud_frenado_carrera({ic}, acc_ap, false);
+                [~, braking_moda] = amplitud_frenado_pie_carrera({ic}, acc_ap, false);
             catch
                 braking_moda = NaN;
             end
 
             try
-                [~, impact_moda] = amplitud_impacto_carrera({ic}, acc_v);
+                [~, impact_moda] = amplitud_impacto_pie_carrera({ic}, acc_v);
             catch
                 impact_moda = NaN;
             end
 
             try
-                [~, rms_frenado_moda] = aceleracion_vert_frenado_carrera(ic, fc, acc_ap, gyr_ml);
+                [~, rms_frenado_moda] = aceleracion_vert_frenado_pie_carrera(ic, fc, acc_ap, gyr_ml);
             catch
                 rms_frenado_moda = NaN;
             end
 
             try
-                [~, rms_impacto_moda] = aceleracion_vert_impacto_carrera(ic, fc, acc_v, gyr_ml);
+                [~, rms_impacto_moda] = aceleracion_vert_impacto_pie_carrera(ic, fc, acc_v, gyr_ml);
             catch
                 rms_impacto_moda = NaN;
             end

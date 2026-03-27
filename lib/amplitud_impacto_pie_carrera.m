@@ -1,7 +1,7 @@
-function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertical, plot_graph)
+function [impact_acc, impact_acc_moda] = amplitud_impacto_pie_carrera(IC, acc_vertical, plot_graph)
 % AMPLITUD_IMPACTO_CARRERA Calcula la aceleración vertical (impacto) durante foot-strike.
 %
-%   [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertical)
+%   [impact_acc, impact_acc_moda] = amplitud_impacto_pie_carrera(IC, acc_vertical)
 %
 % INPUT:
 %   IC             - Array de celdas con las muestras de los eventos 
@@ -15,7 +15,7 @@ function [impact_acc, impact_acc_moda] = amplitud_impacto_carrera(IC, acc_vertic
 %
 % EXAMPLE:
 %   % A partir de señales de aceleración y eventos:
-%   [impact, impact_moda] = amplitud_impacto_carrera(IC, acc_vertical);
+%   [impact, impact_moda] = amplitud_impacto_pie_carrera(IC, acc_vertical);
 %
 % Author:   Alejandro
 % History:  01.07.25    creación del archivo
