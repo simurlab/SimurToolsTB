@@ -75,6 +75,8 @@ Funciones específicas para análisis de carrera con IMU en pie o centro de grav
 | `aceleracion_mediolateral_pie_carrera` | Análisis de estabilidad lateral |
 | `distancia_vert_cog_carrera` | Oscilación vertical del centro de gravedad |
 
+**Demo:** [`Examples/demo_carrera_pie.m`](Examples/demo_carrera_pie.m) — ejemplo completo de pipeline con IMU en el pie.
+
 
 ### 🚧 Vallas (Hurdles)
 Para análisis de carreras de vallas.
