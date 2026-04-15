@@ -83,6 +83,8 @@ Para análisis de carreras de vallas.
 |---------|-------------|
 | `eventos_cog_vallas` | Detección de eventos en carrera con vallas |
 
+**Demo:** [`Examples/demo_vallas_COG.m`](Examples/demo_vallas_COG.m) — ejemplo completo de pipeline con IMU en el COG.
+
 
 
 ### 🦘 Saltos (Jumping)
