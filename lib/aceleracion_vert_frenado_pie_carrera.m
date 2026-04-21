@@ -54,7 +54,7 @@ function [rms_acc_frenado_segmentos, rms_acc_frenado_moda] = aceleracion_vert_fr
         % Índice del máximo
         [~, idx_max] = max(gyr_ml_seg);
 
-        % Segmento aceleración (IC → máximo)
+        % Segmento frenado (IC → máximo)
         acc_seg = acc_ap(ic(i):ic(i) + idx_max) / g_teorica;
 
         % RMS del segmento

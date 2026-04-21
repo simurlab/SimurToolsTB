@@ -10,13 +10,13 @@
 
 **SiMuR Tools TB** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
 
-El toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
+La toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
 Las herramientas están optimizadas para trabajar con *archivos de datos estandarizados* en el formato **IMUstd**, que se generaran desde los archivos nativos de sensores comerciales (Xsens DOT, Shimmer, Bimu, etc.) o cualquier otra fuente que se disponga.
 
 ---
 
-## 🧩 Estructura del Toolbox
+## 🧩 Estructura de la Toolbox
 
 Las funciones están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Con ello se facilita identificar rápidamente las herramientas disponibles para cada aplicación.
 

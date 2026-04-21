@@ -1,8 +1,8 @@
-function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = aceleracion_mediolateral_pie_carrera(IC, acc_medio_lateral)
-% ACELERACION_MEDIOLATERAL_CARRERA Calcula la aceleración medio-lateral durante foot-strike.
+function [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = aceleracion_mediolateral_footstrike_pie_carrera(IC, acc_medio_lateral)
+% ACELERACION_MEDIOLATERAL_FOOTSTRIKE_PIE_CARRERA Calcula la aceleración medio-lateral en el evento de foot-strike.
 %
 %   [acc_medio_lateral_footstrike, acc_medio_lateral_footstrike_moda] = ...
-%       aceleracion_mediolateral_pie_carrera(IC, acc_medio_lateral)
+%       aceleracion_mediolateral_footstrike_pie_carrera(IC, acc_medio_lateral)
 %
 % INPUT:
 %   IC                  - Array de celdas con las muestras de los eventos 

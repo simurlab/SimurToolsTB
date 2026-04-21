@@ -86,7 +86,7 @@
 % In the library there are a number of functions to detect these events from inertial signals. In each case, the correspondence between 
 % the signal and the actual anatomical event is extracted from the
 % specialized literature. A more detailed description of the anatomical step event can be found in 
-% "Observational Gait Analysis", 4� ed. 2004, D.J. Perry, Rancho Los Amigos National Rehabilitation Center.
+% "Observational Gait Analysis", 4th ed. 2004, D.J. Perry, Rancho Los Amigos National Rehabilitation Center.
 
 %%
 %

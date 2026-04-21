@@ -21,12 +21,12 @@
 % eventos_cog_carrera                  - Detecta eventos en el COG durante carrera
 % eventos_cog_caminar                  - Detecta eventos en el COG durante la marcha
 % eventos_cog_tiempo_real_caminar      - Eventos del COG en tiempo real durante la marcha
-% eventos_cog_salto               - Detecta fases principales de un salto vertical
+% eventos_cog_squat_jump          - Detecta eventos principales de un squat jump
 % corrige_eventos_pie                  - Corrige los eventos de IC/TO detectados
 % corrige_seniales_pie                 - Corrige señales del pie en carrera
 % tiempos_eventos_carrera          - Calcula intervalos temporales entre eventos
 % cadencia                             - Calcula la cadencia de la marcha/carrera
-% aceleracion_mediolateral_pie_carrera - Aceleración mediolateral en carrera
+% aceleracion_mediolateral_footstrike_pie_carrera - Aceleración mediolateral en el evento de foot-strike
 % amplitud_frenado_pie_carrera         - Amplitud de la aceleración de frenado
 % amplitud_impacto_pie_carrera         - Amplitud de la aceleración de impacto
 % aceleracion_vert_frenado_pie_carrera - RMS de la aceleración de frenado
@@ -44,7 +44,7 @@
 % distancia_pendulo_parcial_cog_caminar - Distancia con péndulo en intervalos parciales
 % distancia_raiz_cuarta_cog_caminar    - Distancia mediante método de la raíz cuarta
 % rango_extremos                       - Distancia entre extremos de segmentos
-% rango_marcador                       - Distancia recorrida por un marcador
+% distancia_marcador                   - Distancia recorrida por un marcador
 %
 % ===================== Entrada/salida y carga de datos =====================
 % carga_bimu                           - Carga de datos de sensores B-IMU

@@ -1,7 +1,7 @@
-function distancia = rango_marcador(matriz, columna)
-% DISTANCIA_RECORRIDA_MARCADOR Calcula la distancia recorrida en un eje de un marcador o sólido rígido.
+function distancia = distancia_marcador(matriz, columna)
+% DISTANCIA_MARCADOR Calcula la distancia recorrida en un eje de un marcador o sólido rígido.
 %
-%   distancia = rango_marcador(matriz, columna)
+%   distancia = distancia_marcador(matriz, columna)
 %
 %   Esta función estima la distancia total recorrida en un eje sumando las
 %   diferencias absolutas entre muestras consecutivas en la columna

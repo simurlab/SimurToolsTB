@@ -18,15 +18,21 @@
 %    El sensor COG debe estar guardado con el identificador 'COG_1'.
 %
 %  SiMuR Lab — Universidad de Oviedo, 2025
+%
+%  EJEMPLO DE USO:
+%    Opción 1 — ejecutar desde la carpeta con los datos:
+%    >> cd('ruta/a/tus/datos');  demo_vallas_COG
+%    Opción 2 — modificar 'path_dir' en la sección de configuración (línea 30)
 % ==========================================================================
 
 clear; clc;
 
 %% ── 1. CONFIGURACIÓN  ────────────────────────────────────────────────────
 %
-%  ► Cambia 'path_dir' a la carpeta donde están tus archivos de intento.
+%  ► Ejecutar este script desde la carpeta donde están los archivos de intento,
+%    o bien modificar 'path_dir' con la ruta absoluta a esa carpeta.
 
-path_dir  = '/Users/juan/_BDactual/_Vallas/';   % <- AJUSTAR
+path_dir  = pwd;   % <- por defecto usa el directorio actual
 
 sensor_id = 'COG_1';   % Identificador del sensor en los archivos .mat
 freq      = 120;       % Frecuencia de muestreo [Hz]
