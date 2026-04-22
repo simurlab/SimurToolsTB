@@ -1,4 +1,4 @@
-function [num_pasos, indices_pasos] = contar_pasos_muneca_fusion(ax, ay, az, gx, gy, gz, fs)
+function [num_pasos, indices_pasos] = pasos_muneca_fusion_caminar(ax, ay, az, gx, gy, gz, fs)
 % CONTAR_PASOS_FUSION
 % Cuenta pasos a partir de datos de acelerómetro y giroscopio
 % de una IMU ubicada en la muñeca.

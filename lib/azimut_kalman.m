@@ -1,7 +1,7 @@
-function angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo0, freq, reset)
+function angulo = azimut_kalman(vel_giro, campo_x, campo_y, campo_z, angulo0, freq, reset)
 %ORIENTACION_KALMAN Estima la orientación usando filtro de Kalman (giroscopio + compás).
 %
-%   angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo0, freq, reset)
+%   angulo = azimut_kalman(vel_giro, campo_x, campo_y, campo_z, angulo0, freq, reset)
 %
 %   Esta función fusiona los datos de un giróscopo y de un compás mediante
 %   un filtro de Kalman para obtener una estimación robusta de la
@@ -38,10 +38,10 @@ function angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo
 % EJEMPLO:
 %   vel = [0.1*ones(1,200) zeros(1,200)]; % velocidad angular
 %   bx = randn(1,400)*0.01; by = randn(1,400)*0.01; bz = ones(1,400);
-%   ang = orientacion_kalman(vel, bx, by, bz, 0, 100, 1);
+%   ang = azimut_kalman(vel, bx, by, bz, 0, 100, 1);
 %   plot(rad2deg(ang)), ylabel('Ángulo [°]'), xlabel('Muestras')
 %
-% See also: orientacion_giroscopo, orientacion_compas
+% See also: azimut_giroscopo, azimut_compas
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado
@@ -56,7 +56,7 @@ function angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo
     if isempty(estado) || reset == 1
         estado.freq = 100;
         % Inicializar compás con valor actual
-        orientacion_compas(campo_x, campo_y, campo_z, orientacion_compas(campo_x, campo_y, campo_z));
+        azimut_compas(campo_x, campo_y, campo_z, azimut_compas(campo_x, campo_y, campo_z));
         % Matrices iniciales
         estado.P = 1 * eye(3);        % covarianza inicial
         estado.X = [0; 0; 0];         % estado: ángulo, velocidad, bias
@@ -65,8 +65,8 @@ function angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo
 
     % --- Inicializar con parámetros ---
     if nargin > 4
-        angulo = orientacion_compas(campo_x(1), campo_y(1), campo_z(1), 0);
-        orientacion_compas(campo_x(1), campo_y(1), campo_z(1), angulo - angulo0);
+        angulo = azimut_compas(campo_x(1), campo_y(1), campo_z(1), 0);
+        azimut_compas(campo_x(1), campo_y(1), campo_z(1), angulo - angulo0);
         estado.X = [angulo0; 0; 0];
         if nargin > 5
             estado.freq = freq;
@@ -76,7 +76,7 @@ function angulo = orientacion_kalman(vel_giro, campo_x, campo_y, campo_z, angulo
     end
 
     % --- Obtener ángulo y fiabilidad del compás ---
-    [angulo_compas, fiable_compas] = orientacion_compas(campo_x, campo_y, campo_z);
+    [angulo_compas, fiable_compas] = azimut_compas(campo_x, campo_y, campo_z);
     angulo_k = zeros(size(angulo_compas));
 
     % --- Matrices del modelo ---

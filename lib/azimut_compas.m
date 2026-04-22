@@ -1,7 +1,7 @@
-function [angulo, fiable] = orientacion_compas(campo_x, campo_y, campo_z, angulo0)
+function [angulo, fiable] = azimut_compas(campo_x, campo_y, campo_z, angulo0)
 %ORIENTACION_COMPAS Calcula la orientación a partir de un compás magnético.
 %
-%   [angulo, fiable] = orientacion_compas(campo_x, campo_y, campo_z, angulo0)
+%   [angulo, fiable] = azimut_compas(campo_x, campo_y, campo_z, angulo0)
 %
 %   Esta función estima la orientación en el plano horizontal a partir de
 %   los datos de un compás magnético situado en el COG (centro de gravedad).
@@ -23,10 +23,10 @@ function [angulo, fiable] = orientacion_compas(campo_x, campo_y, campo_z, angulo
 %   cx = cos(linspace(0,2*pi,100));
 %   cy = sin(linspace(0,2*pi,100));
 %   cz = zeros(size(cx));
-%   [ang, ok] = orientacion_compas(cx, cy, cz);
+%   [ang, ok] = azimut_compas(cx, cy, cz);
 %   plot(rad2deg(ang)), title('Orientación compás [°]')
 %
-% See also: orientacion_giroscopo, orientacion_kalman
+% See also: azimut_giroscopo, azimut_kalman
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado

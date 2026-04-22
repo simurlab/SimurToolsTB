@@ -33,7 +33,7 @@ xlabel('Tiempo');
 ylabel('Aceleración (m/s^2)');
 xlim([1.5e4, 1.55e4])
 
-[num_pasos, indices_pasos] = contar_pasos_muneca(acc_x_munheca, acc_y_munheca, acc_z_munheca, 60);
+[num_pasos, indices_pasos] = pasos_muneca_caminar(acc_x_munheca, acc_y_munheca, acc_z_munheca, 60);
 
 % Calcular la magnitud de la aceleración
 magnitud_aceleracion = sqrt(acc_x_munheca.^2 + acc_y_munheca.^2 + acc_z_munheca.^2);
@@ -113,7 +113,7 @@ xlabel('Tiempo');
 ylabel('Aceleración (m/s^2)');
 xlim([1.5e4, 1.55e4])
 
-[num_pasos, indices_pasos] = contar_pasos_muneca(acc_x_munheca, acc_y_munheca, acc_z_munheca, 60);
+[num_pasos, indices_pasos] = pasos_muneca_caminar(acc_x_munheca, acc_y_munheca, acc_z_munheca, 60);
 
 % Calcular la magnitud de la aceleración
 magnitud_aceleracion = sqrt(acc_x_munheca.^2 + acc_y_munheca.^2 + acc_z_munheca.^2);

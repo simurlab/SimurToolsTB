@@ -21,30 +21,30 @@
 % eventos_cog_carrera                  - Detecta eventos en el COG durante carrera
 % eventos_cog_caminar                  - Detecta eventos en el COG durante la marcha
 % eventos_cog_tiempo_real_caminar      - Eventos del COG en tiempo real durante la marcha
-% eventos_salto_vertical               - Detecta fases principales de un salto vertical
+% eventos_cog_squat_jump          - Detecta eventos principales de un squat jump
 % corrige_eventos_pie                  - Corrige los eventos de IC/TO detectados
 % corrige_seniales_pie                 - Corrige señales del pie en carrera
-% tiempos_eventos_carrera              - Calcula intervalos temporales entre eventos
+% tiempos_eventos_carrera          - Calcula intervalos temporales entre eventos
 % cadencia                             - Calcula la cadencia de la marcha/carrera
-% aceleracion_mediolateral_carrera     - Aceleración mediolateral en carrera
-% amplitud_frenado_carrera             - Amplitud de la aceleración de frenado
-% amplitud_impacto_carrera             - Amplitud de la aceleración de impacto
-% rms_aceleracion_frenado_carrera      - RMS de la aceleración de frenado
-% rms_aceleracion_impacto_carrera      - RMS de la aceleración de impacto
+% aceleracion_mediolateral_footstrike_pie_carrera - Aceleración mediolateral en el evento de foot-strike
+% amplitud_frenado_pie_carrera         - Amplitud de la aceleración de frenado
+% amplitud_impacto_pie_carrera         - Amplitud de la aceleración de impacto
+% aceleracion_vert_frenado_pie_carrera - RMS de la aceleración de frenado
+% aceleracion_vert_impacto_pie_carrera - RMS de la aceleración de impacto
 %
 % ===================== Orientación =====================
-% orientacion_compas                   - Estima orientación con compás (vector magnético)
-% orientacion_giroscopo                - Estima orientación con giroscopio
-% orientacion_kalman                   - Orientación fusionando compás y giroscopio (Kalman)
-% estimacion_rotacion_triad            - Estimación de rotación con algoritmo TRIAD
+% azimut_compas                        - Estima orientación con compás (vector magnético)
+% azimut_giroscopo                     - Estima orientación con giroscopio
+% azimut_kalman                        - Orientación fusionando compás y giroscopio (Kalman)
+% orientacion_triad                    - Estimación de rotación con algoritmo TRIAD
 %
 % ===================== Distancias y métricas =====================
-% distancia_arco                       - Distancia por arco de circunferencia
-% distancia_pendulo                    - Distancia usando modelo de péndulo invertido
-% distancia_pendulo_parcial            - Distancia con péndulo en intervalos parciales
-% distancia_raiz_cuarta                - Distancia mediante método de la raíz cuarta
-% distancia_recorrida_extremos         - Distancia entre extremos de segmentos
-% distancia_recorrida_marcador         - Distancia recorrida por un marcador
+% distancia_arco_cog_caminar           - Distancia por arco de circunferencia
+% distancia_pendulo_cog_caminar        - Distancia usando modelo de péndulo invertido
+% distancia_pendulo_parcial_cog_caminar - Distancia con péndulo en intervalos parciales
+% distancia_raiz_cuarta_cog_caminar    - Distancia mediante método de la raíz cuarta
+% rango_extremos                       - Distancia entre extremos de segmentos
+% distancia_marcador                   - Distancia recorrida por un marcador
 %
 % ===================== Entrada/salida y carga de datos =====================
 % carga_bimu                           - Carga de datos de sensores B-IMU
@@ -52,7 +52,7 @@
 % carga_sensores                       - Carga general de sensores
 % carga_shimmer                        - Carga de datos Shimmer
 % carga_silop                          - Carga de datos SILOP
-% extraer_info_mocab                   - Extrae información de un archivo MoCap con cabecera
+% extraer_info_mocap                   - Extrae información de un archivo MoCap con cabecera
 % lectura_archivo_csv                  - Lectura de archivo CSV sin cabecera
 % segmenta_intentos                    - Segmentación de intentos de IMUs
 % separar_celda_por_fila               - Separa filas de una celda en archivos .mat

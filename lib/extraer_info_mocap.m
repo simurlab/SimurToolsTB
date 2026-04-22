@@ -1,7 +1,7 @@
-function datos = extraer_info_mocab(path)
+function datos = extraer_info_mocap(path)
 %EXTRAER_INFO_MOCAB Extrae información de un archivo MOCAB con cabezal.
 %
-%   datos = extraer_info_mocab(path)
+%   datos = extraer_info_mocap(path)
 %
 %   Esta función procesa un archivo CSV exportado de un sistema MOCAB con
 %   cabezal, identificando sólidos rígidos, marcadores asociados y
@@ -17,7 +17,7 @@ function datos = extraer_info_mocab(path)
 %   datos : matriz con los datos numéricos del archivo CSV.
 %
 % EJEMPLO:
-%   datos = extraer_info_mocab('prueba_movimiento_cabezal.csv');
+%   datos = extraer_info_mocap('prueba_movimiento_cabezal.csv');
 %
 % Author:   (original) Desconocido
 % History:  ??.??.20??   versión inicial

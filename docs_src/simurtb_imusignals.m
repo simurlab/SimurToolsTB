@@ -86,7 +86,7 @@
 % In the library there are a number of functions to detect these events from inertial signals. In each case, the correspondence between 
 % the signal and the actual anatomical event is extracted from the
 % specialized literature. A more detailed description of the anatomical step event can be found in 
-% "Observational Gait Analysis", 4ª ed. 2004, D.J. Perry, Rancho Los Amigos National Rehabilitation Center.
+% "Observational Gait Analysis", 4th ed. 2004, D.J. Perry, Rancho Los Amigos National Rehabilitation Center.
 
 %%
 %
@@ -99,7 +99,7 @@
 
 %%
 %
-% * distancia_arco: estimation of the pitch length using the arc model
-% * distancia_pendulo: estimation of the length of the step by means of an inverted pendulum
-% * distancia_penduloparcial: estimation of step length by means of pendulum+displacement model
+% * distancia_arco_cog_caminar: estimation of the pitch length using the arc model
+% * distancia_pendulo_cog_caminar: estimation of the length of the step by means of an inverted pendulum
+% * distancia_pendulo_parcial_cog_caminar: estimation of step length by means of pendulum+displacement model
 % * distancia_raizcuarta: estimation of the step length by means of the acceleration amplitude

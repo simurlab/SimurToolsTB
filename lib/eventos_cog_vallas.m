@@ -1,4 +1,4 @@
-function [MaxAcc,saltos,caidas,IC,FC]=eventos_COG_vallas(acc_vert_raw,acc_tot_raw)
+function [MaxAcc,saltos,caidas,IC,FC]=eventos_cog_vallas(acc_vert_raw,acc_tot_raw)
     orden=5;
     corte=30/120;
     acc_vert=filtro_paso_bajo_f0(acc_vert_raw,orden,corte);

@@ -1,7 +1,7 @@
-function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml, plot_graph)
-%RMS_ACELERACION_IMPACTO_CARRERA Calcula la RMS de la aceleración de impacto durante la carrera.
+function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = aceleracion_vert_impacto_pie_carrera(ic, fc, acc_vert, gyr_ml, plot_graph)
+%ACELERACION_VERT_IMPACTO_CARRERA Calcula la RMS de la aceleración de impacto durante la carrera.
 %
-%   [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml)
+%   [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = aceleracion_vert_impacto_pie_carrera(ic, fc, acc_vert, gyr_ml)
 %
 %   Esta función calcula la raíz cuadrática media (RMS) de la aceleración
 %   de impacto en el eje vertical durante la carrera. Cada segmento se define
@@ -25,9 +25,9 @@ function [rms_acc_impacto_segmentos, rms_acc_impacto_moda] = rms_aceleracion_imp
 %       fc = [200 350 500];
 %       acc_vert = randn(1,600) * 9.81; % señal ficticia
 %       gyr_ml = randn(1,600) * 100;
-%       [rms_vals, moda_val] = rms_aceleracion_impacto_carrera(ic, fc, acc_vert, gyr_ml);
+%       [rms_vals, moda_val] = aceleracion_vert_impacto_pie_carrera(ic, fc, acc_vert, gyr_ml);
 %
-%   See also: rms_aceleracion_frenado_carrera, rms, mode
+%   See also: aceleracion_vert_frenado_pie_carrera, rms, mode
 %
 % Author:   (original) Diego
 % History:  xx.yy.zz    versión inicial

@@ -1,7 +1,7 @@
-function angulo = orientacion_giroscopo(vel_giro, angulo0, freq)
+function angulo = azimut_giroscopo(vel_giro, angulo0, freq)
 %ORIENTACION_GIROSCOPO Calcula la orientación a partir de un giróscopo en el COG.
 %
-%   angulo = orientacion_giroscopo(vel_giro, angulo0, freq)
+%   angulo = azimut_giroscopo(vel_giro, angulo0, freq)
 %
 %   Esta función estima la orientación acumulada integrando la velocidad de
 %   giro en el eje vertical. Conserva entre llamadas el ángulo y la
@@ -22,10 +22,10 @@ function angulo = orientacion_giroscopo(vel_giro, angulo0, freq)
 %
 % EJEMPLO:
 %   vel = [ones(1,100) zeros(1,100)] * 0.1; % velocidad angular 0.1 rad/s
-%   ang = orientacion_giroscopo(vel, 0, 100);
+%   ang = azimut_giroscopo(vel, 0, 100);
 %   plot(rad2deg(ang)), ylabel('Ángulo [°]'), xlabel('Muestras')
 %
-% See also: orientacion_compas, orientacion_kalman
+% See also: azimut_compas, azimut_kalman
 %
 % Author:   Diego Álvarez
 % History:  ??.??.200?   creado

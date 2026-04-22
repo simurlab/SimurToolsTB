@@ -1,7 +1,7 @@
-function tiempos = eventos_salto_vertical(aceleracion_vert, freq)
-%EVENTOS_SALTO_VERTICAL Detecta eventos principales de un salto a partir de aceleraciones verticales.
+function tiempos = eventos_cog_squat_jump(aceleracion_vert, freq)
+%EVENTOS_COG_SQUAT_JUMP Detecta eventos principales de un squat jump a partir de la aceleración vertical del COG.
 %
-%   tiempos = eventos_salto_vertical(aceleracion_vert, freq)
+%   tiempos = eventos_cog_squat_jump(aceleracion_vert, freq)
 %
 %   Esta función detecta automáticamente los eventos principales durante
 %   un salto a partir de la aceleración vertical del centro de gravedad (COG).
@@ -27,7 +27,7 @@ function tiempos = eventos_salto_vertical(aceleracion_vert, freq)
 % EJEMPLO:
 %   t = 0:0.01:2;
 %   acc = [zeros(1,30) -12*ones(1,20) 15*ones(1,20) -9.8*ones(1,20) zeros(1,90)];
-%   tiempos = eventos_salto_vertical(acc, 100);
+%   tiempos = eventos_cog_salto(acc, 100);
 %   plot(acc); hold on;
 %   plot(find(tiempos(:,2)), acc(tiempos(:,2)==1), 'ro'); % inicio
 %   plot(find(tiempos(:,4)), acc(tiempos(:,4)==1), 'go'); % fin

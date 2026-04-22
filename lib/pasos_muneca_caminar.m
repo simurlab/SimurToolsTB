@@ -1,9 +1,9 @@
-function [num_pasos, indices_pasos] = contar_pasos_muneca(ax, ay, az, fs)
+function [num_pasos, indices_pasos] = pasos_muneca_caminar(ax, ay, az, fs)
 % CONTAR_PASOS_MUNECA - Cuenta pasos a partir de señales de acelerometría 
 % de una IMU ubicada en la muñeca.
 %
 % Sintaxis:
-%   [num_pasos, indices_pasos] = contar_pasos_muneca(ax, ay, az, fs)
+%   [num_pasos, indices_pasos] = pasos_muneca_caminar(ax, ay, az, fs)
 %
 % Entradas:
 %   ax, ay, az : vectores con las componentes del acelerómetro (en g)
