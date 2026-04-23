@@ -1,4 +1,4 @@
-function maximos = buscaMaximos(datos)
+function maximos = busca_maximos(datos)
 %BUSCAMAXIMOS Detecta todos los máximos locales de una señal discreta.
 %
 %   maximos = buscaMaximos(datos)
