@@ -77,7 +77,7 @@ function [retardo_hs, retardo_to] = eventos_cog_tiempo_real_caminar(acc_ap, acc_
         if pers_data_filt(end) < 0 && pers_data_filt(end-1) > 0
             if sum(sign(pers_data_filt(end-INTERVALO+1:end-1))) == INTERVALO-1
                 % Buscar picos candidatos
-                peaks = localmaxima(pers_data_ap, 2);
+                peaks = busca_maximos_local(pers_data_ap, 2);
                 peaks = peaks .* (pers_data_ap(peaks) > 0.95) ...
                              .* (pers_data_vert(peaks) >= 9.8) ...
                              .* (pers_data_ap(peaks) / max(pers_data_ap) > 0.3);
@@ -93,10 +93,10 @@ function [retardo_hs, retardo_to] = eventos_cog_tiempo_real_caminar(acc_ap, acc_
 
     % -------------------- Detección de TO --------------------
     if pers_ultimo_hs > 0 && length(pers_data_ap) - pers_ultimo_hs >= 25
-        maximos = localmaxima(pers_data_vert(pers_ultimo_hs-5:pers_ultimo_hs+11), 2);
+        maximos = busca_maximos_local(pers_data_vert(pers_ultimo_hs-5:pers_ultimo_hs+11), 2);
         if ~isempty(maximos)
             ff = maximos(1) - 5;
-            minimos = localmaxima(-pers_data_vert(pers_ultimo_hs+ff:pers_ultimo_hs+22), 2);
+            minimos = busca_maximos_local(-pers_data_vert(pers_ultimo_hs+ff:pers_ultimo_hs+22), 2);
             if ~isempty(minimos)
                 evento = minimos(1) + pers_ultimo_hs + ff - 1;
                 retardo_to = length(pers_data_vert) - evento;

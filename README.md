@@ -60,6 +60,8 @@ Funciones para análisis de la marcha normal.
 | `pasos_muneca_caminar` | Conteo de pasos desde acelerómetro de muñeca |
 | `pasos_muneca_fusion_caminar` | Conteo con fusión de múltiples sensores |
 
+**Demo:** [`Examples/demo_caminar_posicion2D.m`](Examples/demo_caminar_posicion2D.m) — reconstrucción de la posición 2D a partir de IMU en L3.
+
 ### 🏃 Carrera (Running)
 Funciones específicas para análisis de carrera con IMU en pie o centro de gravedad.
 
