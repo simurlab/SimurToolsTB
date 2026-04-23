@@ -8,9 +8,9 @@
 %
 %  PIPELINE:
 %    1. Carga de señales del sensor (formato Xsens .log)
-%    2. Detección de eventos del paso en tiempo real  → eventos_RT
-%    3. Estimación de la distancia de cada paso       → distancia_pendulo
-%    4. Estimación de la orientación                  → orientaciongiroscopo
+%    2. Detección de eventos del paso en tiempo real  → eventos_cog_tiempo_real_caminar
+%    3. Estimación de la distancia de cada paso       → distancia_pendulo_cog_caminar
+%    4. Estimación de la orientación                  → azimut_giroscopo
 %    5. Cálculo de la posición 2D
 %
 %  FORMATO DE DATOS:
@@ -69,18 +69,18 @@ fprintf('   Muestras cargadas: %d (%.1f s)\n\n', size(data,1), size(data,1)/freq
 
 %% ── 3. DETECCIÓN DE EVENTOS DEL PASO  ───────────────────────────────────
 %
-%  eventos_RT procesa las señales muestra a muestra, simulando el modo
-%  tiempo real. Devuelve el retardo (en muestras) al evento más reciente.
+%  eventos_cog_tiempo_real_caminar procesa las señales muestra a muestra,
+%  simulando el modo tiempo real. Devuelve el retardo (en muestras) al evento más reciente.
 %    hs — HeelStrike (contacto del talón)
 %    to — ToeOff     (despegue del pie)
 
-eventos_RT(0, 0, 'reset');
+eventos_cog_tiempo_real_caminar(0, 0, true);
 
 eventosHS = zeros(size(acc_ap));
 eventosTO = zeros(size(acc_ap));
 
 for k = 1:length(acc_ap)
-    [hs, to] = eventos_RT(acc_ap(k), acc_v(k));
+    [hs, to] = eventos_cog_tiempo_real_caminar(acc_ap(k), acc_v(k));
     if hs ~= 0
         eventosHS(k - hs) = 1;
     end
@@ -108,7 +108,7 @@ grid on;
 
 %% ── 4. ESTIMACIÓN DE LA DISTANCIA POR PASO  ─────────────────────────────
 %
-%  distancia_pendulo calcula la longitud de cada paso a partir de la
+%  distancia_pendulo_cog_caminar calcula la longitud de cada paso a partir de la
 %  aceleración vertical usando el modelo del péndulo invertido.
 %  Se aplica solo a pasos cuya duración sea menor que max_duracion_paso.
 
@@ -118,7 +118,7 @@ for k = 2:length(indicesHS)
     ini = indicesHS(k-1);
     fin = indicesHS(k);
     if fin - ini < max_duracion_paso
-        distancias(fin) = distancia_pendulo(acc_v(ini:fin), freq, long_pierna);
+        distancias(fin) = distancia_pendulo_cog_caminar(acc_v(ini:fin), freq, long_pierna);
     end
 end
 
@@ -136,13 +136,13 @@ fprintf('   Distancia total estimada: %.2f m\n\n', sum(distancias));
 %
 %  Se corrige el offset del giróscopo vertical comparando la integral
 %  en un segmento conocido con el ángulo real de referencia.
-%  Después, orientaciongiroscopo integra la velocidad de giro corregida.
+%  Después, azimut_giroscopo integra la velocidad de giro corregida.
 
 offset_giro = (ref_giros - sum(gyr_v(ref_muestra_ini:ref_muestra_fin)) / freq) / ...
               ((ref_muestra_fin - ref_muestra_ini) / freq);
 
 gyr_v_corr  = gyr_v + offset_giro;
-orientacion = orientaciongiroscopo(gyr_v_corr, 0, freq);
+orientacion = azimut_giroscopo(gyr_v_corr, 0, freq);
 
 figure;
 plot(orientacion * 180/pi);
