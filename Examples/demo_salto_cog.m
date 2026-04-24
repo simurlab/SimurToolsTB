@@ -170,8 +170,13 @@ for i = 1:numel(inicios_imu)
 end
 sgtitle('IMU — aceleración vertical por salto');
 
-tiemposxs  = (finales_imu - inicios_imu) / freq;
-alturaxs   = 9.81 * tiemposxs.^2 / 8;
+% ------------------------------------------------------------------
+% 4.2  Cálculo de duración, altura y energía
+%      evalua_cog_salto encapsula las tres métricas a partir de la
+%      matriz de eventos. El peso por defecto es 75 kg; ajústalo en
+%      la sección de configuración si es necesario.
+% ------------------------------------------------------------------
+[tiemposxs, alturaxs, energiaxs] = evalua_cog_salto(eventos_imu, freq);
 
 
 %% ── 5. TABLA COMPARATIVA  ────────────────────────────────────────────────
@@ -187,5 +192,11 @@ T_alturas = array2table([alturaPF(:), alturaxs(:), alturaCam(:)], ...
     'VariableNames', {'Plataforma_m', 'IMU_m', 'Camara_m'}, ...
     'RowNames', {'Salto_1', 'Salto_2', 'Salto_3'});
 disp(T_alturas);
+
+fprintf('===== Energía por salto — IMU (J) =====\n');
+T_energia = array2table(energiaxs(:), ...
+    'VariableNames', {'Energia_J'}, ...
+    'RowNames', {'Salto_1', 'Salto_2', 'Salto_3'});
+disp(T_energia);
 
 fprintf('── Listo.\n');
