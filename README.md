@@ -94,7 +94,10 @@ Para análisis de salto vertical y pliometría.
 
 | Función | Descripción |
 |---------|-------------|
-| `eventos_cog_salto` | Detecta inicio, despegue, vuelo y aterrizaje |
+| `eventos_cog_salto` | Detecta inicio, contacto inicial, impacto y preparación para el contacto |
+| `evalua_cog_salto` | Calcula duración, altura y energía de cada salto a partir de los eventos |
+
+**Demo:** [`Examples/demo_salto_cog.m`](Examples/demo_salto_cog.m) — estimación de altura y duración de saltos verticales comparando cámara, plataforma de fuerzas e IMU.
 
 
 
