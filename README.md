@@ -218,6 +218,63 @@ un sistema de referencia *anatómico*, de convenio (V, ML, AP).
 
 ---
 
+## 📡 ¿Qué señales necesito?
+
+Esta sección resume el **convenio de ejes**, la **colocación de sensores** y las **señales mínimas requeridas** para cada actividad, de modo que puedas preparar tus datos antes de llamar a cualquier función de la TB.
+
+---
+
+### 🧭 Convenio anatómico
+
+Todas las funciones de la TB trabajan en el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
+
+| Eje IMUstd | Etiqueta | Dirección positiva |
+|:----------:|----------|--------------------|
+| **V**  | `Acc_X` / `Gyr_X` | Vertical, hacia arriba |
+| **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la izquierda |
+| **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
+
+> `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
+
+![Convenio anatómico IMUstd {V, ML, AP}](img/IMUstd_mini.png)
+
+---
+
+### 📍 Ubicación de los sensores
+
+Los sensores se identifican con un código de **ubicación + número** (`ubicacion_N`):
+
+| Código | Ubicación | Colocación recomendada |
+|--------|-----------|------------------------|
+| `COG_1` | Centro de Gravedad | Sacro / espalda baja |
+| `FR_1`  | Pie Derecho (*Foot Right*)   | Dorso del pie derecho |
+| `FL_1`  | Pie Izquierdo (*Foot Left*)  | Dorso del pie izquierdo |
+| `TR_1`  | Muslo Derecho (*Thigh Right*)  | Cara lateral del muslo derecho |
+| `TL_1`  | Muslo Izquierdo (*Thigh Left*) | Cara lateral del muslo izquierdo |
+| `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
+| `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
+
+<!-- TODO: añadir imagen img/sensores_mini.png con la colocación de sensores -->
+
+---
+
+### 🏃 Señales mínimas por actividad
+
+La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
+
+| Actividad | Sensor | Señales requeridas | Señales opcionales | Funciones principales |
+|-----------|--------|--------------------|--------------------|----------------------|
+| 🚶 **Caminar** | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
+| 🏃 **Carrera** | `FR_1` / `FL_1` | `Gyr_Y` (ML) | `Gyr_Z` (AP) para pronación | `eventos_pie_carrera`, `tiempos_eventos_carrera` |
+| 🏃 **Carrera** | `COG_1` | `Acc_X` (V), `Acc_Z` (AP) | — | `eventos_cog_carrera`, `distancia_vert_cog_carrera` |
+| 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
+| 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
+| 🦶 **Pasos (muñeca)** | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
+
+> **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
+
+---
+
 ## 🚀 Instalación
 
 Se puede instalar mediante el AddsOn Manager propio de Matlab
