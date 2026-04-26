@@ -16,6 +16,98 @@ Las herramientas están optimizadas para trabajar con *archivos de datos estanda
 
 ---
 
+## 📡 ¿Qué señales necesito?
+
+Esta sección resume el **convenio de ejes**, la **colocación de sensores** y las **señales mínimas requeridas** para cada actividad, de modo que puedas preparar tus datos antes de llamar a cualquier función de la TB.
+
+---
+
+### 🧭 Convenio anatómico
+
+Todas las funciones de la TB trabajan en el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
+
+| Eje IMUstd | Etiqueta | Dirección positiva |
+|:----------:|----------|--------------------|
+| **V**  | `Acc_X` / `Gyr_X` | Vertical, hacia arriba |
+| **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la izquierda |
+| **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
+
+> `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
+
+![Convenio anatómico IMUstd {V, ML, AP}](img/IMUstd_mini.png)
+
+---
+
+### 📍 Ubicación de los sensores
+
+Los sensores se identifican con un código de **ubicación + número** (`ubicacion_N`):
+
+| Código | Ubicación | Colocación recomendada |
+|--------|-----------|------------------------|
+| `COG_1` | Centro de Gravedad | Sacro / espalda baja |
+| `FR_1`  | Pie Derecho (*Foot Right*)   | Dorso del pie derecho |
+| `FL_1`  | Pie Izquierdo (*Foot Left*)  | Dorso del pie izquierdo |
+| `TR_1`  | Muslo Derecho (*Thigh Right*)  | Cara lateral del muslo derecho |
+| `TL_1`  | Muslo Izquierdo (*Thigh Left*) | Cara lateral del muslo izquierdo |
+| `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
+| `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
+
+![Colocación de sensores IMUstd](img/sensores_mini.png)
+
+---
+
+### 🏃 Señales mínimas por actividad
+
+La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
+
+| Actividad | Sensor | Señales requeridas | Señales opcionales | Funciones principales |
+|-----------|--------|--------------------|--------------------|----------------------|
+| 🚶 **Caminar** | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
+| 🏃 **Carrera** | `FR_1` / `FL_1` | `Gyr_Y` (ML) | `Gyr_Z` (AP) para pronación | `eventos_pie_carrera`, `tiempos_eventos_carrera` |
+| 🏃 **Carrera** | `COG_1` | `Acc_X` (V), `Acc_Z` (AP) | — | `eventos_cog_carrera`, `distancia_vert_cog_carrera` |
+| 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
+| 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
+| 🦶 **Pasos (muñeca)** | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
+
+> **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
+
+---
+
+### ⚙️ El formato IMUstd
+
+El formato **IMUstd** es el tipo de dato estandarizado con el que trabaja la TB. Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.).
+
+Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localización del cuerpo, y con ciertas propiedades. Se define con una estructura de dos partes: **datos** y **metadatos**.
+
+**Datos** — señales del sensor ordenadas en columnas:
+
+| Tipo de dato | Etiquetas | Unidades |
+|---|---|---|
+| Acelerómetro | `Acc_X`, `Acc_Y`, `Acc_Z` | m/s² |
+| Giroscopio | `Gyr_X`, `Gyr_Y`, `Gyr_Z` | °/s |
+| Magnético | `Mag_X`, `Mag_Y`, `Mag_Z` | µT |
+| Ángulos de Euler | `Eul_X`, `Eul_Y`, `Eul_Z` | ° |
+| Cuaternion | `Quat_W`, `Quat_X`, `Quat_Y`, `Quat_Z` | — |
+| Nº de muestra | `PacketCounter` | — |
+| Instante de la muestra | `Time` | s |
+| Estado de la batería | `Battery` | — |
+| Código de estado | `Status` | — |
+
+**Metadatos** — información del sensor y su colocación:
+
+| Metadato | Descripción | Ejemplo |
+|---|---|---|
+| `IMU` | ID del sensor utilizado | `'DOT8'` |
+| `ubicacion` | Dónde se colocó el sensor | `'FR_1'`, `'COG_1'` |
+| `modelo` | Etiqueta del modelo comercial | `'Xsens Dot'` |
+| `frecuencia` | Frecuencia de muestreo | `100`, `120` Hz |
+| `orientacion` | Reorientación al sistema anatómico {V, ML, AP} | `[3, -1, 2]` |
+| `intervaloIntento` | Muestra inicial y final del intento | `[600, 14000]` |
+
+La función `carga_IMUstd` lee un archivo IMUstd y devuelve las señales ya reorientadas al convenio anatómico (V, ML, AP).
+
+---
+
 ## 🧩 Estructura de la Toolbox
 
 Las funciones están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Con ello se facilita identificar rápidamente las herramientas disponibles para cada aplicación.
@@ -153,125 +245,6 @@ Carga de datos, preprocesamiento y visualización universal.
 | **Visualización 3D** | `mostrar_patrones`, `dibujar_sistema_referencia`, `mostrar_marcadores_solido_rigido`, `mostrar_orientacion_solido_rigido`, `dibujar_voxel`, `esfera_3d`, `crear_solido_prismatico` | Representación gráfica de sistemas de referencia, marcadores y volúmenes 3D. |
 | **Utilidades y Matemática General** | `busca_maximos`, `busca_maximos_local`, `busca_maximos_umbral`, `anatomical_to_isb`, `separar_celda_por_fila`, `distancia_raiz_cuarta_cog_caminar`, `int_acumulada_cam_simp` | Funciones auxiliares para optimización, búsqueda de picos y transformaciones anatómicas. |
 | **Gestión de Bases de Datos** |  `db_prueba`, `db_intentos`,  `carga_bimu`, `carga_shimmer`, `carga_dot`, `carga_silop`, `lectura_archivo_csv`, `resume_intentos`, `extraer_info_mocab` | Creación de archivos de formato IMUstd. |
-
----
-
-## 🧱 Convenciones y Estructura de Carpetas
-
-```
-SimurTools/
-│
-├── carga_*                 % Funciones de lectura de datos
-├── eventos_*               % Detección de eventos biomecánicos
-├── db_*                       % Creación de Bases de Datos en el formato IMUstd 
-├── orientacion_*           % Estimación de orientación
-├── dibujar_*, mostrar_*    % Visualización 3D
-├── doble_integracion_*     % Métodos de integración
-├── amplitud_*, rms_*       % Parámetros de rendimiento
-├── Contents.m              % Índice automático del toolbox
-└── README.md               % Este archivo
-```
-
----
-
-## ⚙️ El formato IMU estándar (IMUstd)
-
- El formato **IMUstd** es un tipo de dato estandarizado, especialmente útil para trabajar con la **SIMUR Tools TB**. 
- Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado.
-  
- Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localización del cuerpo, y con ciertas propiedades. 
- Se define con una estructura que consta de dos partes: datos y metadatos.
- 
-### Datos: 
-las señales de los sensores ordenadas en columnas:
-
-| Tipo de dato | Etiqueta Principales | Unidades |
-|------------|-----------------------|----------------------|
-| Acelerómetro | "Acc_X", "Acc_Y", "Acc_Z" |ms |
-| Giroscopio | "Gyr_X", "Gyr_Y", "Gyr_Z"|ms |
-| Magnético |"Mag_X", "Mag_Y", "Mag_Z"|ms |
-|Ángulos de Euler | "Eul_X", "Eul_Y", "Eul_Z"|ms |
-|Cuaternion|"Quat_W", "Quat_X", "Quat_Y", "Quat_Z"|ms |
-|Número de muestra|"PacketCounter"| ms |
-|Instante de la muestra|"Time"| ms |
-|Estado de la batería|"Battery"| ms |
-|Código de estado|"Status"| ms |
-|Uso reservado|"Var24"| - |
-|Uso reservado|"Index"| - |
-
-### Metadatos: 
-información referida al tipo de sensor y su colocación:
-
-| Metadato |  Información | Ejemplo |
-|------------|-----------------------|----------------------|
-|IMU | ID del sensor utilizado  | 'DOT8' |
-|ubicacion | Dónde se colocó el sensor | 'FL' 'FR' 'COG' |
-|modelo | Etiqueta del modelo comercial | 'Xsens Dot' |
-|frecuencia | muestreo del sensor | 30, 60, 100, 120... Hz |
-|orientacion | relativa respecto al **sistema de referencia IMUstd**, de convenio {V, ML, AP} ("anatómico") | [3,-1,2] |
-|intervaloIntento | muestra inicial y final de interés, del archivo raiz | [600, 14000] |
-
-La función *carga_IMUstd* de la TB está pensada para leer un archivo de un **IMUstd** y devolver las señales de acelerómetros y giroscopios referidas a
-un sistema de referencia *anatómico*, de convenio (V, ML, AP).
-
-![El sistema de referencia de IMUstd {V, ML, AP}](img/IMUstd_mini.png)
-
----
-
-## 📡 ¿Qué señales necesito?
-
-Esta sección resume el **convenio de ejes**, la **colocación de sensores** y las **señales mínimas requeridas** para cada actividad, de modo que puedas preparar tus datos antes de llamar a cualquier función de la TB.
-
----
-
-### 🧭 Convenio anatómico
-
-Todas las funciones de la TB trabajan en el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
-
-| Eje IMUstd | Etiqueta | Dirección positiva |
-|:----------:|----------|--------------------|
-| **V**  | `Acc_X` / `Gyr_X` | Vertical, hacia arriba |
-| **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la izquierda |
-| **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
-
-> `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
-
-![Convenio anatómico IMUstd {V, ML, AP}](img/IMUstd_mini.png)
-
----
-
-### 📍 Ubicación de los sensores
-
-Los sensores se identifican con un código de **ubicación + número** (`ubicacion_N`):
-
-| Código | Ubicación | Colocación recomendada |
-|--------|-----------|------------------------|
-| `COG_1` | Centro de Gravedad | Sacro / espalda baja |
-| `FR_1`  | Pie Derecho (*Foot Right*)   | Dorso del pie derecho |
-| `FL_1`  | Pie Izquierdo (*Foot Left*)  | Dorso del pie izquierdo |
-| `TR_1`  | Muslo Derecho (*Thigh Right*)  | Cara lateral del muslo derecho |
-| `TL_1`  | Muslo Izquierdo (*Thigh Left*) | Cara lateral del muslo izquierdo |
-| `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
-| `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
-
-![Colocación de sensores IMUstd](img/sensores_mini.png)
-
----
-
-### 🏃 Señales mínimas por actividad
-
-La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
-
-| Actividad | Sensor | Señales requeridas | Señales opcionales | Funciones principales |
-|-----------|--------|--------------------|--------------------|----------------------|
-| 🚶 **Caminar** | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
-| 🏃 **Carrera** | `FR_1` / `FL_1` | `Gyr_Y` (ML) | `Gyr_Z` (AP) para pronación | `eventos_pie_carrera`, `tiempos_eventos_carrera` |
-| 🏃 **Carrera** | `COG_1` | `Acc_X` (V), `Acc_Z` (AP) | — | `eventos_cog_carrera`, `distancia_vert_cog_carrera` |
-| 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
-| 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
-| 🦶 **Pasos (muñeca)** | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
-
-> **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
 
 ---
 
