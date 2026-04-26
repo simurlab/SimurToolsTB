@@ -254,7 +254,7 @@ Los sensores se identifican con un código de **ubicación + número** (`ubicaci
 | `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
 | `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
 
-<!-- TODO: añadir imagen img/sensores_mini.png con la colocación de sensores -->
+![Colocación de sensores IMUstd](img/sensores_mini.png)
 
 ---
 
