@@ -1,18 +1,22 @@
 ![logo](img/logoIA3mini.jpeg)
 # 🧠 SiMuR Tools — MATLAB Toolbox para el Análisis de Movimiento
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19816490.svg)](https://doi.org/10.5281/zenodo.19816490)
 
 **Grupo:** SiMuR — Universidad de Oviedo  
-**Versión:** 1.5 (Octubre 2025)  
+**Versión:** 1.6 (Abril 2026)  
  
 ---
 
 ## 📘 Descripción General
 
-**SiMuR Tools TB** es un conjunto de funciones en MATLAB diseñadas para facilitar el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
+**SiMuR Tools TB** es un conjunto de funciones en MATLAB para el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
+Las herramientas abarcan la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
-La toolbox permite desde la **carga y preprocesamiento de señales**, hasta la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
-Las herramientas están optimizadas para trabajar con *archivos de datos estandarizados* en el formato **IMUstd**, que se generaran desde los archivos nativos de sensores comerciales (Xsens DOT, Shimmer, Bimu, etc.) o cualquier otra fuente que se disponga.
+La toolbox facilita la **carga y preprocesamiento de señales** provinientes de diferentes IMUs comerciales: Movella-DOT, Shimmer, Bimu, etc.
+ 
+También permite almacenarlos en un tipo de *archivos de datos estandarizados*, el formato **IMUstd**, que facilita su explotación y uso posteriores.
+
 
 ---
 
@@ -24,7 +28,7 @@ Esta sección resume el **convenio de ejes**, la **colocación de sensores** y l
 
 ### 🧭 Convenio anatómico
 
-Todas las funciones de la TB trabajan en el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
+Todas las funciones de la TB trabajan con el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
 
 | Eje IMUstd | Etiqueta | Dirección positiva |
 |:----------:|----------|--------------------|
@@ -32,7 +36,7 @@ Todas las funciones de la TB trabajan en el sistema de referencia **anatómico I
 | **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la izquierda |
 | **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
 
-> `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
+> Para archivos de datos en formato imuSTD,  `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
 
 ![Convenio anatómico IMUstd {V, ML, AP}](img/IMUstd_mini.png)
 
@@ -73,13 +77,18 @@ La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`)
 
 ---
 
-### ⚙️ El formato IMUstd
+### ⚙️ Archivos en formato IMUstd (*.mat)
 
-El formato **IMUstd** es el tipo de dato estandarizado con el que trabaja la TB. Se define para homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.).
+Los archivos con formato **IMUstd** proporcionan datos estandarizados que facilitan trabajar directamente con la TB. Su finalidad es homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.)
 
-Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localización del cuerpo, y con ciertas propiedades. Se define con una estructura de dos partes: **datos** y **metadatos**.
+Un archivo en formato **IMUstd** contiene tanto las señales como las condiciones en las que se adquirieron, de _uno o varios IMUs_ simultáneamente. 
 
-**Datos** — señales del sensor ordenadas en columnas:
+
+Se codifican en formato **.mat** de Matlab.
+Constan de una _tabla_ con las señales crudas o **datos** recogidos por el IMU
+y una _struct_ con los **metadatos** relacionados.
+
+**Los datos** — las señales del sensor, ordenadas en columnas y etiquetadas así:
 
 | Tipo de dato | Etiquetas | Unidades |
 |---|---|---|
@@ -93,7 +102,7 @@ Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localizació
 | Estado de la batería | `Battery` | — |
 | Código de estado | `Status` | — |
 
-**Metadatos** — información del sensor y su colocación:
+**Los metadatos** — información del sensor y su colocación:
 
 | Metadato | Descripción | Ejemplo |
 |---|---|---|
@@ -101,10 +110,10 @@ Un **IMUstd** es un sensor colocado de cierta manera, en una cierta localizació
 | `ubicacion` | Dónde se colocó el sensor | `'FR_1'`, `'COG_1'` |
 | `modelo` | Etiqueta del modelo comercial | `'Xsens Dot'` |
 | `frecuencia` | Frecuencia de muestreo | `100`, `120` Hz |
-| `orientacion` | Reorientación al sistema anatómico {V, ML, AP} | `[3, -1, 2]` |
+| `orientacion` | Colocación respecto al convenio  anatómico {V, ML, AP} | `[3, -1, 2]` |
 | `intervaloIntento` | Muestra inicial y final del intento | `[600, 14000]` |
 
-La función `carga_IMUstd` lee un archivo IMUstd y devuelve las señales ya reorientadas al convenio anatómico (V, ML, AP).
+La función `carga_IMUstd` lee un archivo tipo IMUstd y devuelve las señales ya reorientadas con el convenio anatómico (V, ML, AP).
 
 ---
 
@@ -250,7 +259,8 @@ Carga de datos, preprocesamiento y visualización universal.
 
 ## 🚀 Instalación
 
-Se puede instalar mediante el AddsOn Manager propio de Matlab
+La última versión está disponible en Github. Existe una versión que se puede instalar mediante el AddsOn Manager propio de Matlab (en revisión).
+
 
 ---
 
@@ -286,7 +296,7 @@ dibujar_sistema_referencia();
   * **Optimization Toolbox**
   * **Aerospace Toolbox** *(para algunos cálculos de orientación)*
  
-**En caso de tener la Robotic Toolbox se recomienta desinstalarla o evitar sus funciones para cálculos de cuaterniones, ya que utiliza diferentes esquema**
+**En caso de tener la Robotics Toolbox se recomienta desinstalarla o evitar sus funciones para cálculos de cuaterniones, ya que utiliza diferentes esquema**
 
 ---
 
@@ -294,7 +304,10 @@ dibujar_sistema_referencia();
 
 Si utilizas este toolbox en una publicación científica, cita de la siguiente manera:
 
->  *SiMuR Tools: MATLAB Toolbox para el análisis biomecánico*, SiMuR, Universidad de Oviedo, 2025.
+> SiMuR Group (2026). *SiMuR Tools TB: MATLAB Toolbox para el análisis biomecánico* (v1.6).
+> Universidad de Oviedo. https://doi.org/10.5281/zenodo.19816490
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19816490.svg)](https://doi.org/10.5281/zenodo.19816490)
 
 ---
 
