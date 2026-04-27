@@ -33,7 +33,7 @@ Todas las funciones de la TB trabajan con el sistema de referencia **anatómico 
 | Eje IMUstd | Etiqueta | Dirección positiva |
 |:----------:|----------|--------------------|
 | **V**  | `Acc_X` / `Gyr_X` | Vertical, hacia arriba |
-| **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la izquierda |
+| **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la derecha |
 | **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
 
 > Para archivos de datos en formato imuSTD,  `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
