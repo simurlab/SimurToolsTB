@@ -1,25 +1,39 @@
-%% Función para leer datos de un sensor y devolver accs y giros calibrados
 function [acc_cal, gyr_cal] = carga_IMUstd(db_file, sensor_id)
-% CARGA_IMUSTD  Lee datos de un sensor IMU y devuelve aceleraciones y giros
-% calibrados y reorientados a coordenadas anatómicas.
+%CARGA_IMUSTD Lee un sensor IMU de un archivo IMUstd y devuelve sus senales
+%   reorientadas al sistema anatomico {V, ML, AP}.
 %
 %   [acc_cal, gyr_cal] = carga_IMUstd(db_file, sensor_id)
 %
-%   ENTRADAS:
-%       db_file   : nombre del archivo .mat con los datos
-%       sensor_id : prefijo del nombre del campo del sensor (string/char)
+%   Lee el archivo db_file (formato IMUstd), localiza el sensor indicado
+%   por sensor_id, y aplica calibra_anatomical sobre la zona estatica
+%   inicial (primeras 50 muestras) para alinear los ejes del sensor con
+%   el sistema de referencia anatomico. Las 50 muestras de reposo se
+%   descartan de la salida.
 %
-%   SALIDAS:
-%       acc_cal : aceleraciones calibradas (ya recortadas), [N x 3]
-%       gyr_cal : giros calibrados (ya recortados), [N x 3]
+% INPUT:
+%   db_file    - Ruta al archivo .mat en formato IMUstd. Debe contener al
+%                menos un campo cuyo nombre empiece por sensor_id (p.ej.
+%                'COG_1') con columnas Acc_X, Acc_Y, Acc_Z, Gyr_X, Gyr_Y,
+%                Gyr_Z, y un campo '<sensor_id>_metadata' con el campo
+%                'orientacion' (vector [1x3] o matriz [3x3]).
+%   sensor_id  - Prefijo del campo del sensor dentro del archivo, p.ej.
+%                'COG', 'PD', 'MD'. Si hay varios campos con ese prefijo
+%                (COG_1, COG_2, ...) se usa el primero encontrado.
 %
-%   NOTAS:
-%       - Se asume que en 'datos' hay un campo cuyo nombre empieza por
-%         sensor_id, con subcampos Acc_X, Acc_Y, Acc_Z, Gyr_X, Gyr_Y, Gyr_Z.
-%       - Se asume también un campo 'xxx_metadata' con el mismo prefijo
-%         que contiene la orientación en datos.(xxx_metadata).orientacion.
-%       - Las primeras 50 muestras se usan para calibrar (reposo) y se
-%         eliminan del resultado final.
+% OUTPUT:
+%   acc_cal    - Aceleraciones reorientadas a ejes anatomicos [N x 3],
+%                columnas: [V, ML, AP] en m/s^2 (o g, segun el sensor).
+%                Las primeras 50 muestras de reposo han sido descartadas.
+%   gyr_cal    - Velocidades angulares reorientadas [N x 3], columnas:
+%                [V, ML, AP] en deg/s. Misma longitud que acc_cal.
+%
+% EJEMPLO:
+%   [acc, gyr] = carga_IMUstd('h0101.mat', 'COG');
+%   [acc, gyr] = carga_IMUstd('h0101.mat', 'PD');
+%
+% See also: calibra_anatomical, db_intentos, carga_dot, carga_shimmer
+%
+% Author:   SiMuR Lab
 
     %----------------------------------------------------------------------
     % 1) Cargar archivo y localizar el campo del sensor
@@ -46,7 +60,7 @@ function [acc_cal, gyr_cal] = carga_IMUstd(db_file, sensor_id)
     gyr = [tabla.Gyr_X, tabla.Gyr_Y, tabla.Gyr_Z];
 
     %----------------------------------------------------------------------
-    % 3) Obtener orientación del sensor (metadata)
+    % 3) Obtener orientacion del sensor (metadata)
     %----------------------------------------------------------------------
     metadataField = [campoSensor, '_metadata'];
 
@@ -58,7 +72,7 @@ function [acc_cal, gyr_cal] = carga_IMUstd(db_file, sensor_id)
     Rcal = datos.(metadataField).orientacion;
 
     %----------------------------------------------------------------------
-    % 4) Calibración / reorientación a coordenadas anatómicas
+    % 4) Calibracion / reorientacion a coordenadas anatomicas
     %    Usamos las primeras 50 muestras (reposo) para calibrar
     %----------------------------------------------------------------------
     iniReposo = 1;
@@ -66,14 +80,14 @@ function [acc_cal, gyr_cal] = carga_IMUstd(db_file, sensor_id)
 
     Mrot = calibra_anatomical(acc(iniReposo:finReposo, :), Rcal);
 
-    % Re-orientar toda la señal a coordenadas anatómicas
+    % Re-orientar toda la senal a coordenadas anatomicas
     a_cal = acc * Mrot.';
     g_cal = gyr * Mrot.';
 
     %----------------------------------------------------------------------
     % 5) Omitir las primeras 50 muestras (reposo) en la salida
     %----------------------------------------------------------------------
-    inicio = 50;                  % mismas 50 que usaste para reposo
+    inicio = 50;
     acc_cal = a_cal(inicio:end, :);
     gyr_cal = g_cal(inicio:end, :);
 

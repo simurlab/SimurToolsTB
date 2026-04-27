@@ -62,7 +62,11 @@ function db_intentos(varargin)
 
     datos = load(nombreArchivo);
     campos = fieldnames(datos);
-    ubicaciones = unique(regexprep(campos, '_\d+(_metadata)?$', ''));
+
+    % Campos de datos (sin sufijo _metadata)
+    camposDatos = campos(cellfun(@(c) isempty(regexp(c, '_metadata$', 'once')), campos));
+    % Ubicaciones base: 'COG' agrupa 'COG_1' y 'COG_2'
+    baseLocations = unique(regexprep(camposDatos, '_\d+$', ''));
 
     % -------------------- Resumen preexistente --------------------
     if usarResumen
@@ -74,37 +78,44 @@ function db_intentos(varargin)
     end
 
     zonasEstaticas = struct();
-    segmentosPorUbicacion = struct();
+    segmentosPorIdentificador = struct();
     intentosGlobales = [];
 
-    % -------------------- Procesar por ubicación --------------------
-    for i = 1:numel(ubicaciones)
-        ubic = ubicaciones{i};
-        nombreTabla = sprintf('%s_1', ubic);
-        nombreMeta  = sprintf('%s_1_metadata', ubic);
+    % -------------------- Procesar por ubicación base --------------------
+    for i = 1:numel(baseLocations)
+        base = baseLocations{i};
 
-        if ~isfield(datos, nombreTabla) || ~isfield(datos, nombreMeta)
-            warning('⚠️ Falta tabla o metadata para %s. Se omite.', ubic);
+        % Todos los sensores de esta ubicación (p.ej. COG_1, COG_2)
+        variantes = camposDatos(cellfun(@(c) ...
+            ~isempty(regexp(c, ['^' base '_\d+$'], 'once')), camposDatos));
+        if isempty(variantes)
             continue;
         end
-        tabla = datos.(nombreTabla);
 
-        % --- Zona estática ---
+        % Primer sensor: sirve de referencia para gráficas e intervalos
+        primerIdent = variantes{1};
+        if ~isfield(datos, primerIdent) || ~isfield(datos, [primerIdent '_metadata'])
+            warning('⚠️ Falta tabla o metadata para %s. Se omite.', primerIdent);
+            continue;
+        end
+        tablaPrimera = datos.(primerIdent);
+
+        % --- Zona estática (se selecciona una vez, se aplica a todas las variantes) ---
         if usarResumen
             filaEst = resumenTabla(strcmp(resumenTabla.Tipo,'estatico') & ...
-                                   strcmp(resumenTabla.Ubicacion,[ubic '_1']), :);
+                                   strcmp(resumenTabla.Ubicacion, primerIdent), :);
             if isempty(filaEst)
-                warning('⚠️ No se encontró intervalo estático para %s.', ubic);
+                warning('⚠️ No se encontró intervalo estático para %s.', primerIdent);
                 continue;
             end
             i1e = filaEst.Intervalo(1);
-            zonasEstaticas.(ubic) = tabla(i1e:i1e+49,:);
         else
-            figure('Name',[ubic ' - Zona Estática']); clf;
-            plot(tabla.Acc_X); hold on;
-            plot(tabla.Acc_Y); plot(tabla.Acc_Z);
+            figure('Name',[base ' - Zona Estática']); clf;
+            plot(tablaPrimera.Acc_X); hold on;
+            plot(tablaPrimera.Acc_Y); plot(tablaPrimera.Acc_Z);
             legend({'Acc_X','Acc_Y','Acc_Z'}); grid on;
-            title(['Selecciona zona estática para ' ubic]);
+            title(['Selecciona zona estática para ' base ...
+                   sprintf(' (%d sensor/es)', numel(variantes))]);
 
             while true
                 entrada = input('Intervalo estático [i1 i2]: ','s');
@@ -115,7 +126,6 @@ function db_intentos(varargin)
                         warning('❌ Mínimo 50 muestras requeridas.');
                         continue;
                     end
-                    zonasEstaticas.(ubic) = tabla(i1e:i1e+49,:);
                     break;
                 else
                     warning('❌ Entrada inválida. Intenta de nuevo.');
@@ -123,18 +133,30 @@ function db_intentos(varargin)
             end
         end
 
-        % --- Intentos ---
-        segmentos = {};
+        % Extraer zona estática de cada variante con el mismo intervalo
+        for k = 1:numel(variantes)
+            ident = variantes{k};
+            zonasEstaticas.(ident) = datos.(ident)(i1e:i1e+49,:);
+        end
+
+        % --- Intentos (se seleccionan una vez, se aplican a todas las variantes) ---
         if usarResumen
             filasIntentos = resumenTabla(strcmp(resumenTabla.Tipo,'intervalo') & ...
-                                         strcmp(resumenTabla.Ubicacion,[ubic '_1']), :);
+                                         strcmp(resumenTabla.Ubicacion, primerIdent), :);
             for j = 1:height(filasIntentos)
                 intento = filasIntentos.Numero(j);
                 i1 = filasIntentos.Intervalo(j,1);
                 i2 = filasIntentos.Intervalo(j,2);
-                segmentos{intento} = [zonasEstaticas.(ubic); tabla(i1:i2,:)];
+                for k = 1:numel(variantes)
+                    ident = variantes{k};
+                    if ~isfield(segmentosPorIdentificador, ident)
+                        segmentosPorIdentificador.(ident) = {};
+                    end
+                    segmentosPorIdentificador.(ident){intento} = ...
+                        [zonasEstaticas.(ident); datos.(ident)(i1:i2,:)];
+                end
                 intentosGlobales = [intentosGlobales; struct( ...
-                    'intento', intento, 'ubicacion', ubic, ...
+                    'intento', intento, 'base', base, ...
                     'inicio', i1, 'fin', i2, ...
                     'inicio_estatico', i1e, 'fin_estatico', i1e+49)];
             end
@@ -147,10 +169,17 @@ function db_intentos(varargin)
                 partes = sscanf(entrada,'%f');
                 if numel(partes)==2 && partes(1)<partes(2)
                     i1 = max(1,floor(partes(1)));
-                    i2 = min(height(tabla),floor(partes(2)));
-                    segmentos{intento} = [zonasEstaticas.(ubic); tabla(i1:i2,:)];
+                    i2 = min(height(tablaPrimera),floor(partes(2)));
+                    for k = 1:numel(variantes)
+                        ident = variantes{k};
+                        if ~isfield(segmentosPorIdentificador, ident)
+                            segmentosPorIdentificador.(ident) = {};
+                        end
+                        segmentosPorIdentificador.(ident){intento} = ...
+                            [zonasEstaticas.(ident); datos.(ident)(i1:i2,:)];
+                    end
                     intentosGlobales = [intentosGlobales; struct( ...
-                        'intento', intento, 'ubicacion', ubic, ...
+                        'intento', intento, 'base', base, ...
                         'inicio', i1, 'fin', i2, ...
                         'inicio_estatico', i1e, 'fin_estatico', i1e+49)];
                     intento = intento+1;
@@ -159,7 +188,6 @@ function db_intentos(varargin)
                 end
             end
         end
-        segmentosPorUbicacion.(ubic) = segmentos;
     end
 
     % -------------------- Guardar fragmentos --------------------
@@ -169,26 +197,25 @@ function db_intentos(varargin)
     for i = 1:numel(intentosUnicos)
         idIntento = intentosUnicos(i);
         fragmento = struct();
-        for j = 1:numel(ubicaciones)
-            ubic = ubicaciones{j};
-            segmentos = segmentosPorUbicacion.(ubic);
-            if idIntento > numel(segmentos) || isempty(segmentos{idIntento})
+        for j = 1:numel(camposDatos)
+            ident = camposDatos{j};
+            if ~isfield(segmentosPorIdentificador, ident)
                 continue;
             end
-            fragmento.(sprintf('%s_1',ubic)) = segmentos{idIntento};
-            meta = datos.(sprintf('%s_1_metadata',ubic));
+            segs = segmentosPorIdentificador.(ident);
+            if idIntento > numel(segs) || isempty(segs{idIntento})
+                continue;
+            end
+            fragmento.(ident) = segs{idIntento};
+            meta = datos.([ident '_metadata']);
+            base = regexprep(ident, '_\d+$', '');
             intentosFiltrados = intentosGlobales([intentosGlobales.intento]==idIntento & ...
-                                                 strcmp({intentosGlobales.ubicacion},ubic));
+                                                 strcmp({intentosGlobales.base}, base));
             if ~isempty(intentosFiltrados)
-                meta.intervaloIntento = [intentosFiltrados.inicio, intentosFiltrados.fin];
+                meta.intervaloIntento  = [intentosFiltrados(1).inicio, intentosFiltrados(1).fin];
+                meta.intervaloEstatico = [intentosFiltrados(1).inicio_estatico, intentosFiltrados(1).fin_estatico];
             end
-            % añadir en la struct meta los intervalos estático y el del
-            % intento
-            if ~isempty(intentosFiltrados)
-                meta.intervaloIntento = [intentosFiltrados.inicio, intentosFiltrados.fin];
-                meta.intervaloEstatico = [intentosFiltrados.inicio_estatico, intentosFiltrados.fin_estatico];
-            end
-            fragmento.(sprintf('%s_1_metadata',ubic)) = meta;
+            fragmento.([ident '_metadata']) = meta;
         end
         nombreIntento = sprintf('%s%02d.mat', nombreBase, idIntento);
         save(nombreIntento,'-struct','fragmento');
@@ -198,21 +225,25 @@ function db_intentos(varargin)
     % -------------------- Guardar resumen si interactivo --------------------
     if ~usarResumen
         Tipo = {}; Numero = []; Ubicacion = {}; Intervalo = [];
-        ubicacionesUnicas = unique({intentosGlobales.ubicacion});
-        for i = 1:numel(ubicacionesUnicas)
-            ubic = ubicacionesUnicas{i};
-            intentosUbic = intentosGlobales(strcmp({intentosGlobales.ubicacion},ubic));
-            if ~isempty(intentosUbic)
+        basesUnicas = unique({intentosGlobales.base});
+        for i = 1:numel(basesUnicas)
+            base = basesUnicas{i};
+            intentosBase = intentosGlobales(strcmp({intentosGlobales.base}, base));
+            % Identificador del primer sensor de esta base para el resumen
+            variantes = camposDatos(cellfun(@(c) ...
+                ~isempty(regexp(c, ['^' base '_\d+$'], 'once')), camposDatos));
+            primerIdent = variantes{1};
+            if ~isempty(intentosBase)
                 Tipo{end+1,1} = 'estatico';
                 Numero(end+1,1) = 0;
-                Ubicacion{end+1,1} = [ubic '_1'];
-                Intervalo(end+1,:) = [intentosUbic(1).inicio_estatico, intentosUbic(1).fin_estatico];
+                Ubicacion{end+1,1} = primerIdent;
+                Intervalo(end+1,:) = [intentosBase(1).inicio_estatico, intentosBase(1).fin_estatico];
             end
-            for j = 1:numel(intentosUbic)
+            for j = 1:numel(intentosBase)
                 Tipo{end+1,1} = 'intervalo';
-                Numero(end+1,1) = intentosUbic(j).intento;
-                Ubicacion{end+1,1} = [ubic '_1'];
-                Intervalo(end+1,:) = [intentosUbic(j).inicio, intentosUbic(j).fin];
+                Numero(end+1,1) = intentosBase(j).intento;
+                Ubicacion{end+1,1} = primerIdent;
+                Intervalo(end+1,:) = [intentosBase(j).inicio, intentosBase(j).fin];
             end
         end
         resumenTabla = table(Tipo,Numero,Ubicacion,Intervalo);
