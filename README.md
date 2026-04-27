@@ -302,12 +302,9 @@ dibujar_sistema_referencia();
 
 ## 📚 Cita y Atribución
 
-Si utilizas este toolbox en una publicación científica, cita de la siguiente manera:
-
-> SiMuR Group (2026). *SiMuR Tools TB: MATLAB Toolbox para el análisis biomecánico* (v1.6).
-> Universidad de Oviedo. https://doi.org/10.5281/zenodo.19816490
-
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19816490.svg)](https://doi.org/10.5281/zenodo.19816490)
+
+Si utilizas este toolbox en una publicación científica, usa el botón **"Cite this repository"** de la barra lateral de GitHub, o consulta directamente el archivo [`CITATION.cff`](CITATION.cff).
 
 ---
 

@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+title: "SiMuR Tools: MATLAB Toolbox para el Análisis del Movimiento"
+message: "Si utilizas este software, por favor cítalo usando la referencia proporcionada."
+type: software
+version: 2.0.1
+date-released: 2026-04-27
+
+authors:
+  - family-names: "Alvarez Alvarez"
+    given-names: "Juan Carlos"
+    affiliation: "Universidad de Oviedo"
+  - family-names: "Alvarez Prieto"
+    given-names: "Diego"
+    affiliation: "Universidad de Oviedo"    
+    
+doi: "10.5281/zenodo.19816490"
+repository-code: "https://github.com/simurlab/SimurToolsTB"
+url: "https://github.com/simurlab/SimurToolsTB"
+
+license: MIT
+
+keywords:
+  - biomechanics
+  - motion analysis
+  - MATLAB
+  - wearable sensors
+  - signal processing
+
+abstract: >
+  SiMuR Tools is a MATLAB toolbox designed for the analysis of human motion
+  using wearable sensors and biomechanical signal processing techniques.
+  It provides utilities for data processing, synchronization, and analysis
+  of kinematic signals.
+
+preferred-citation:
+  type: software
+  authors:
+  - family-names: "Alvarez Alvarez"
+    given-names: "Juan Carlos"
+    affiliation: "Universidad de Oviedo"
+  - family-names: "Alvarez Prieto"
+    given-names: "Diego"
+    affiliation: "Universidad de Oviedo" 
+  title: "SiMuR Tools TB: MATLAB Toolbox para el Análisis del Movimiento"
+  version: 2.0.1
+  year: 2026
+  publisher: "Grupo SiMuR, Universidad de Oviedo"
+  doi: "10.5281/zenodo.19816490"
+  url: "https://github.com/simurlab/SimurToolsTB"
