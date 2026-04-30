@@ -7,28 +7,56 @@
  
 ---
 
-## 📘 Descripción General
+## Contenidos
+
+1. [📘 Descripción General](#1-descripción-general)
+2. [🧩 Uso de la Toolbox](#2-uso-de-la-toolbox)
+3. [🧪 Ejemplos de Uso](#3-ejemplos-de-uso)
+4. [🧩 Estructura de la Toolbox](#4-estructura-de-la-toolbox)
+5. [🚀 Instalación y Dependencias](#5-instalación-y-dependencias)
+6. [⚙️ Archivos en formato IMUstd](#6-archivos-en-formato-imustd)
+
+---
+
+## 1. 📘 Descripción General
 
 **SiMuR Tools TB** es un conjunto de funciones en MATLAB para el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
 Las herramientas abarcan la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
 
 
-La toolbox facilita la **carga y preprocesamiento de señales** provinientes de diferentes IMUs comerciales: Movella-DOT, Shimmer, Bimu, etc.
- 
-También permite almacenarlos en un tipo de *archivos de datos estandarizados*, el formato **IMUstd**, que facilita su explotación y uso posteriores.
+La toolbox facilita la **carga y preprocesamiento de señales** provinientes de diferentes IMUs comerciales: Movella-DOT, Shimmer, Bimu, etc. También permite almacenarlos en un tipo de *archivos de datos estandarizado* (formato **IMUstd**), que facilita su explotación y uso posteriores.
 
 
 ---
 
-## 📡 ¿Qué señales necesito?
+## 2. 🧩 Uso de la Toolbox
 
-Esta sección resume el **convenio de ejes**, la **colocación de sensores** y las **señales mínimas requeridas** para cada actividad, de modo que puedas preparar tus datos antes de llamar a cualquier función de la TB.
+Las funciones están orientadas a varios **tipos de actividad física**: Caminar, Saltos, Carrera y Vallas. 
+
+
+### 📊 Resumen de las funciones
+
+```
+Por tipo de Actividad (19 funciones)
+├── 🚶 Caminar ............... 8 funciones
+├── 🏃 Carrera ............... 9 funciones
+├── 🚧 Vallas ................ 1 funciones
+├── 🦘 Saltos ................ 1 funciones
+
+```
+```
+Auxiliares para cálculo y visualización (30+ funciones)
+├── 🦴 Segmentos 3D .......... 5 funciones
+├── 🔄 Utilidades numéricas .. 8 funciones
+├── ⌚ En desarrollo ......... 2 funciones
+└── ⚙️ Infraestructura ....... 20+ funciones
+```
 
 ---
 
-### 🧭 Convenio anatómico
+### 📡 ¿Qué señales necesito?
 
-Todas las funciones de la TB trabajan con el sistema de referencia **anatómico IMUstd**, con los tres ejes definidos así:
+Para preparar tus datos antes de llamar a cualquier función de la TB, es recomendable entender el **convenio de ejes**. Las funciones suponen que las señales están referidas a un sistema de referencia que denominamos **sistema anatómico**, definido así:
 
 | Eje IMUstd | Etiqueta | Dirección positiva |
 |:----------:|----------|--------------------|
@@ -36,35 +64,14 @@ Todas las funciones de la TB trabajan con el sistema de referencia **anatómico 
 | **ML** | `Acc_Y` / `Gyr_Y` | MedioLateral, hacia la derecha |
 | **AP** | `Acc_Z` / `Gyr_Z` | AnteroPosterior, hacia adelante |
 
-> Para archivos de datos en formato imuSTD,  `carga_IMUstd` aplica automáticamente la reorientación configurada en los metadatos del sensor y devuelve siempre las columnas en el orden `[V, ML, AP]`.
 
-![Convenio anatómico IMUstd {V, ML, AP}](img/IMUstd_mini.png)
+<img src="img/IMUstd_mini.png" width="50%" alt="Convenio anatómico IMUstd {V, ML, AP}">
 
----
 
-### 📍 Ubicación de los sensores
+En la siguiente tabla se resumen algunos ejemplos de las **señales mínimas requeridas** en algunas funciones. Se indican qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
 
-Los sensores se identifican con un código de **ubicación + número** (`ubicacion_N`):
 
-| Código | Ubicación | Colocación recomendada |
-|--------|-----------|------------------------|
-| `COG_1` | Centro de Gravedad | Sacro / espalda baja |
-| `FR_1`  | Pie Derecho (*Foot Right*)   | Dorso del pie derecho |
-| `FL_1`  | Pie Izquierdo (*Foot Left*)  | Dorso del pie izquierdo |
-| `TR_1`  | Muslo Derecho (*Thigh Right*)  | Cara lateral del muslo derecho |
-| `TL_1`  | Muslo Izquierdo (*Thigh Left*) | Cara lateral del muslo izquierdo |
-| `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
-| `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
-
-![Colocación de sensores IMUstd](img/sensores_mini.png)
-
----
-
-### 🏃 Señales mínimas por actividad
-
-La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
-
-| Actividad | Sensor | Señales requeridas | Señales opcionales | Funciones principales |
+| Actividad | Sensor* | Señales requeridas | Señales opcionales | Funciones principales |
 |-----------|--------|--------------------|--------------------|----------------------|
 | 🚶 **Caminar** (COG) | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
 | 🚶 **Caminar** (muñeca) | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
@@ -73,81 +80,98 @@ La tabla indica qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`)
 | 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
 | 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
 
+> El campo **Sensor** se refiere a las posibles colocaciones del sensor en el cuerpo se detallan más adelante.
+> 
 > **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
 
----
 
-### ⚙️ Archivos en formato IMUstd (*.mat)
-
-Los archivos con formato **IMUstd** proporcionan datos estandarizados que facilitan trabajar directamente con la TB. Su finalidad es homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.)
-
-Un archivo en formato **IMUstd** contiene tanto las señales como las condiciones en las que se adquirieron, de _uno o varios IMUs_ simultáneamente. 
-
-
-Se codifican en formato **.mat** de Matlab.
-Constan de una _tabla_ con las señales crudas o **datos** recogidos por el IMU
-y una _struct_ con los **metadatos** relacionados.
-
-**Los datos** — las señales del sensor, ordenadas en columnas y etiquetadas así:
-
-| Tipo de dato | Etiquetas | Unidades |
-|---|---|---|
-| Acelerómetro | `Acc_X`, `Acc_Y`, `Acc_Z` | m/s² |
-| Giroscopio | `Gyr_X`, `Gyr_Y`, `Gyr_Z` | °/s |
-| Magnético | `Mag_X`, `Mag_Y`, `Mag_Z` | µT |
-| Ángulos de Euler | `Eul_X`, `Eul_Y`, `Eul_Z` | ° |
-| Cuaternion | `Quat_W`, `Quat_X`, `Quat_Y`, `Quat_Z` | — |
-| Nº de muestra | `PacketCounter` | — |
-| Instante de la muestra | `Time` | s |
-| Estado de la batería | `Battery` | — |
-| Código de estado | `Status` | — |
-
-**Los metadatos** — información del sensor y su colocación:
-
-| Metadato | Descripción | Ejemplo |
-|---|---|---|
-| `IMU` | ID del sensor utilizado | `'DOT8'` |
-| `ubicacion` | Dónde se colocó el sensor | `'FR_1'`, `'COG_1'` |
-| `modelo` | Etiqueta del modelo comercial | `'Xsens Dot'` |
-| `frecuencia` | Frecuencia de muestreo | `100`, `120` Hz |
-| `orientacion` | Colocación respecto al convenio  anatómico {V, ML, AP} | `[3, -1, 2]` |
-| `intervaloIntento` | Muestra inicial y final del intento | `[600, 14000]` |
-
-La función `carga_IMUstd` lee un archivo tipo IMUstd y devuelve las señales ya reorientadas con el convenio anatómico (V, ML, AP).
 
 ---
 
-## 🧩 Estructura de la Toolbox
 
-Las funciones están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Con ello se facilita identificar rápidamente las herramientas disponibles para cada aplicación.
+## 3. 🧪 Ejemplos de Uso
+
+La carpeta [`Examples/`](Examples/) contiene cuatro demos ejecutables directamente en MATLAB. Cada una incluye sus propios archivos de datos de ejemplo en `Examples/data/` y **no requiere ninguna configuración previa**.
+
+---
+
+### 🚶 Localización 2D al caminar — `demo_caminar_posicion2D`
+
+Reconstruye la trayectoria (x, y) de una persona con un sensor en L3, combinando detección de paso en tiempo real, modelo de péndulo para la distancia por paso y giróscopo para la orientación.
+
+```matlab
+>> demo_caminar_posicion2D
+```
+
+**Archivo de datos:** `data/ejemplo_caminar_posicion2D.log` — señales Xsens en formato texto, 100 Hz
+
+---
+
+### 🏃 Análisis de carrera con IMU en el pie — `demo_carrera_pie`
+
+Pipeline completo de carrera: detección de eventos del ciclo de zancada, tiempos de fase, cadencia y amplitudes de impacto y frenado. Produce una tabla resumen de resultados.
+
+```matlab
+>> demo_carrera_pie
+```
+
+**Archivo de datos:** `data/ejemplo_carrera.mat` — formato IMUstd con sensores `FR_1` (pie derecho) y `FL_1` (pie izquierdo)
+
+---
+
+### 🚧 Análisis de carrera de vallas — `demo_vallas_COG`
+
+Detección automática de eventos de valla desde el COG y visualización de patrones de señal paso a paso.
+
+```matlab
+>> demo_vallas_COG
+```
+
+**Archivo de datos:** `data/ejemplo_vallas.mat` — formato IMUstd con sensor `COG_1`
+
+---
+
+### 🦘 Análisis de saltos verticales — `demo_salto_cog`
+
+Estima duración, altura y energía de tres saltos verticales y compara los resultados obtenidos con tres sistemas: cámara de movimiento, plataforma de fuerzas e IMU en el COG.
+
+```matlab
+>> demo_salto_cog
+```
+
+**Archivos de datos:**
+- `data/ejemplo_salto_camara.trc` — posición vertical del marcador [mm], 100 Hz
+- `data/ejemplo_salto_plataforma.xls` — fuerza de reacción por pie [N], 100 Hz
+- `data/ejemplo_salto_imu.log` — aceleraciones Xsens en COG, 100 Hz
+
+---
 
 
-### 📊 Resumen por Actividad
+
+
+
+
+
+## 4. 🧩 Estructura de la Toolbox
+
+Las funciones principales están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Se les asigna un nombre con una estructura `que_como_actividad`:
+
+- `que` — qué se mide: Eventos, Tiempo, Distancia, Aceleracion...
+- `como` — condición(es) como la colocación del IMU, el método de cálculo, etc.
+- `actividad` — Caminar, Saltos, Carrera, Vallas, etc.
+
 
 ```
-SimurToolsTB (70+ funciones)
+Por tipo de Actividad (19 funciones)
 ├── 🚶 Caminar ............... 8 funciones
 ├── 🏃 Carrera ............... 9 funciones
 ├── 🚧 Vallas ................ 1 funciones
 ├── 🦘 Saltos ................ 1 funciones
-├── 🦴 Segmentos 3D .......... 5 funciones
-├── 🔄 Utilidades numéricas .. 8 funciones
-├── ⌚ En desarrollo ......... 2 funciones
-└── ⚙️ Infraestructura ....... 20+ funciones
+
 ```
 
 
----
-
-Las funciones  tiene una estructura `que_como_actividad`:
-
-- `que` que se mide: Eventos, Tiempo, Distancia, Aceleracion, 
-- `como` condición(es) como la colocación del IMU, el método de cálculo, etc.
-- `actividad` Caminar, Saltos, Carrera, Vallas, etc.
-
-
-
-### 🚶 Caminar (Walking/Gait)
+## 🚶 Caminar (Walking/Gait)
 Funciones para análisis de la marcha normal. 
    
 | Función | Descripción |
@@ -163,7 +187,7 @@ Funciones para análisis de la marcha normal.
 
 **Demo:** [`Examples/demo_caminar_posicion2D.m`](Examples/demo_caminar_posicion2D.m) — reconstrucción de la posición 2D a partir de IMU en L3.
 
-### 🏃 Carrera (Running)
+## 🏃 Carrera (Running)
 Funciones específicas para análisis de carrera con IMU en pie o centro de gravedad.
 
 | Función | Descripción |
@@ -181,7 +205,7 @@ Funciones específicas para análisis de carrera con IMU en pie o centro de grav
 **Demo:** [`Examples/demo_carrera_pie.m`](Examples/demo_carrera_pie.m) — ejemplo completo de pipeline con IMU en el pie.
 
 
-### 🚧 Vallas (Hurdles)
+## 🚧 Vallas (Hurdles)
 Para análisis de carreras de vallas.
 
 | Función | Descripción |
@@ -192,7 +216,7 @@ Para análisis de carreras de vallas.
 
 
 
-### 🦘 Saltos (Jumping)
+## 🦘 Saltos (Jumping)
 Para análisis de salto vertical y pliometría.
 
 | Función | Descripción |
@@ -201,6 +225,24 @@ Para análisis de salto vertical y pliometría.
 | `evalua_cog_salto` | Calcula duración, altura y energía de cada salto a partir de los eventos |
 
 **Demo:** [`Examples/demo_salto_cog.m`](Examples/demo_salto_cog.m) — estimación de altura y duración de saltos verticales comparando cámara, plataforma de fuerzas e IMU.
+
+
+
+
+
+## ⚙️ Funciones Auxiliares
+
+Además existen una serie de **funciones auxiliares** para cálculos, visualizaciones y otras utilidades. 
+
+
+
+```
+Auxiliares para cálculo y visualización (30+ funciones)
+├── 🦴 Segmentos 3D .......... 5 funciones
+├── 🔄 Utilidades numéricas .. 8 funciones
+├── ⌚ En desarrollo ......... 2 funciones
+└── ⚙️ Infraestructura ....... 20+ funciones
+```
 
 
 
@@ -257,37 +299,14 @@ Carga de datos, preprocesamiento y visualización universal.
 
 ---
 
-## 🚀 Instalación
+
+
+
+## 5. 🚀 Instalación y Dependencias
 
 La última versión está disponible en Github. Existe una versión que se puede instalar mediante el AddsOn Manager propio de Matlab (en revisión).
 
-
----
-
-## 🧪 Ejemplo de Uso
-
-```matlab
-% Ejemplo básico de pipeline con datos de carrera
-
-% 1. Filtrar aceleraciones
-data.acc = filtro_paso_bajo_f0(data.acc, 20, data.freq);
-
-% 2. Detectar eventos de pie
-[ic, fc, maxS, minS, mvp, mp] = eventos_pie_carrera(data.gyr, 10, data.freq);
-
-% 3. Calcular tiempos de fase
-tiempos = tiempos_eventos_carrera(ic, fc, maxS, minS, mvp, mp, data.freq);
-
-% 4. Calcular cadencia
-cad = cadencia(ic, fc, data.freq);
-
-% 5. Visualizar resultados
-dibujar_sistema_referencia();
-```
-
----
-
-## 🧩 Dependencias
+Las dependencias son:
 
 * MATLAB R2020a o superior
 * Toolboxes recomendados:
@@ -299,6 +318,64 @@ dibujar_sistema_referencia();
 **En caso de tener la Robotics Toolbox se recomienta desinstalarla o evitar sus funciones para cálculos de cuaterniones, ya que utiliza diferentes esquema**
 
 ---
+
+
+
+## 6. ⚙️ Archivos en formato IMUstd (*.mat)
+
+Los archivos con formato **IMUstd** proporcionan datos estandarizados que facilitan trabajar directamente con la TB. Su finalidad es doble: la primera es homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.); la segunda es dar soporte a una **base de datos** en la que se guarden, además de las señales, información sobre las condiciones en las que se hizo esa captura.
+
+Por tanto, un archivo en formato **IMUstd** contiene tanto las señales como las condiciones en las que se adquirieron, de _uno o varios IMUs_ simultáneamente. Se codifican en formato **.mat** de Matlab, y constan de una _tabla_ con las señales crudas o **datos** recogidos por el IMU y una _struct_ con los **metadatos** relacionados.
+
+**Los datos** — las señales del sensor, ordenadas en columnas y etiquetadas así:
+
+| Tipo de dato | Etiquetas | Unidades |
+|---|---|---|
+| Acelerómetro | `Acc_X`, `Acc_Y`, `Acc_Z` | m/s² |
+| Giroscopio | `Gyr_X`, `Gyr_Y`, `Gyr_Z` | °/s |
+| Magnético | `Mag_X`, `Mag_Y`, `Mag_Z` | µT |
+| Ángulos de Euler | `Eul_X`, `Eul_Y`, `Eul_Z` | ° |
+| Cuaternion | `Quat_W`, `Quat_X`, `Quat_Y`, `Quat_Z` | — |
+| Nº de muestra | `PacketCounter` | — |
+| Instante de la muestra | `Time` | s |
+| Estado de la batería | `Battery` | — |
+| Código de estado | `Status` | — |
+
+**Los metadatos** — información del sensor y su colocación:
+
+| Metadato | Descripción | Ejemplo |
+|---|---|---|
+| `IMU` | ID del sensor utilizado | `'DOT8'` |
+| `ubicacion` | Dónde se colocó el sensor | `'FR_1'`, `'COG_1'` |
+| `modelo` | Etiqueta del modelo comercial | `'Xsens Dot'` |
+| `frecuencia` | Frecuencia de muestreo | `100`, `120` Hz |
+| `orientacion` | Colocación respecto al convenio anatómico {V, ML, AP} | `[3, -1, 2]` |
+| `intervaloIntento` | Muestra inicial y final del intento | `[600, 14000]` |
+
+La función `carga_IMUstd` lee un archivo tipo IMUstd y aplica automáticamente la reorientación configurada en los metadatos, devolviendo siempre las columnas en el orden `[V, ML, AP]`.
+
+---
+
+
+### 📍 La ubicación de los sensores
+
+Los IMUs que generaron la señal se habrán colocado en alguna parte del cuerpo.
+Algunas utilidades necesitan conocer esto para funcionar correctamente. Se reserva un identificador con un código de **ubicación + número** (`ubicacion_N`) para los más frecuentes (el **número** es si van varios en el mismo sitio):
+
+| Código | Ubicación | Colocación recomendada |
+|--------|-----------|------------------------|
+| `COG_1` | Centro de Gravedad | Sacro / espalda baja |
+| `FR_1`  | Pie Derecho (*Foot Right*)   | Dorso del pie derecho |
+| `FL_1`  | Pie Izquierdo (*Foot Left*)  | Dorso del pie izquierdo |
+| `TR_1`  | Muslo Derecho (*Thigh Right*)  | Cara lateral del muslo derecho |
+| `TL_1`  | Muslo Izquierdo (*Thigh Left*) | Cara lateral del muslo izquierdo |
+| `WR_1`  | Muñeca Derecha (*Wrist Right*) | Cara dorsal de la muñeca derecha |
+| `WL_1`  | Muñeca Izquierda (*Wrist Left*)| Cara dorsal de la muñeca izquierda |
+
+<img src="img/sensores_mini.png" width="90%" alt="Colocación de sensores IMUstd">
+
+---
+
 
 ## 📚 Cita y Atribución
 
