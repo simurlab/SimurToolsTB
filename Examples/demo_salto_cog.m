@@ -16,19 +16,19 @@
 %    3. Cálculo de duración y altura       (modelo caída libre)
 %    4. Tabla comparativa de los tres métodos
 %
-%  FORMATO DE DATOS:
-%    ejemplo_salto_camara.trc    — posición vertical [mm], col 4, 100 Hz
-%    ejemplo_salto_plataforma.xls — fuerza por pie [N], cols 2-3, 100 Hz
-%    ejemplo_salto_imu.log       — aceleraciones Xsens, cols 2-4, 100 Hz
+%  ARCHIVOS DE DATOS (en Examples/data/):
+%    ejemplo_salto_camara.trc     — posición vertical del marcador [mm], col 4, 100 Hz
+%    ejemplo_salto_plataforma.xls — fuerza de reacción por pie [N], cols 2-3, 100 Hz
+%    ejemplo_salto_imu.log        — aceleraciones Xsens en COG, cols 2-4, 100 Hz
 %
 %  SiMuR Lab — Universidad de Oviedo, 2025
 %
 %  EJEMPLO DE USO:
-%    Ejecutar directamente — el script carga los archivos de ejemplo incluidos:
+%    Ejecutar directamente — el script carga los tres archivos de ejemplo incluidos:
 %    >> demo_salto_cog
 %
 %    Para usar tus propios datos, sustituye las rutas en la sección de
-%    configuración (líneas 36-38) por las rutas a tus archivos.
+%    configuración (líneas 40-42) por las rutas a tus archivos.
 % ==========================================================================
 
 clear; clc;
