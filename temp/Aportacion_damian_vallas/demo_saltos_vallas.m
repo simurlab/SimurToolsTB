@@ -14,7 +14,7 @@ clc; clear; close all;
 freq = 120;
 
 %% ── 1. CARGA ─────────────────────────────────────────────────────────────────
-load('g 2025-06 - Las Mestas Vallas/Pruebas/01 Prueba/g0102')
+load('../../../InerSens-Data/g 2025-06 - Las Mestas Vallas/Pruebas/01 Prueba/g0102')
 
 %% ── 2. DETECCIÓN ─────────────────────────────────────────────────────────────
 %  Modifica opciones para explorar parámetros sin tocar la función principal.
