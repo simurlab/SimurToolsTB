@@ -1,6 +1,6 @@
 %% Cargamos los datos en el formato IMU std.
 % VALLAS LAS MESTAS. g01.mat.
-path_dataset = '/Users/alejandro/git/simurlab/SimurToolsTB/datos/g01.mat';
+path_dataset = './g01.mat';
 segment_body = 'COG';
 [dataset_vallas_las_mestas_cog_acc, dataset_vallas_las_mestas_cog_gyro] = carga_IMUstd(path_dataset, segment_body);
 
@@ -32,7 +32,7 @@ k = 4;
         fs, winSec, k);
 
 
-%% Matrix Profile (MP)
+% %% Matrix Profile (MP)
 % X = [dataset_vallas_las_mestas_cog_acc, dataset_vallas_las_mestas_cog_gyro];
 % fs = 120;
 % m = fs * 10; % ventana de 10 s
@@ -52,4 +52,5 @@ k = 4;
     dataset_vallas_las_mestas_cog_gyro, ...
     fs, winSec, k);
 
+X = [dataset_vallas_las_mestas_cog_acc, dataset_vallas_las_mestas_cog_gyro];
 plotSignalsWithColorBands(X, labelsTS, fs);
