@@ -2,7 +2,7 @@ classdef Dynathlon
     % Carga los datos de los sensores de Dynathlon y permite guardarlos en
     % un .mat 
     % Uso:
-    %   d = Dynathlon('ruta_carpeta', '.\data\l_01 20260702 - Las Mestas Vallas\experiment_20260702_113328', 'save', 'y', 'orientacion', [1 2 3], 'atividad', 'Vallas', 'freq', 120);    
+    %   d = Dynathlon('ruta_carpeta', '.\data\l_01 20260702 - Las Mestas Vallas\experiment_20260702_113328', 'save', 'y', 'orientacion', [1 2 3], 'actividad', 'Vallas', 'freq', 120);    
     %   plot(d.DatosSensores.MD.Time, d.DatosSensores.MD.Acc_X)
     %      o
     %   d.plotData();

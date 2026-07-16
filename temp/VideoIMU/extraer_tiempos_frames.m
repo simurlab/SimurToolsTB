@@ -21,10 +21,8 @@ function t_video = extraer_tiempos_frames(ruta_video, usar_ffprobe)
 %       variable 'ruta_ffprobe' definida dentro del código (por defecto: 
 %       'C:\ffmpeg\bin\ffprobe.exe').
     
-    % Ruta por defecto de los ejecutables de FFMPEG
-    ruta_ffmpeg = 'C:\ffmpeg\bin';    % Requiere descargar FFMPEG ('https://www.gyan.dev/ffmpeg/builds/')
-    
-    ruta_ffprobe = strcat(ruta_ffmpeg, '\ffprobe.exe');
+    % Obtener rutas de FFMPEG de forma multiplataforma
+    [~, ruta_ffprobe] = get_ffmpeg_path();
 
     %% Lectura tiempos de video por cada frame
     [~,nombre,~]=fileparts(ruta_video);

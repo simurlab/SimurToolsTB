@@ -7,56 +7,64 @@
  
 ---
 
-## Contenidos
+# Contenidos
 
-1. [📘 Descripción General](#1-descripción-general)
-2. [🧩 Uso de la Toolbox](#2-uso-de-la-toolbox)
-3. [🧪 Ejemplos de Uso](#3-ejemplos-de-uso)
-4. [🧩 Estructura de la Toolbox](#4-estructura-de-la-toolbox)
-5. [🚀 Instalación y Dependencias](#5-instalación-y-dependencias)
-6. [⚙️ Archivos en formato IMUstd](#6-archivos-en-formato-imustd)
+1. [Descripción General](#1-descripción-general)
+2. [Uso de la Toolbox](#2-uso-de-la-toolbox)
+3. [Funciones disponibles](#3-funciones-disponibles)
+4. [Funciones auxiliares](#24-funciones-auxiliares)
+5. [Archivos en formato IMUstd](#5-archivos-en-formato-imustd)
+6. [Los Ejemplos de Uso](#6-los-ejemplos-de-uso)
+7. [Instalación y Dependencias](#7-instalación-y-dependencias)
 
----
-
-## 1. 📘 Descripción General
-
-**SiMuR Tools TB** es un conjunto de funciones en MATLAB para el procesamiento, análisis y visualización de datos provenientes de sensores en estudios de biomecánica y control del movimiento humano, especialmente sensores inerciales tipo IMUs. 
-Las herramientas abarcan la **detección automática de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares** en tiempo real.
-
-
-La toolbox facilita la **carga y preprocesamiento de señales** provinientes de diferentes IMUs comerciales: Movella-DOT, Shimmer, Bimu, etc. También permite almacenarlos en un tipo de *archivos de datos estandarizado* (formato **IMUstd**), que facilita su explotación y uso posteriores.
 
 
 ---
 
-## 2. 🧩 Uso de la Toolbox
+# 1. Descripción General
 
-Las funciones están orientadas a varios **tipos de actividad física**: Caminar, Saltos, Carrera y Vallas. 
+**SiMuR Tools TB** son herramientas para el análisis y visualización del movimiento humano con sensores inerciales (IMUs), principalmente. Abarcan la **detección de eventos**, el **cálculo de parámetros espacio-temporales** y la **estimación de orientación** y **ángulos articulares**.
 
+La toolbox facilita la **carga y preprocesamiento de señales** provinientes de diferentes IMUs comerciales: Movella-DOT, Shimmer, Bimu, etc. También permite almacenarlas en *archivos de datos estandarizados* (formato **IMUstd**), que facilita la explotación y uso posteriores de los datos.
 
-### 📊 Resumen de las funciones
+Las herramientas están orientadas a **cuatro tipos concretos** de actividad física: Caminar, Saltos, Carrera y Vallas. 
 
-```
-Por tipo de Actividad (19 funciones)
-├── 🚶 Caminar ............... 8 funciones
-├── 🏃 Carrera ............... 9 funciones
-├── 🚧 Vallas ................ 1 funciones
-├── 🦘 Saltos ................ 1 funciones
-
-```
-```
-Auxiliares para cálculo y visualización (30+ funciones)
-├── 🦴 Segmentos 3D .......... 5 funciones
-├── 🔄 Utilidades numéricas .. 8 funciones
-├── ⌚ En desarrollo ......... 2 funciones
-└── ⚙️ Infraestructura ....... 20+ funciones
-```
 
 ---
 
-### 📡 ¿Qué señales necesito?
+# 2. Uso de la Toolbox
 
-Para preparar tus datos antes de llamar a cualquier función de la TB, es recomendable entender el **convenio de ejes**. Las funciones suponen que las señales están referidas a un sistema de referencia que denominamos **sistema anatómico**, definido así:
+
+## 2.1 Pipeline convencional
+
+Las herramientas están concebidas para poder llamarse de manera secuencial:
+	
+  1. Carga de las señales de los sensores
+  2. Detección del eventos relevantes de la actividad
+  3. Cálculo de variables de interés
+  4. Visualizaciones 
+
+En [`Examples/`](Examples/) se muestran algunos ejemplos de estos pipelines. Son ejecutables directamente en MATLAB al incluir sus propios archivos de datos:
+
+
+1. `demo_caminar_posicion2D`: reconstruye la trayectoria (x, y) de una persona con un IMU en la espalda.
+2. `demo_carrera_pie`: análisis del ciclo de zancada en carrera, con IMUs en las zapatillas.
+3. `demo_vallas_COG`: detección de eventos carreras de vallas con un IMU en la espalda.
+4. `demo_salto_cog`: duración, altura y energía de saltos verticales con cámara, plataforma de fuerzas e IMU en la espalda.
+
+
+
+
+
+
+
+
+
+## 2.2 Qué señales son necesarias
+
+
+Antes de llamar a cualquier función de la TB es recomendable entender qué señales se esperan. 
+Las supondremos descritas en un sistema de referencia que denominamos **sistema anatómico**, definido así:
 
 | Eje IMUstd | Etiqueta | Dirección positiva |
 |:----------:|----------|--------------------|
@@ -68,98 +76,17 @@ Para preparar tus datos antes de llamar a cualquier función de la TB, es recome
 <img src="img/IMUstd_mini.png" width="50%" alt="Convenio anatómico IMUstd {V, ML, AP}">
 
 
-En la siguiente tabla se resumen algunos ejemplos de las **señales mínimas requeridas** en algunas funciones. Se indican qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
+Respetando este convenio, cualquier archivo con señales de IMUs puede utilizarse para la primera etapa de "Carga de las señales" en un pipeline, independientemente de en qué segmento del cuerpo se haya colocado.
 
-
-| Actividad | Sensor* | Señales requeridas | Señales opcionales | Funciones principales |
-|-----------|--------|--------------------|--------------------|----------------------|
-| 🚶 **Caminar** (COG) | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
-| 🚶 **Caminar** (muñeca) | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
-| 🏃 **Carrera** (pie) | `FR_1` / `FL_1` | `Gyr_Y` (ML) | `Gyr_Z` (AP) para pronación | `eventos_pie_carrera`, `tiempos_eventos_carrera` |
-| 🏃 **Carrera** (COG) | `COG_1` | `Acc_X` (V), `Acc_Z` (AP) | — | `eventos_cog_carrera`, `distancia_vert_cog_carrera` |
-| 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
-| 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
-
-> El campo **Sensor** se refiere a las posibles colocaciones del sensor en el cuerpo se detallan más adelante.
-> 
-> **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
+  
 
 
 
 ---
 
+# 3. Funciones disponibles
 
-## 3. 🧪 Ejemplos de Uso
-
-La carpeta [`Examples/`](Examples/) contiene cuatro demos ejecutables directamente en MATLAB. Cada una incluye sus propios archivos de datos de ejemplo en `Examples/data/` y **no requiere ninguna configuración previa**.
-
----
-
-### 🚶 Localización 2D al caminar — `demo_caminar_posicion2D`
-
-Reconstruye la trayectoria (x, y) de una persona con un sensor en L3, combinando detección de paso en tiempo real, modelo de péndulo para la distancia por paso y giróscopo para la orientación.
-
-```matlab
->> demo_caminar_posicion2D
-```
-
-**Archivo de datos:** `data/ejemplo_caminar_posicion2D.log` — señales Xsens en formato texto, 100 Hz
-
----
-
-### 🏃 Análisis de carrera con IMU en el pie — `demo_carrera_pie`
-
-Pipeline completo de carrera: detección de eventos del ciclo de zancada, tiempos de fase, cadencia y amplitudes de impacto y frenado. Produce una tabla resumen de resultados.
-
-```matlab
->> demo_carrera_pie
-```
-
-**Archivo de datos:** `data/ejemplo_carrera.mat` — formato IMUstd con sensores `FR_1` (pie derecho) y `FL_1` (pie izquierdo)
-
----
-
-### 🚧 Análisis de carrera de vallas — `demo_vallas_COG`
-
-Detección automática de eventos de valla desde el COG y visualización de patrones de señal paso a paso.
-
-```matlab
->> demo_vallas_COG
-```
-
-**Archivo de datos:** `data/ejemplo_vallas.mat` — formato IMUstd con sensor `COG_1`
-
----
-
-### 🦘 Análisis de saltos verticales — `demo_salto_cog`
-
-Estima duración, altura y energía de tres saltos verticales y compara los resultados obtenidos con tres sistemas: cámara de movimiento, plataforma de fuerzas e IMU en el COG.
-
-```matlab
->> demo_salto_cog
-```
-
-**Archivos de datos:**
-- `data/ejemplo_salto_camara.trc` — posición vertical del marcador [mm], 100 Hz
-- `data/ejemplo_salto_plataforma.xls` — fuerza de reacción por pie [N], 100 Hz
-- `data/ejemplo_salto_imu.log` — aceleraciones Xsens en COG, 100 Hz
-
----
-
-
-
-
-
-
-
-## 4. 🧩 Estructura de la Toolbox
-
-Las funciones principales están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. Se les asigna un nombre con una estructura `que_como_actividad`:
-
-- `que` — qué se mide: Eventos, Tiempo, Distancia, Aceleracion...
-- `como` — condición(es) como la colocación del IMU, el método de cálculo, etc.
-- `actividad` — Caminar, Saltos, Carrera, Vallas, etc.
-
+Las funciones principales están organizadas por **tipo de actividad física**: Caminar, Saltos, Carrera y Vallas. 
 
 ```
 Por tipo de Actividad (19 funciones)
@@ -171,7 +98,15 @@ Por tipo de Actividad (19 funciones)
 ```
 
 
-## 🚶 Caminar (Walking/Gait)
+Las funciones tiene nombres representativos de su funcionalidad, del tipo `que_como_actividad`:
+
+- `que` — qué se mide: Eventos, Tiempo, Distancia, Aceleracion...
+- `como` — condición(es) como la colocación del IMU, el método de cálculo, etc.
+- `actividad` — Caminar, Saltos, Carrera, Vallas, etc.
+
+
+
+## 3.1🚶 Caminar (Walking/Gait)
 Funciones para análisis de la marcha normal. 
    
 | Función | Descripción |
@@ -187,7 +122,7 @@ Funciones para análisis de la marcha normal.
 
 **Demo:** [`Examples/demo_caminar_posicion2D.m`](Examples/demo_caminar_posicion2D.m) — reconstrucción de la posición 2D a partir de IMU en L3.
 
-## 🏃 Carrera (Running)
+## 3.2 🏃 Carrera (Running)
 Funciones específicas para análisis de carrera con IMU en pie o centro de gravedad.
 
 | Función | Descripción |
@@ -205,7 +140,7 @@ Funciones específicas para análisis de carrera con IMU en pie o centro de grav
 **Demo:** [`Examples/demo_carrera_pie.m`](Examples/demo_carrera_pie.m) — ejemplo completo de pipeline con IMU en el pie.
 
 
-## 🚧 Vallas (Hurdles)
+## 3.3 🚧 Vallas (Hurdles)
 Para análisis de carreras de vallas.
 
 | Función | Descripción |
@@ -216,7 +151,7 @@ Para análisis de carreras de vallas.
 
 
 
-## 🦘 Saltos (Jumping)
+## 3.4 🦘 Saltos (Jumping)
 Para análisis de salto vertical y pliometría.
 
 | Función | Descripción |
@@ -224,13 +159,14 @@ Para análisis de salto vertical y pliometría.
 | `eventos_cog_salto` | Detecta inicio, contacto inicial, impacto y preparación para el contacto |
 | `evalua_cog_salto` | Calcula duración, altura y energía de cada salto a partir de los eventos |
 
-**Demo:** [`Examples/demo_salto_cog.m`](Examples/demo_salto_cog.m) — estimación de altura y duración de saltos verticales comparando cámara, plataforma de fuerzas e IMU.
+**Demo:** [`Examples/demo_salto_cog.m`](Examples/demo_salto_cog.m) — estimación en saltos verticales comparando cámara, plataforma de fuerzas e IMU.
 
 
 
 
+---
 
-## ⚙️ Funciones Auxiliares
+# 4. Funciones Auxiliares
 
 Además existen una serie de **funciones auxiliares** para cálculos, visualizaciones y otras utilidades. 
 
@@ -246,7 +182,7 @@ Auxiliares para cálculo y visualización (30+ funciones)
 
 
 
-### 🦴 Análisis de Segmentos Corporales (3D Body Segments)
+## 4.1 🦴 Análisis de Segmentos Corporales (3D Body Segments)
 Para sistemas MOCAP, orientación de extremidades y biomecánica articular.
 
 | Función | Descripción |
@@ -258,7 +194,7 @@ Para sistemas MOCAP, orientación de extremidades y biomecánica articular.
 | `extraer_info_mocap` | Parser de archivos de captura de movimiento |
 
 
-### 🔄 Utilidades numéricas
+## 4.2 🔄 Utilidades numéricas
 Funciones de diferentes cálculos numéricos de utilidad general.
 
 | Función | Descripción |
@@ -273,7 +209,7 @@ Funciones de diferentes cálculos numéricos de utilidad general.
 | `rango_marcador` | Distancia acumulada de un marcador |
 
 
-### ⌚ Funcionalidades en desarrollo
+## 4.3 ⌚ Funcionalidades en desarrollo
 Utilidades no consolidades, pero utilizables temporalmente.
 
 | Función | Descripción |
@@ -282,7 +218,7 @@ Utilidades no consolidades, pero utilizables temporalmente.
 | `cadencia` | Cálculo de pasos/min desde eventos IC/FC |
 
 
-### ⚙️ Infraestructura Común (Core/Utils)
+## 4.4 ⚙️ Infraestructura Común (Core/Utils)
 Carga de datos, preprocesamiento y visualización universal.
 
 | Categoría | Funciones | Descripción |
@@ -302,26 +238,13 @@ Carga de datos, preprocesamiento y visualización universal.
 
 
 
-## 5. 🚀 Instalación y Dependencias
-
-La última versión está disponible en Github. Existe una versión que se puede instalar mediante el AddsOn Manager propio de Matlab (en revisión).
-
-Las dependencias son:
-
-* MATLAB R2020a o superior
-* Toolboxes recomendados:
-
-  * **Signal Processing Toolbox**
-  * **Optimization Toolbox**
-  * **Aerospace Toolbox** *(para algunos cálculos de orientación)*
- 
-**En caso de tener la Robotics Toolbox se recomienta desinstalarla o evitar sus funciones para cálculos de cuaterniones, ya que utiliza diferentes esquema**
-
----
 
 
 
-## 6. ⚙️ Archivos en formato IMUstd (*.mat)
+
+
+
+# 5. Archivos en formato IMUstd (*.mat)
 
 Los archivos con formato **IMUstd** proporcionan datos estandarizados que facilitan trabajar directamente con la TB. Su finalidad es doble: la primera es homogeneizar la información proveniente de la gran diversidad de IMUs disponibles en el mercado (Xsens DOT, Shimmer, Bimu, etc.); la segunda es dar soporte a una **base de datos** en la que se guarden, además de las señales, información sobre las condiciones en las que se hizo esa captura.
 
@@ -377,7 +300,121 @@ Algunas utilidades necesitan conocer esto para funcionar correctamente. Se reser
 ---
 
 
-## 📚 Cita y Atribución
+
+
+
+
+
+
+En la siguiente tabla se resumen algunos ejemplos de las **señales mínimas requeridas** en algunas funciones. Se indican qué ejes del acelerómetro (`Acc_*`) y del giroscopio (`Gyr_*`) son necesarios, y en qué sensor deben estar registrados.
+
+
+| Actividad | Sensor* | Señales requeridas | Señales opcionales | Funciones principales |
+|-----------|--------|--------------------|--------------------|----------------------|
+| 🚶 **Caminar** (COG) | `COG_1` | `Acc_Z` (AP), `Acc_X` (V) | `Gyr_Y` (ML) para orientación | `eventos_cog_caminar`, `eventos_cog_tiempo_real_caminar`, `distancia_pendulo_cog_caminar` |
+| 🚶 **Caminar** (muñeca) | `WR_1` / `WL_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `pasos_muneca_caminar`, `pasos_muneca_fusion_caminar` |
+| 🏃 **Carrera** (pie) | `FR_1` / `FL_1` | `Gyr_Y` (ML) | `Gyr_Z` (AP) para pronación | `eventos_pie_carrera`, `tiempos_eventos_carrera` |
+| 🏃 **Carrera** (COG) | `COG_1` | `Acc_X` (V), `Acc_Z` (AP) | — | `eventos_cog_carrera`, `distancia_vert_cog_carrera` |
+| 🚧 **Vallas** | `COG_1` | `Acc_X` (V), `Acc_Y` (ML), `Acc_Z` (AP) | — | `eventos_cog_vallas` |
+| 🦘 **Salto** | `COG_1` | `Acc_X` (V) | — | `eventos_cog_salto`, `evalua_cog_salto` |
+
+> El campo **Sensor** se refiere a las posibles colocaciones del sensor en el cuerpo se detallan más adelante.
+> 
+> **Nota sobre unidades:** Las aceleraciones se expresan en **m/s²** (con eje V centrado en ~9,81 m/s² en reposo). Las velocidades angulares en **°/s**. Las funciones de estimación de distancia esperan aceleraciones en m/s².
+
+
+
+---
+
+
+# 6. Los Ejemplos de Uso
+
+La carpeta [`Examples/`](Examples/) contiene cuatro demos ejecutables directamente en MATLAB. Cada una incluye sus propios archivos de datos de ejemplo en `Examples/data/` y **no requiere ninguna configuración previa**.
+
+---
+
+## 🚶 Localización 2D al caminar — `demo_caminar_posicion2D`
+
+Reconstruye la trayectoria (x, y) de una persona con un sensor en L3, combinando detección de paso en tiempo real, modelo de péndulo para la distancia por paso y giróscopo para la orientación.
+
+```matlab
+>> demo_caminar_posicion2D
+```
+
+**Archivo de datos:** `data/ejemplo_caminar_posicion2D.log` — señales Xsens en formato texto, 100 Hz
+
+---
+
+## 🏃 Análisis de carrera con IMU en el pie — `demo_carrera_pie`
+
+Pipeline completo de carrera: detección de eventos del ciclo de zancada, tiempos de fase, cadencia y amplitudes de impacto y frenado. Produce una tabla resumen de resultados.
+
+```matlab
+>> demo_carrera_pie
+```
+
+**Archivo de datos:** `data/ejemplo_carrera.mat` — formato IMUstd con sensores `FR_1` (pie derecho) y `FL_1` (pie izquierdo)
+
+---
+
+## 🚧 Análisis de carrera de vallas — `demo_vallas_COG`
+
+Detección automática de eventos de valla desde el COG y visualización de patrones de señal paso a paso.
+
+```matlab
+>> demo_vallas_COG
+```
+
+**Archivo de datos:** `data/ejemplo_vallas.mat` — formato IMUstd con sensor `COG_1`
+
+---
+
+## 🦘 Análisis de saltos verticales — `demo_salto_cog`
+
+Estima duración, altura y energía de tres saltos verticales y compara los resultados obtenidos con tres sistemas: cámara de movimiento, plataforma de fuerzas e IMU en el COG.
+
+```matlab
+>> demo_salto_cog
+```
+
+**Archivos de datos:**
+- `data/ejemplo_salto_camara.trc` — posición vertical del marcador [mm], 100 Hz
+- `data/ejemplo_salto_plataforma.xls` — fuerza de reacción por pie [N], 100 Hz
+- `data/ejemplo_salto_imu.log` — aceleraciones Xsens en COG, 100 Hz
+
+---
+
+
+
+
+
+
+
+
+
+
+# 7. Instalación y Dependencias
+
+La última versión está disponible en Github. Existe una versión que se puede instalar mediante el AddsOn Manager propio de Matlab (en revisión).
+
+Las dependencias son:
+
+* MATLAB R2020a o superior
+* Toolboxes recomendados:
+
+  * **Signal Processing Toolbox**
+  * **Optimization Toolbox**
+  * **Aerospace Toolbox** *(para algunos cálculos de orientación)*
+ 
+**En caso de tener la Robotics Toolbox se recomienta desinstalarla o evitar sus funciones para cálculos de cuaterniones, ya que utiliza diferentes esquema**
+
+---
+
+
+
+
+
+# 8. Cita y Atribución
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19816490.svg)](https://doi.org/10.5281/zenodo.19816490)
 
@@ -385,7 +422,7 @@ Si utilizas este toolbox en una publicación científica, usa el botón **"Cite 
 
 ---
 
-## 🤝 Contribuir
+# 9. Contribuir
 
 ¿Quieres añadir funciones o mejorar el toolbox? Consulta las instrucciones del equipo:
 
@@ -393,7 +430,7 @@ Si utilizas este toolbox en una publicación científica, usa el botón **"Cite 
 
 ---
 
-## 🧠 Créditos
+# 10. Créditos
 
 Desarrollado en el **SiMuR Lab** (Simulación y Movimiento Humano) — Universidad de Oviedo.
 Contacto: [[juan@uniovi.es](mailto:juan@uniovi.es)]

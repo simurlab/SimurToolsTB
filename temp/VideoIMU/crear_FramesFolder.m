@@ -21,9 +21,7 @@ function ruta_frames_folder = crear_FramesFolder(ruta_video)
 %       Por defecto: 'C:\ffmpeg\bin'.
 
 
-    ruta_ffmpeg = 'C:\ffmpeg\bin';    % Requiere descargar FFMPEG ('https://www.gyan.dev/ffmpeg/builds/')
-    
-    ruta_ffmpeg = strcat(ruta_ffmpeg, '\ffmpeg.exe');
+    [ruta_ffmpeg, ~] = get_ffmpeg_path();
 
     [ruta_carpeta, nombre_video, ~] = fileparts(ruta_video);
     ruta_frames = fullfile(ruta_carpeta, sprintf('frames_%s', nombre_video));

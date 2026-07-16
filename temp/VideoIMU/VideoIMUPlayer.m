@@ -1,9 +1,9 @@
 classdef VideoIMUPlayer < handle
-    % DYNATHLONPLAYER  Visualizador de vídeo + señales IMU
-    % 
+    % VIDEOIMUPLAYER  Visualizador de vídeo + señales IMU
+    %
     % Uso:
     %   d = Dynathlon('ruta_carpeta', '.\datos\experiment_20260416_113857');
-    %   p = DynathlonPlayer(d);
+    %   p = VideoIMUPlayer('.\datos\experiment_20260416_113857\video.mp4', '.\datos\data.mat', 'MD');
     %   p.setEditMode(true);   % flechas izq/dcha para ajustar offset
     %
     % Requiere carpeta "frames_{video_name}" con imagenes de cada frame.
@@ -121,13 +121,37 @@ classdef VideoIMUPlayer < handle
             for i = 1:n_videos
                 [ruta_carpeta, nombre_video, ~] = fileparts(ruta_video(i));
                 obj.FramesFolder{i} = fullfile(ruta_carpeta, sprintf('frames_%s', nombre_video));
-                if isempty(obj.FramesFolder{i})
-                    error('❌ No se encontró carpeta con los frames de %s. Ejecuta crear_FramesFolder primero.', nombre_video);
+
+                % Verificar que la carpeta de frames existe
+                if ~isfolder(obj.FramesFolder{i})
+                    error('❌ No se encontró carpeta con los frames: %s\nEjecuta: crear_FramesFolder(''%s'')', obj.FramesFolder{i}, ruta_video(i));
                 end
-                obj.FrameFiles{i} = dir(fullfile(obj.FramesFolder{i}, 'frame_*.jpg'));
-                if isempty(obj.FrameFiles{i})
-                    error('❌ No se encontraron frames de %s. Ejecuta crear_FramesFolder primero.', nombre_video);
+
+                % Buscar archivos de frames en la carpeta
+                todos_archivos = dir(obj.FramesFolder{i});
+
+                % Filtrar: archivos (no directorios) que contengan 'frame_' en el nombre
+                es_archivo = ~[todos_archivos.isdir];
+                contiene_frame = contains({todos_archivos.name}, 'frame_');
+                archivos_temp = todos_archivos(es_archivo & contiene_frame);
+
+                if isempty(archivos_temp)
+                    archivos_jpg = todos_archivos(contains({todos_archivos.name}, '.jpg'));
+                    if isempty(archivos_jpg)
+                        nombres = 'ninguno';
+                    else
+                        nombres = strjoin({archivos_jpg.name}, ', ');
+                    end
+
+                    error(['❌ No se encontraron frames con patrón "frame_" en:\n' ...
+                           '   %s\n' ...
+                           'Archivos .jpg encontrados: %s\n\n' ...
+                           'Solución: Ejecuta primero:\n' ...
+                           '   crear_FramesFolder(''%s'')'], ...
+                           obj.FramesFolder{i}, nombres, ruta_video(i));
                 end
+
+                obj.FrameFiles{i} = archivos_temp;
                 obj.VidName{i} = nombre_video;
 
                 % Extraer tiempos de cada frame
@@ -161,10 +185,21 @@ classdef VideoIMUPlayer < handle
             % Video
             for i = 1:NVid
                 obj.AxVideo{i} = nexttile(t, i, [nSeniales 1]);
-                frame = imread(fullfile(obj.FramesFolder{i}, obj.FrameFiles{i}(1).name));
+
+                % Verificar que hay frames disponibles
+                if isempty(obj.FrameFiles{i})
+                    error('❌ No hay frames disponibles para video %d. FrameFiles{%d} está vacío.', i, i);
+                end
+
+                ruta_frame = fullfile(obj.FramesFolder{i}, obj.FrameFiles{i}(1).name);
+                if ~isfile(ruta_frame)
+                    error('❌ No se puede leer el primer frame: %s', ruta_frame);
+                end
+
+                frame = imread(ruta_frame);
                 obj.hImg{i} = imshow(frame, 'Parent', obj.AxVideo{i});
                 title(obj.AxVideo{i}, sprintf('Video: %s', obj.VidName{i}),"Interpreter","none");
-                set(obj.AxVideo{i}, 'Tag', sprintf('Vid_%d', i));       % para ignorar axes de video
+                set(obj.AxVideo{i}, 'Tag', sprintf('Vid_%d', i));
             end
  
             % IMUs
