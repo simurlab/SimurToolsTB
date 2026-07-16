@@ -4,7 +4,7 @@ classdef VideoIMUPlayer < handle
     % Uso:
     %   d = Dynathlon('ruta_carpeta', '.\datos\experiment_20260416_113857');
     %   p = VideoIMUPlayer('.\datos\experiment_20260416_113857\video.mp4', '.\datos\data.mat', 'MD');
-    %   p.setEditMode(true);   % flechas izq/dcha para ajustar offset
+    %
     %
     % Requiere carpeta "frames_{video_name}" con imagenes de cada frame.
     %   crear_FramesFolder('.\datos\experiment_20260416_113857\video_20260702_120246.mp4');
@@ -29,11 +29,12 @@ classdef VideoIMUPlayer < handle
 
         t_video = {} % Cell con Arrays con los tiempos asociados a cada frame del video.
 
-        % Throttling fuera del buffer
-        LIMIT02 = false          % evitar releer el mismo frame
+        btnZoom      % handle gráfico de Zoom boton
+        btnPan       % handle gráfico de Pan boton
+        
+        LIMIT02 = false          % Evitar releer el mismo frame
         
         LastFrameIdx = []
-        DisplayScale = 1      % reducción del frame al cachear (0.5 = mitad de resolución)
     
     end
 
@@ -222,6 +223,18 @@ classdef VideoIMUPlayer < handle
 
             % Cursor temporal arrastrable
             draggableCursorV4(obj.Fig, @(tCursor) obj.onCursorMove(tCursor));
+
+            % Botones auxiliares para Zoom y Desplazamiento en cualquier axe, incluido la del video:
+            obj.btnZoom = uicontrol(obj.Fig, 'Style','togglebutton', ...
+                'Units','normalized', 'Position',[0.458 0.967 0.04 0.03], ...
+                'String','Zoom', ...
+                'Callback', @(src,~) obj.toggleZoom(src));
+            
+            obj.btnPan = uicontrol(obj.Fig, 'Style','togglebutton', ...
+                'Units','normalized', 'Position',[0.502 0.967 0.04 0.03], ...
+                'String','Pan', ...
+                'Callback', @(src,~) obj.togglePan(src));
+
         end
 
         function diff_array_ms = plotSyncError(obj)         %% REVISAR
@@ -260,11 +273,31 @@ classdef VideoIMUPlayer < handle
         function onCursorMove(obj, tCursor)
             obj.refreshFrame(tCursor);
         end
+        
+        function toggleZoom(obj, src)
+            if src.Value
+                pan(obj.Fig, 'off'); obj.btnPan.Value = 0; % evita tener zoom y pan a la vez
+                zoom(obj.Fig, 'on');
+            else
+                zoom(obj.Fig, 'off');
+            end
+        end
+        
+        function togglePan(obj, src)
+            if src.Value
+                zoom(obj.Fig, 'off'); obj.btnZoom.Value = 0;
+                pan(obj.Fig, 'on');
+            else
+                pan(obj.Fig, 'off');
+            end
+        end
 
         %% Refresco del frame de vídeo mediante lectura de jpg en carpeta "frames_{videoname}"
         function refreshFrame(obj, t)
             obj.CurrentTime = t;
             
+            idx_IMU_sample = find(obj.myIMU.(obj.idIMU(1)).Time/1000 == t); % Indice de muestra del IMU en t
+
             % Para cada Video:
             for i = 1:length(obj.VidName)
                 tVideo = t - obj.Offset{i};
@@ -282,8 +315,13 @@ classdef VideoIMUPlayer < handle
                 ruta_img = fullfile(obj.FramesFolder{i}, obj.FrameFiles{i}(frameIdx).name);
                 frame = imread(ruta_img);
                 set(obj.hImg{i}, 'CData', frame);
-    
-                xlabel(obj.AxVideo{i}, sprintf('t_{IMU}=%.3f s | t_{vid}=%.3f s | off=%.3f s | dif=%+.0f ms | Video Frame:%d', t, obj.t_video{i}(frameIdx), obj.Offset{i}, diff_tiempo, frameIdx));
+                
+                % Mostrar información relevante de instante t
+                texto = sprintf('t_{IMU}=%.3f s | t_{vid}=%.3f s | off=%.3f s | dif=%+.0f ms | \\bf{IMU sample:%d  | Video Frame:%d}', ...
+                    t, obj.t_video{i}(frameIdx), obj.Offset{i}, diff_tiempo, idx_IMU_sample, frameIdx);
+
+                xlabel(obj.AxVideo{i}, texto, 'Interpreter','tex', 'FontSize',10, 'FontName','Arial');
+                
                 drawnow limitrate;
             end
         end
@@ -301,7 +339,12 @@ function draggableCursorV4(fig, updateFcn)
     
     ax = findall(fig, 'Type','axes');
     ax = flipud(ax);
-    ax = ax(~contains({ax.Tag}, "Vid_"));   % excluir axes cuyo Tag contiene 'Vid_'
+
+    % Eliminar barra de herramientas de todos los axes
+    for i = 1:numel(ax); ax(i).Toolbar = []; end    
+
+    % Excluir axes cuyo Tag contiene 'Vid_'
+    ax = ax(~contains({ax.Tag}, "Vid_"));   
     linkaxes(ax, 'x');
     
     curves = cell(numel(ax),1);
