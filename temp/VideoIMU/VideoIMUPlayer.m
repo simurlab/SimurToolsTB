@@ -1,11 +1,11 @@
 classdef VideoIMUPlayer < handle
     % VIDEOIMUPLAYER  Visualizador de vídeo + señales IMU
     %
-    % Uso:
-    %   d = Dynathlon('ruta_carpeta', '.\datos\experiment_20260416_113857');
-    %   p = VideoIMUPlayer('.\datos\experiment_20260416_113857\video.mp4', '.\datos\data.mat', 'MD');
-    %
-    %
+    % EJEMPLO:
+    %   p = VideoIMUPlayer("./vid2.mp4", "./Data.mat", "MD")
+    %     o
+    %   p = VideoIMUPlayer(["./vid1.mp4" "./vid2.mp4"], "./Data.mat", "MD", ["Acc_X","Acc_Y","Acc_Z"], [1 300], [1 231])
+    % 
     % Requiere carpeta "frames_{video_name}" con imagenes de cada frame.
     %   crear_FramesFolder('.\datos\experiment_20260416_113857\video_20260702_120246.mp4');
     % 
@@ -64,7 +64,7 @@ classdef VideoIMUPlayer < handle
         %                   IMU_sync_sample = n;
         %                   Frame_sync_sample = k;
         %       Si se tienen varios videos, Frame_sync_sample será un
-        %       array con los frames que sincronizan.
+        %       array con los frames que sincronizan, idem con IMU_sync_sample.
         %
         % EJEMPLO:
         %   p = VideoIMUPlayer("./vid2.mp4", "./Data.mat", "MD")
@@ -86,6 +86,11 @@ classdef VideoIMUPlayer < handle
             if (Frame_sync_sample == 1) && (length(Frame_sync_sample) ~= n_videos)
                 Frame_sync_sample = ones(1,n_videos);   % Valor por defecto si hay varios videos y no se especifica sync
             end
+            if (IMU_sync_sample == 1) && (length(IMU_sync_sample) ~= n_videos)
+                IMU_sync_sample = ones(1,n_videos);   % Valor por defecto si hay varios videos y no se especifica sync
+            end
+            if (length(Frame_sync_sample) ~= n_videos), error('Input error en Frame_sync_sample. Se espera [1x%d]', n_videos);end
+            if (length(IMU_sync_sample) ~= n_videos), error('Input error en IMU_sync_sample.Se espera [1x%d]', n_videos);end
 
             % Cargar datos de sensor/es: sensor_id
             datos = load(db_file);
@@ -162,7 +167,7 @@ classdef VideoIMUPlayer < handle
                 obj.VideoObj{i} = VideoReader(ruta_video(i));
 
                 % Offset segun sync dada por IMU_sync_sample y Frame_sync_sample
-                obj.Offset{i} = obj.myIMU.(sensor_id(1)).Time(IMU_sync_sample)/1000 - obj.t_video{i}(Frame_sync_sample(i));  % Si hay varios IMUs se da por hecho que estan sincronizados entre si
+                obj.Offset{i} = obj.myIMU.(sensor_id(1)).Time(IMU_sync_sample(i))/1000 - obj.t_video{i}(Frame_sync_sample(i));  % Si hay varios IMUs se da por hecho que estan sincronizados entre si
             end
 
             % Inicializar param auxiliare
